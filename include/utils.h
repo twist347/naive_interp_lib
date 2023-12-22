@@ -3,7 +3,7 @@
 #include <concepts>
 #include <cmath>
 
-namespace naive_interp::utils {
+namespace ni::utils {
     template<class T, class U>
     constexpr auto to(U u) -> T {
         return static_cast<T>(u);

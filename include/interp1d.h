@@ -4,33 +4,34 @@
 #include <interp1d_algs.h>
 #include <stdexcept>
 
-namespace naive_interp::_1d {
+namespace ni::_1d {
 
 #define GENERATE_MOVE_AND_DELETE_COPY_SEMANTICS(class_name) \
-    class_name(const class_name &) = delete; \
-    class_name(class_name &&) noexcept = default; \
-    auto operator=(const class_name &) -> class_name & = delete; \
-    auto operator=(class_name &&) noexcept -> class_name & = default; \
+    constexpr class_name(const class_name &) = delete; \
+    constexpr class_name(class_name &&) noexcept = default; \
+    constexpr auto operator=(const class_name &) -> class_name & = delete; \
+    constexpr auto operator=(class_name &&) noexcept -> class_name & = default; \
 
     enum class Type1D {
         Prev,
         Next,
         NearestNeighbour,
-        Linear
+        Linear,
+        Quadratic
     };
 
     template<class Container>
     class i_1d_base {
     public:
-        using container_type = Container;
-        using value_type = Container::value_type;
-        using size_type = Container::size_type;
+        using container_type = std::remove_cvref_t<Container>;
+        using value_type = container_type::value_type;
+        using size_type = container_type::size_type;
 
         GENERATE_MOVE_AND_DELETE_COPY_SEMANTICS(i_1d_base)
 
         i_1d_base() = default;
 
-        virtual auto operator()(const Container &) const -> container_type = 0;
+        virtual auto operator()(const container_type &) const -> container_type = 0;
 
         virtual ~i_1d_base() = default;
     };
@@ -39,29 +40,33 @@ namespace naive_interp::_1d {
     template<Type1D type, class Container>
     class i_1d : public i_1d_base<Container> {
     public:
-        constexpr i_1d(const Container &xp, const Container &yp) {
+        using container_type = typename i_1d_base<Container>::container_type;
+        using value_type = typename container_type::value_type;
+        using size_type = typename container_type::size_type;
+
+        constexpr i_1d(const container_type &xp, const container_type &yp) {
             init(xp, yp);
         }
 
-        using container_type = typename i_1d_base<Container>::container_type;
-        using value_type = typename i_1d_base<Container>::value_type;
-        using size_type = typename i_1d_base<Container>::size_type;
+        GENERATE_MOVE_AND_DELETE_COPY_SEMANTICS(i_1d)
 
-        constexpr auto operator()(const Container &x) const -> container_type override {
+        constexpr auto operator()(const container_type &x) const -> container_type override {
             switch (type) {
                 case Type1D::Prev:
-                    return naive_interp::prev(x, xp_, yp_);
+                    return ni::prev(x, xp_, yp_);
                 case Type1D::Next:
-                    return naive_interp::next(x, xp_, yp_);
+                    return ni::next(x, xp_, yp_);
                 case Type1D::NearestNeighbour:
-                    return naive_interp::nearest_neighbour(x, xp_, yp_);
+                    return ni::nearest_neighbour(x, xp_, yp_);
                 case Type1D::Linear:
-                    return naive_interp::linear(x, xp_, yp_);
+                    return ni::linear(x, xp_, yp_);
+                case Type1D::Quadratic:
+                    return ni::quadratic(x, xp_, yp_);
             }
         }
 
     private:
-        constexpr void init(const Container &xp, const Container &yp) {
+        constexpr void init(const container_type &xp, const container_type &yp) {
             if (xp.size() != yp.size()) {
                 throw std::invalid_argument("size of xp must be equal to yp size");
             }
@@ -84,6 +89,8 @@ namespace naive_interp::_1d {
                     return 1;
                 case Type1D::Linear:
                     return 2;
+                case Type1D::Quadratic:
+                    return 3;
                 default:
                     throw std::invalid_argument("unknown 1d interpolation type");
             }
@@ -91,7 +98,7 @@ namespace naive_interp::_1d {
 
         constexpr static int min_num_points = min_points_extr(type);
 
-        Container xp_;
-        Container yp_;
+        container_type xp_;
+        container_type yp_;
     };
 }

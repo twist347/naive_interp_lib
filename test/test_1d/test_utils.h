@@ -18,7 +18,7 @@ auto arrays_eq(T &&real, T &&expected) -> bool {
     }
     for (idx_t i = 0; i < real.size(); ++i) {
         auto r = real[i], e = expected[i];
-        if (std::isnan(r) || std::isnan(r) || r != e) {
+        if ((!std::isnan(r) || !std::isnan(e)) && r != e) {
             std::cerr << std::fixed << std::setprecision(8) << "real: " << r << ", expected: " << e << " at idx " << i
                       << '\n';
             return false;
