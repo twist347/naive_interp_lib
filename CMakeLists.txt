@@ -13,5 +13,8 @@ if(CMAKE_BUILD_TYPE MATCHES "Debug")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fsanitize=address,undefined,leak -fno-sanitize-recover=all")
 endif()
 
+include_directories(${Boost_INCLUDE_DIRS})
+
 add_subdirectory(test/test_1d)
 add_subdirectory(test/test_perf_1d)
+add_subdirectory(test/test_2d)

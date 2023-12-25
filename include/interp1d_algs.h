@@ -8,6 +8,10 @@
 namespace ni {
     template<class Container, class Value = Container::value_type>
     constexpr auto prev(const Container &x, const Container &xp, const Container &yp) -> Container {
+        if (xp.size() < 1 || yp.size() < 1 || xp.size() != yp.size()) {
+            throw std::invalid_argument("the input data does not meet the conditions");
+        }
+
         Container y(x.size());
 
         using idx_t = Container::size_type;
@@ -29,6 +33,10 @@ namespace ni {
 
     template<class Container, class Value = Container::value_type>
     constexpr auto next(const Container &x, const Container &xp, const Container &yp) -> Container {
+        if (xp.size() < 1 || yp.size() < 1 || xp.size() != yp.size()) {
+            throw std::invalid_argument("the input data does not meet the conditions");
+        }
+
         Container y(x.size());
 
         using idx_t = Container::size_type;
@@ -51,6 +59,10 @@ namespace ni {
 
     template<class Container, class Value = Container::value_type>
     constexpr auto nearest_neighbour(const Container &x, const Container &xp, const Container &yp) -> Container {
+        if (xp.size() < 1 || yp.size() < 1 || xp.size() != yp.size()) {
+            throw std::invalid_argument("the input data does not meet the conditions");
+        }
+
         Container y(x.size());
 
         using idx_t = Container::size_type;
@@ -75,6 +87,10 @@ namespace ni {
 
     template<class Container, class Value = Container::value_type>
     constexpr auto linear(const Container &x, const Container &xp, const Container &yp) -> Container {
+        if (xp.size() < 2 || yp.size() < 2 || xp.size() != yp.size()) {
+            throw std::invalid_argument("the input data does not meet the conditions");
+        }
+
         Container y(x.size());
 
         using idx_t = Container::size_type;
@@ -99,6 +115,10 @@ namespace ni {
 
     template<class Container, class Value = Container::value_type>
     constexpr auto quadratic(const Container &x, const Container &xp, const Container &yp) -> Container {
+        if (xp.size() < 3 || yp.size() < 3 || xp.size() != yp.size()) {
+            throw std::invalid_argument("the input data does not meet the conditions");
+        }
+
         auto calc_ = [](Value x0, Value y0, Value x1, Value y1, Value x2, Value y2, Value xi) {
             const Value a = ((xi - x1) * (xi - x2)) / ((x0 - x1) * (x0 - x2)) * y0;
             const Value b = ((xi - x0) * (xi - x2)) / ((x1 - x0) * (x1 - x2)) * y1;
@@ -131,6 +151,10 @@ namespace ni {
 
     template<class Container, class Value = Container::value_type>
     constexpr auto cubic(const Container &x, const Container &xp, const Container &yp) -> Container {
+        if (xp.size() < 4 || yp.size() < 4 || xp.size() != yp.size()) {
+            throw std::invalid_argument("the input data does not meet the conditions");
+        }
+
         auto calc_ = [](Value x0, Value y0, Value x1, Value y1, Value x2, Value y2, Value x3, Value y3, Value xi) {
             const Value a = ((xi - x1) * (xi - x2) * (xi - x3) / ((x0 - x1) * (x0 - x2) * (x0 - x3))) * y0;
             const Value b = ((xi - x0) * (xi - x2) * (xi - x3) / ((x1 - x0) * (x1 - x2) * (x1 - x3))) * y1;
