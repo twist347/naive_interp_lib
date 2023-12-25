@@ -17,7 +17,8 @@ namespace ni::_1d {
         Next,
         NearestNeighbour,
         Linear,
-        Quadratic
+        Quadratic,
+        Cubic
     };
 
     template<class Container>
@@ -62,6 +63,8 @@ namespace ni::_1d {
                     return ni::linear(x, xp_, yp_);
                 case Type1D::Quadratic:
                     return ni::quadratic(x, xp_, yp_);
+                case Type1D::Cubic:
+                    return ni::cubic(x, xp_, yp_);
             }
         }
 
@@ -91,6 +94,8 @@ namespace ni::_1d {
                     return 2;
                 case Type1D::Quadratic:
                     return 3;
+                case Type1D::Cubic:
+                    return 4;
                 default:
                     throw std::invalid_argument("unknown 1d interpolation type");
             }

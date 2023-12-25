@@ -7,7 +7,6 @@ file(GLOB SOURCES ./main.cpp)
 
 include_directories(${CMAKE_SOURCE_DIR}/include)
 
-add_executable(test_1d ${SOURCES}
-        test_utils.h)
+add_executable(test_1d ${SOURCES})
 
 target_link_libraries(test_1d gtest)

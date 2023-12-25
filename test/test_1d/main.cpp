@@ -1,6 +1,6 @@
 #include <gtest/gtest.h>
 #include <vector>
-#include "test_utils.h"
+#include "../test_utils.h"
 #include <interp1d_algs.h>
 #include <interp1d.h>
 #include <interp_make.h>
@@ -333,6 +333,65 @@ TEST(QuadraticInterp, Unordered) {
 TEST(QuadraticInterp, EqArrays) {
     std::vector<double> xp{1, 2, 3, 4, 5}, yp{1, 4, 9, 16, 25}, x{1, 2, 3, 4, 5}, expected{1, 4, 9, 16, 25};
     auto interp = ni::_1d::i_1d<ni::_1d::Type1D::Quadratic, std::vector<double>>(xp, yp);
+    auto y = interp(x);
+    ASSERT_TRUE(arrays_eq(y, expected));
+}
+
+TEST(CubicAlg, Base) {
+    std::vector<double> xp{1, 2, 3, 4, 5}, yp{1, 4, 9, 16, 25}, x{2, 2.5, 4.5}, expected{4, 6.25, 20.25};
+    auto y = ni::cubic(x, xp, yp);
+    ASSERT_TRUE(arrays_eq(y, expected));
+}
+
+TEST(CubicAlg, Edge) {
+    std::vector<double> xp{1, 2, 3, 4, 5}, yp{1, 4, 9, 16, 25}, x{1, 2.5, 5}, expected{1, 6.25, 25};
+    auto y = ni::cubic(x, xp, yp);
+    ASSERT_TRUE(arrays_eq(y, expected));
+}
+
+TEST(CubicAlg, Unordered) {
+    std::vector<double> xp{1, 2, 3, 4, 5}, yp{1, 4, 9, 16, 25}, x{2.5, 1, 4.5}, expected{6.25, 1, 20.25};
+    auto y = ni::cubic(x, xp, yp);
+    ASSERT_TRUE(arrays_eq(y, expected));
+}
+
+TEST(CubicAlg, EqArrays) {
+    std::vector<double> xp{1, 2, 3, 4, 5}, yp{1, 4, 9, 16, 25}, x{1, 2, 3, 4, 5}, expected{1, 4, 9, 16, 25};
+    auto y = ni::cubic(x, xp, yp);
+    ASSERT_TRUE(arrays_eq(y, expected));
+}
+
+TEST(CubicAlg, NaninX) {
+    auto nan = std::numeric_limits<double>::quiet_NaN();
+    std::vector<double> xp{1, 2, 3, 4, 5}, yp{1, 4, 9, 16, 25}, x{2, nan, 4.5}, expected{4, nan, 20.25};
+    auto y = ni::cubic(x, xp, yp);
+    ASSERT_TRUE(arrays_eq(y, expected));
+}
+
+TEST(CubicAlg, NaninYp) {
+    auto nan = std::numeric_limits<double>::quiet_NaN();
+    std::vector<double> xp{1, 2, 3, 4, 5}, yp{1, 4, nan, 16, 25}, x{1, 4.5, 5}, expected{nan, nan, 25};
+    auto y = ni::cubic(x, xp, yp);
+    ASSERT_TRUE(arrays_eq(y, expected));
+}
+
+TEST(CubicInterp, Base) {
+    std::vector<double> xp{1, 2, 3, 4, 5}, yp{1, 4, 9, 16, 25}, x{2, 2.5, 4.5}, expected{4, 6.25, 20.25};
+    auto interp = ni::_1d::i_1d<ni::_1d::Type1D::Cubic, std::vector<double>>(xp, yp);
+    auto y = interp(x);
+    ASSERT_TRUE(arrays_eq(y, expected));
+}
+
+TEST(CubicInterp, Edge) {
+    std::vector<double> xp{1, 2, 3, 4, 5}, yp{1, 4, 9, 16, 25}, x{1, 2.5, 5}, expected{1, 6.25, 25};
+    auto interp = ni::_1d::i_1d<ni::_1d::Type1D::Cubic, std::vector<double>>(xp, yp);
+    auto y = interp(x);
+    ASSERT_TRUE(arrays_eq(y, expected));
+}
+
+TEST(CubicInterp, Unordered) {
+    std::vector<double> xp{1, 2, 3, 4, 5}, yp{1, 4, 9, 16, 25}, x{2.5, 1, 4.5}, expected{6.25, 1, 20.25};
+    auto interp = ni::_1d::i_1d<ni::_1d::Type1D::Cubic, std::vector<double>>(xp, yp);
     auto y = interp(x);
     ASSERT_TRUE(arrays_eq(y, expected));
 }

@@ -4,6 +4,8 @@ project(naive_interp_lib)
 
 set(CMAKE_CXX_STANDARD 23)
 
+find_package(OpenMP REQUIRED)
+
 #set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fsanitize=address,undefined,leak -fno-sanitize-recover=all")
 
 if(CMAKE_BUILD_TYPE MATCHES "Debug")
@@ -12,3 +14,4 @@ if(CMAKE_BUILD_TYPE MATCHES "Debug")
 endif()
 
 add_subdirectory(test/test_1d)
+add_subdirectory(test/test_perf_1d)
