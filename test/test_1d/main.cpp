@@ -8,39 +8,39 @@
 
 TEST(PrevAlg, Base) {
     std::vector<double> xp{1, 2, 3, 4, 5}, yp{1, 4, 9, 16, 25}, x{2, 2.5, 4.5}, expected{4, 4, 16};
-    auto y = ni::prev(x, xp, yp);
+    auto y = ni::_1d::prev(x, xp, yp);
     ASSERT_TRUE(arrays_eq(y, expected));
 }
 
 TEST(PrevAlg, Edge) {
     std::vector<double> xp{1, 2, 3, 4, 5}, yp{1, 4, 9, 16, 25}, x{1, 2.5, 5}, expected{1, 4, 25};
-    auto y = ni::prev(x, xp, yp);
+    auto y = ni::_1d::prev(x, xp, yp);
     ASSERT_TRUE(arrays_eq(y, expected));
 }
 
 TEST(PrevAlg, Unordered) {
     std::vector<double> xp{1, 2, 3, 4, 5}, yp{1, 4, 9, 16, 25}, x{2.5, 1, 4.5}, expected{4, 1, 16};
-    auto y = ni::prev(x, xp, yp);
+    auto y = ni::_1d::prev(x, xp, yp);
     ASSERT_TRUE(arrays_eq(y, expected));
 }
 
 TEST(PrevAlg, EqArrays) {
     std::vector<double> xp{1, 2, 3, 4, 5}, yp{1, 4, 9, 16, 25}, x{1, 2, 3, 4, 5}, expected{1, 4, 9, 16, 25};
-    auto y = ni::prev(x, xp, yp);
+    auto y = ni::_1d::prev(x, xp, yp);
     ASSERT_TRUE(arrays_eq(y, expected));
 }
 
 TEST(PrevAlg, NaninX) {
     auto nan = std::numeric_limits<double>::quiet_NaN();
     std::vector<double> xp{1, 2, 3, 4, 5}, yp{1, 4, 9, 16, 25}, x{2, nan, 4.5}, expected{4, nan, 16};
-    auto y = ni::prev(x, xp, yp);
+    auto y = ni::_1d::prev(x, xp, yp);
     ASSERT_TRUE(arrays_eq(y, expected));
 }
 
 TEST(PrevAlg, NaninYp) {
     auto nan = std::numeric_limits<double>::quiet_NaN();
     std::vector<double> xp{1, 2, 3, 4, 5}, yp{1, 4, nan, 16, 25}, x{2, 2.5, 3.5}, expected{4, 4, nan};
-    auto y = ni::prev(x, xp, yp);
+    auto y = ni::_1d::prev(x, xp, yp);
     ASSERT_TRUE(arrays_eq(y, expected));
 }
 
@@ -74,40 +74,40 @@ TEST(PrevInterp, EqArrays) {
 
 TEST(NextAlg, BaseTest) {
     std::vector<double> xp{1, 2, 3, 4, 5}, yp{1, 4, 9, 16, 25}, x{1, 2.5, 4.5}, expected{1, 9, 25};
-    auto y = ni::next(x, xp, yp);
+    auto y = ni::_1d::next(x, xp, yp);
     print(y);
     ASSERT_TRUE(arrays_eq(y, expected));
 }
 
 TEST(NextAlg, Edge) {
     std::vector<double> xp{1, 2, 3, 4, 5}, yp{1, 4, 9, 16, 25}, x{1, 2.5, 5}, expected{1, 9, 25};
-    auto y = ni::next(x, xp, yp);
+    auto y = ni::_1d::next(x, xp, yp);
     ASSERT_TRUE(arrays_eq(y, expected));
 }
 
 TEST(NextAlg, Unordered) {
     std::vector<double> xp{1, 2, 3, 4, 5}, yp{1, 4, 9, 16, 25}, x{2.5, 1, 4.5}, expected{9, 1, 25};
-    auto y = ni::next(x, xp, yp);
+    auto y = ni::_1d::next(x, xp, yp);
     ASSERT_TRUE(arrays_eq(y, expected));
 }
 
 TEST(NextAlg, EqArrays) {
     std::vector<double> xp{1, 2, 3, 4, 5}, yp{1, 4, 9, 16, 25}, x{1, 2, 3, 4, 5}, expected{1, 4, 9, 16, 25};
-    auto y = ni::next(x, xp, yp);
+    auto y = ni::_1d::next(x, xp, yp);
     ASSERT_TRUE(arrays_eq(y, expected));
 }
 
 TEST(NextAlg, NaninX) {
     auto nan = std::numeric_limits<double>::quiet_NaN();
     std::vector<double> xp{1, 2, 3, 4, 5}, yp{1, 4, 9, 16, 25}, x{2, nan, 4.5}, expected{4, nan, 25};
-    auto y = ni::next(x, xp, yp);
+    auto y = ni::_1d::next(x, xp, yp);
     ASSERT_TRUE(arrays_eq(y, expected));
 }
 
 TEST(NextAlg, NaninYp) {
     auto nan = std::numeric_limits<double>::quiet_NaN();
     std::vector<double> xp{1, 2, 3, 4, 5}, yp{1, 4, nan, 16, 25}, x{2, 2.5, 3.5}, expected{4, nan, 16};
-    auto y = ni::next(x, xp, yp);
+    auto y = ni::_1d::next(x, xp, yp);
     ASSERT_TRUE(arrays_eq(y, expected));
 }
 
@@ -141,39 +141,39 @@ TEST(NextInterp, EqArrays) {
 
 TEST(NearestNeighbourAlg, Base) {
     std::vector<double> xp{1, 2, 3, 4, 5}, yp{1, 4, 9, 16, 25}, x{2, 2.5, 4.5}, expected{4, 9, 25};
-    auto y = ni::nearest_neighbour(x, xp, yp);
+    auto y = ni::_1d::nearest_neighbour(x, xp, yp);
     ASSERT_TRUE(arrays_eq(y, expected));
 }
 
 TEST(NearestNeighbourAlg, Edge) {
     std::vector<double> xp{1, 2, 3, 4, 5}, yp{1, 4, 9, 16, 25}, x{1, 2.5, 5}, expected{1, 9, 25};
-    auto y = ni::nearest_neighbour(x, xp, yp);
+    auto y = ni::_1d::nearest_neighbour(x, xp, yp);
     ASSERT_TRUE(arrays_eq(y, expected));
 }
 
 TEST(NearestNeighbourAlg, Unordered) {
     std::vector<double> xp{1, 2, 3, 4, 5}, yp{1, 4, 9, 16, 25}, x{2.5, 1, 4.5}, expected{9, 1, 25};
-    auto y = ni::nearest_neighbour(x, xp, yp);
+    auto y = ni::_1d::nearest_neighbour(x, xp, yp);
     ASSERT_TRUE(arrays_eq(y, expected));
 }
 
 TEST(NearestNeighbourAlg, EqArrays) {
     std::vector<double> xp{1, 2, 3, 4, 5}, yp{1, 4, 9, 16, 25}, x{1, 2, 3, 4, 5}, expected{1, 4, 9, 16, 25};
-    auto y = ni::prev(x, xp, yp);
+    auto y = ni::_1d::prev(x, xp, yp);
     ASSERT_TRUE(arrays_eq(y, expected));
 }
 
 TEST(NearestNeighbourAlg, NaninX) {
     auto nan = std::numeric_limits<double>::quiet_NaN();
     std::vector<double> xp{1, 2, 3, 4, 5}, yp{1, 4, 9, 16, 25}, x{2, nan, 4.5}, expected{4, nan, 25};
-    auto y = ni::nearest_neighbour(x, xp, yp);
+    auto y = ni::_1d::nearest_neighbour(x, xp, yp);
     ASSERT_TRUE(arrays_eq(y, expected));
 }
 
 TEST(NearestNeighbourAlg, NaninYp) {
     auto nan = std::numeric_limits<double>::quiet_NaN();
     std::vector<double> xp{1, 2, 3, 4, 5}, yp{1, 4, nan, 16, 25}, x{2, 2.5, 3.5}, expected{4, nan, 16};
-    auto y = ni::nearest_neighbour(x, xp, yp);
+    auto y = ni::_1d::nearest_neighbour(x, xp, yp);
     ASSERT_TRUE(arrays_eq(y, expected));
 }
 
@@ -207,39 +207,39 @@ TEST(NearestNeighbourInterp, EqArrays) {
 
 TEST(LinearAlg, Base) {
     std::vector<double> xp{1, 2, 3, 4, 5}, yp{1, 4, 9, 16, 25}, x{2, 2.5, 4.5}, expected{4, 6.5, 20.5};
-    auto y = ni::linear(x, xp, yp);
+    auto y = ni::_1d::linear(x, xp, yp);
     ASSERT_TRUE(arrays_eq(y, expected));
 }
 
 TEST(LinearAlg, Edge) {
     std::vector<double> xp{1, 2, 3, 4, 5}, yp{1, 4, 9, 16, 25}, x{1, 2.5, 5}, expected{1, 6.5, 25};
-    auto y = ni::linear(x, xp, yp);
+    auto y = ni::_1d::linear(x, xp, yp);
     ASSERT_TRUE(arrays_eq(y, expected));
 }
 
 TEST(LinearAlg, Unordered) {
     std::vector<double> xp{1, 2, 3, 4, 5}, yp{1, 4, 9, 16, 25}, x{2.5, 1, 4.5}, expected{6.5, 1, 20.5};
-    auto y = ni::linear(x, xp, yp);
+    auto y = ni::_1d::linear(x, xp, yp);
     ASSERT_TRUE(arrays_eq(y, expected));
 }
 
 TEST(LinearAlg, EqArrays) {
     std::vector<double> xp{1, 2, 3, 4, 5}, yp{1, 4, 9, 16, 25}, x{1, 2, 3, 4, 5}, expected{1, 4, 9, 16, 25};
-    auto y = ni::linear(x, xp, yp);
+    auto y = ni::_1d::linear(x, xp, yp);
     ASSERT_TRUE(arrays_eq(y, expected));
 }
 
 TEST(LinearAlg, NaninX) {
     auto nan = std::numeric_limits<double>::quiet_NaN();
     std::vector<double> xp{1, 2, 3, 4, 5}, yp{1, 4, 9, 16, 25}, x{2, nan, 4.5}, expected{4, nan, 20.5};
-    auto y = ni::linear(x, xp, yp);
+    auto y = ni::_1d::linear(x, xp, yp);
     ASSERT_TRUE(arrays_eq(y, expected));
 }
 
 TEST(LinearAlg, NaninYp) {
     auto nan = std::numeric_limits<double>::quiet_NaN();
     std::vector<double> xp{1, 2, 3, 4, 5}, yp{1, 4, nan, 16, 25}, x{1, 2.5, 4.5}, expected{1, nan, 20.5};
-    auto y = ni::linear(x, xp, yp);
+    auto y = ni::_1d::linear(x, xp, yp);
     ASSERT_TRUE(arrays_eq(y, expected));
 }
 
@@ -273,39 +273,39 @@ TEST(LinearInterp, EqArrays) {
 
 TEST(QuadraticAlg, Base) {
     std::vector<double> xp{1, 2, 3, 4, 5}, yp{1, 4, 9, 16, 25}, x{2, 2.5, 4.5}, expected{4, 6.25, 20.25};
-    auto y = ni::quadratic(x, xp, yp);
+    auto y = ni::_1d::quadratic(x, xp, yp);
     ASSERT_TRUE(arrays_eq(y, expected));
 }
 
 TEST(QuadraticAlg, Edge) {
     std::vector<double> xp{1, 2, 3, 4, 5}, yp{1, 4, 9, 16, 25}, x{1, 2.5, 5}, expected{1, 6.25, 25};
-    auto y = ni::quadratic(x, xp, yp);
+    auto y = ni::_1d::quadratic(x, xp, yp);
     ASSERT_TRUE(arrays_eq(y, expected));
 }
 
 TEST(QuadraticAlg, Unordered) {
     std::vector<double> xp{1, 2, 3, 4, 5}, yp{1, 4, 9, 16, 25}, x{2.5, 1, 4.5}, expected{6.25, 1, 20.25};
-    auto y = ni::quadratic(x, xp, yp);
+    auto y = ni::_1d::quadratic(x, xp, yp);
     ASSERT_TRUE(arrays_eq(y, expected));
 }
 
 TEST(QuadraticAlg, EqArrays) {
     std::vector<double> xp{1, 2, 3, 4, 5}, yp{1, 4, 9, 16, 25}, x{1, 2, 3, 4, 5}, expected{1, 4, 9, 16, 25};
-    auto y = ni::quadratic(x, xp, yp);
+    auto y = ni::_1d::quadratic(x, xp, yp);
     ASSERT_TRUE(arrays_eq(y, expected));
 }
 
 TEST(QuadraticAlg, NaninX) {
     auto nan = std::numeric_limits<double>::quiet_NaN();
     std::vector<double> xp{1, 2, 3, 4, 5}, yp{1, 4, 9, 16, 25}, x{2, nan, 4.5}, expected{4, nan, 20.25};
-    auto y = ni::quadratic(x, xp, yp);
+    auto y = ni::_1d::quadratic(x, xp, yp);
     ASSERT_TRUE(arrays_eq(y, expected));
 }
 
 TEST(QuadraticAlg, NaninYp) {
     auto nan = std::numeric_limits<double>::quiet_NaN();
     std::vector<double> xp{1, 2, 3, 4, 5}, yp{1, 4, nan, 16, 25}, x{1, 4.5, 5}, expected{nan, nan, 25};
-    auto y = ni::quadratic(x, xp, yp);
+    auto y = ni::_1d::quadratic(x, xp, yp);
     ASSERT_TRUE(arrays_eq(y, expected));
 }
 
@@ -339,39 +339,39 @@ TEST(QuadraticInterp, EqArrays) {
 
 TEST(CubicAlg, Base) {
     std::vector<double> xp{1, 2, 3, 4, 5}, yp{1, 4, 9, 16, 25}, x{2, 2.5, 4.5}, expected{4, 6.25, 20.25};
-    auto y = ni::cubic(x, xp, yp);
+    auto y = ni::_1d::cubic(x, xp, yp);
     ASSERT_TRUE(arrays_eq(y, expected));
 }
 
 TEST(CubicAlg, Edge) {
     std::vector<double> xp{1, 2, 3, 4, 5}, yp{1, 4, 9, 16, 25}, x{1, 2.5, 5}, expected{1, 6.25, 25};
-    auto y = ni::cubic(x, xp, yp);
+    auto y = ni::_1d::cubic(x, xp, yp);
     ASSERT_TRUE(arrays_eq(y, expected));
 }
 
 TEST(CubicAlg, Unordered) {
     std::vector<double> xp{1, 2, 3, 4, 5}, yp{1, 4, 9, 16, 25}, x{2.5, 1, 4.5}, expected{6.25, 1, 20.25};
-    auto y = ni::cubic(x, xp, yp);
+    auto y = ni::_1d::cubic(x, xp, yp);
     ASSERT_TRUE(arrays_eq(y, expected));
 }
 
 TEST(CubicAlg, EqArrays) {
     std::vector<double> xp{1, 2, 3, 4, 5}, yp{1, 4, 9, 16, 25}, x{1, 2, 3, 4, 5}, expected{1, 4, 9, 16, 25};
-    auto y = ni::cubic(x, xp, yp);
+    auto y = ni::_1d::cubic(x, xp, yp);
     ASSERT_TRUE(arrays_eq(y, expected));
 }
 
 TEST(CubicAlg, NaninX) {
     auto nan = std::numeric_limits<double>::quiet_NaN();
     std::vector<double> xp{1, 2, 3, 4, 5}, yp{1, 4, 9, 16, 25}, x{2, nan, 4.5}, expected{4, nan, 20.25};
-    auto y = ni::cubic(x, xp, yp);
+    auto y = ni::_1d::cubic(x, xp, yp);
     ASSERT_TRUE(arrays_eq(y, expected));
 }
 
 TEST(CubicAlg, NaninYp) {
     auto nan = std::numeric_limits<double>::quiet_NaN();
     std::vector<double> xp{1, 2, 3, 4, 5}, yp{1, 4, nan, 16, 25}, x{1, 4.5, 5}, expected{nan, nan, 25};
-    auto y = ni::cubic(x, xp, yp);
+    auto y = ni::_1d::cubic(x, xp, yp);
     ASSERT_TRUE(arrays_eq(y, expected));
 }
 

@@ -5,7 +5,7 @@
 #include <algorithm>
 #include <utils.h>
 
-namespace ni {
+namespace ni::_1d {
     template<class Container, class Value = Container::value_type>
     constexpr auto prev(const Container &x, const Container &xp, const Container &yp) -> Container {
         if (xp.size() < 1 || yp.size() < 1 || xp.size() != yp.size()) {
@@ -16,7 +16,7 @@ namespace ni {
 
         using idx_t = Container::size_type;
 
-#pragma omp parallel for
+#pragma omp parallel for schedule(guided)
         for (idx_t i = 0; i < x.size(); ++i) {
             if (std::isnan(x[i])) {
                 y[i] = std::numeric_limits<Value>::quiet_NaN();
@@ -41,7 +41,7 @@ namespace ni {
 
         using idx_t = Container::size_type;
 
-#pragma omp parallel for
+#pragma omp parallel for schedule(guided)
         for (idx_t i = 0; i < x.size(); ++i) {
             if (std::isnan(x[i])) {
                 y[i] = std::numeric_limits<Value>::quiet_NaN();
@@ -67,7 +67,7 @@ namespace ni {
 
         using idx_t = Container::size_type;
 
-#pragma omp parallel for
+#pragma omp parallel for schedule(guided)
         for (idx_t i = 0; i < x.size(); ++i) {
             if (std::isnan(x[i])) {
                 y[i] = std::numeric_limits<Value>::quiet_NaN();
@@ -95,7 +95,7 @@ namespace ni {
 
         using idx_t = Container::size_type;
 
-#pragma omp parallel for
+#pragma omp parallel for schedule(guided)
         for (idx_t i = 0; i < x.size(); ++i) {
             if (std::isnan(x[i])) {
                 y[i] = std::numeric_limits<Value>::quiet_NaN();
@@ -130,7 +130,7 @@ namespace ni {
 
         using idx_t = Container::size_type;
 
-#pragma omp parallel for
+#pragma omp parallel for schedule(guided)
         for (idx_t i = 0; i < x.size(); ++i) {
             if (std::isnan(x[i])) {
                 y[i] = std::numeric_limits<Value>::quiet_NaN();
@@ -167,7 +167,7 @@ namespace ni {
 
         using idx_t = Container::size_type;
 
-#pragma omp parallel for
+#pragma omp parallel for schedule(guided)
         for (idx_t i = 0; i < x.size(); ++i) {
             if (std::isnan(x[i])) {
                 y[i] = std::numeric_limits<Value>::quiet_NaN();

@@ -1,8 +1,9 @@
 #pragma once
 
 #include <exception>
-#include <interp1d_algs.h>
 #include <stdexcept>
+#include <interp1d_algs.h>
+#include <interp1d_types.h>
 
 #define GENERATE_MOVE_AND_DELETE_COPY_SEMANTICS(class_name) \
     constexpr class_name(const class_name &) = delete; \
@@ -11,15 +12,6 @@
     constexpr auto operator=(class_name &&) noexcept -> class_name & = default; \
 
 namespace ni::_1d {
-    enum class Type1D {
-        Prev,
-        Next,
-        NearestNeighbour,
-        Linear,
-        Quadratic,
-        Cubic
-    };
-
     template<class Container>
     class i_1d_base {
     public:
@@ -53,17 +45,17 @@ namespace ni::_1d {
         constexpr auto operator()(const container_type &x) const -> container_type override {
             switch (type) {
                 case Type1D::Prev:
-                    return ni::prev(x, xp_, yp_);
+                    return prev(x, xp_, yp_);
                 case Type1D::Next:
-                    return ni::next(x, xp_, yp_);
+                    return next(x, xp_, yp_);
                 case Type1D::NearestNeighbour:
-                    return ni::nearest_neighbour(x, xp_, yp_);
+                    return nearest_neighbour(x, xp_, yp_);
                 case Type1D::Linear:
-                    return ni::linear(x, xp_, yp_);
+                    return linear(x, xp_, yp_);
                 case Type1D::Quadratic:
-                    return ni::quadratic(x, xp_, yp_);
+                    return quadratic(x, xp_, yp_);
                 case Type1D::Cubic:
-                    return ni::cubic(x, xp_, yp_);
+                    return cubic(x, xp_, yp_);
             }
         }
 

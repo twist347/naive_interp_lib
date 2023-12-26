@@ -1,9 +1,13 @@
 #pragma once
 
 #include <utils.h>
+#include <interp2d_types.h>
 #include <boost/geometry.hpp>
 #include <boost/geometry/index/rtree.hpp>
 #include <boost/container/small_vector.hpp>
+#include <boost/function_output_iterator.hpp>
+#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+#include <CGAL/Delaunay_triangulation_2.h>
 
 #define GENERATE_MOVE_AND_DELETE_COPY_SEMANTICS(class_name) \
     constexpr class_name(const class_name &) = delete; \
@@ -12,11 +16,6 @@
     constexpr auto operator=(class_name &&) noexcept -> class_name & = default; \
 
 namespace ni::_2d {
-
-    enum class Type2DScatter {
-        IDW
-    };
-
     template<class Container>
     class i_2d_base {
     public:
@@ -67,7 +66,7 @@ namespace ni::_2d {
             namespace bgi = boost::geometry::index;
             auto sz = std::min(x.size(), y.size());
             container_type z(sz);
-#pragma omp parallel for
+#pragma omp parallel for schedule(guided)
             for (size_type i = 0; i < sz; ++i) {
                 point2_t current_p(x[i], y[i]);
                 // small_vector is allocated in stack
@@ -102,7 +101,7 @@ namespace ni::_2d {
             auto numerator = utils::to<value_type>(0.0);
             auto denominator = utils::to<value_type>(0.0);
 
-            // O(log(n)), in practice: n_count_ iterations
+            // O(log(n)), in practice: count_ iterations
             for (const auto &neighbor: neighbours) {
                 value_type distance = bg::distance(current_p, neighbor.first);
                 if (utils::eq_flt(distance, utils::to<value_type>(0.0))) {
@@ -119,6 +118,130 @@ namespace ni::_2d {
         }
     };
 
+    template<class Container>
+    class i_nearest_neighbour : public i_2d_base<Container> {
+    public:
+        using container_type = typename i_2d_base<Container>::container_type;
+        using value_type = typename container_type::value_type;
+        using size_type = typename container_type::size_type;
+
+    private:
+        using point2_t = boost::geometry::model::point<value_type, 2, boost::geometry::cs::cartesian>;
+
+    public:
+        constexpr i_nearest_neighbour(const container_type &xp, const container_type &yp, const container_type &zp) {
+            if (xp.size() != yp.size() || xp.size() != zp.size()) {
+                throw std::invalid_argument("all xp, yp, zp must be the same size");
+            }
+
+            for (size_type i = 0; i < xp.size(); ++i) {
+                rtree_.insert({{xp[i], yp[i]}, zp[i]});
+            }
+        }
+
+        GENERATE_MOVE_AND_DELETE_COPY_SEMANTICS(i_nearest_neighbour)
+
+        constexpr auto operator()(const container_type &x, const container_type &y) const -> container_type override {
+            namespace bgi = boost::geometry::index;
+            auto sz = std::min(x.size(), y.size());
+            container_type z(sz);
+
+#pragma omp parallel for schedule(guided)
+            for (size_type i = 0; i < sz; ++i) {
+                point2_t query_point{x[i], y[i]};
+                rtree_.query(bgi::nearest(query_point, 1), boost::make_function_output_iterator(
+                        [&z, i](const auto &p) { z[i] = p.second; }
+                ));
+            }
+            return z;
+        }
+
+    private:
+        boost::geometry::index::rtree<std::pair<point2_t, value_type>, boost::geometry::index::quadratic<16>> rtree_;
+    };
+
+    /// Triangulated Irregular Network
+    template<class Container>
+    class i_tin : public i_2d_base<Container> {
+    public:
+        using container_type = typename i_2d_base<Container>::container_type;
+        using value_type = typename container_type::value_type;
+        using size_type = typename container_type::size_type;
+
+    private:
+        using kernel_t = CGAL::Exact_predicates_inexact_constructions_kernel;
+        using point2_t = kernel_t::Point_2;
+        using delaunay_t = CGAL::Delaunay_triangulation_2<kernel_t>;
+
+    public:
+        constexpr i_tin(const container_type &xp, const container_type &yp, const container_type &zp) {
+            if (xp.size() != yp.size() || xp.size() != zp.size()) {
+                throw std::invalid_argument("all xp, yp, zp must be the same size");
+            }
+            std::vector<point2_t> points(xp.size());
+            z_vals_.reserve(xp.size());
+            for (size_type i = 0; i < xp.size(); ++i) {
+                point2_t p{xp[i], yp[i]};
+                points[i] = p;
+                z_vals_[p] = zp[i];
+            }
+            // much faster than do d_.insert(points[i]) int loop
+            d_.insert(points.begin(), points.end());
+        }
+
+        GENERATE_MOVE_AND_DELETE_COPY_SEMANTICS(i_tin)
+
+        constexpr auto operator()(const container_type &x, const container_type &y) const -> container_type override {
+            auto sz = std::min(x.size(), y.size());
+            container_type z(sz);
+            delaunay_t::Face_handle prev{};
+
+#pragma omp parallel for firstprivate(prev) schedule(guided)
+            for (size_type i = 0; i < sz; ++i) {
+                // nearest triangle to current point {x[i],y[i]}. prev is a start hint
+                auto nearest_tr = d_.locate({x[i], y[i]}, prev);
+                prev = nearest_tr;
+                z[i] = calc(nearest_tr, x[i], y[i]);
+            }
+            return z;
+        }
+
+    private:
+        auto calc(const delaunay_t::Face_handle &nearest_tr, value_type xi, value_type yi) const -> value_type {
+            // get vertices coords of found triangle
+            auto [x1, y1, z1] = get_coords(nearest_tr, 0);
+            auto [x2, y2, z2] = get_coords(nearest_tr, 1);
+            auto [x3, y3, z3] = get_coords(nearest_tr, 2);
+
+            const value_type denominator = (y2 - y3) * (x1 - x3) + (x3 - x2) * (y1 - y3);
+            const value_type dx = xi - x3, dy = yi - y3;
+            // barycentric coordinates
+            const value_type alpha = ((y2 - y3) * dx + (x3 - x2) * dy) / denominator;
+            const value_type beta = ((y3 - y1) * dx + (x1 - x3) * dy) / denominator;
+            const value_type gamma = 1 - alpha - beta;
+            return alpha * z1 + beta * z2 + gamma * z3;
+        }
+
+        auto get_coords(const delaunay_t::Face_handle &nearest, int n_vert) const ->
+        std::tuple<value_type, value_type, value_type> {
+            auto point = nearest->vertex(n_vert)->point();
+            return {point.x(), point.y(), z_vals_.find(point)->second};
+        }
+
+        struct point2_t_hash {
+            constexpr auto operator()(const point2_t &p) const -> std::size_t {
+                std::size_t hash = 0;
+                boost::hash_combine(hash, p.x());
+                boost::hash_combine(hash, p.y());
+                return hash;
+            }
+        };
+
+        // for z values of 2-d points in network
+        std::unordered_map<point2_t, value_type, point2_t_hash> z_vals_;
+        delaunay_t d_;
+    };
+
     namespace detail {
         template<Type2DScatter type, class Container>
         struct interp;
@@ -126,6 +249,16 @@ namespace ni::_2d {
         template<class Container>
         struct interp<Type2DScatter::IDW, Container> {
             using type = i_idw<Container>;
+        };
+
+        template<class Container>
+        struct interp<Type2DScatter::NearestNeighbour, Container> {
+            using type = i_nearest_neighbour<Container>;
+        };
+
+        template<class Container>
+        struct interp<Type2DScatter::TIN, Container> {
+            using type = i_tin<Container>;
         };
 
         template<Type2DScatter type, class Container>
