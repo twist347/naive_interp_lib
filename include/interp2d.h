@@ -16,6 +16,7 @@
     constexpr auto operator=(class_name &&) noexcept -> class_name & = default; \
 
 namespace ni::_2d {
+
     template<class Container>
     class i_2d_base {
     public:
@@ -88,8 +89,8 @@ namespace ni::_2d {
             namespace bg = boost::geometry;
             value_type radius = utils::to<value_type>(0.0);
 
-            for (const auto &neighbor: neighbours) {
-                radius += bg::distance(neighbor.first, current_p);
+            for (const auto &neighbour: neighbours) {
+                radius += bg::distance(neighbour.first, current_p);
             }
             return radius / count_;
         }
@@ -185,7 +186,7 @@ namespace ni::_2d {
                 points[i] = p;
                 z_vals_[p] = zp[i];
             }
-            // much faster than do d_.insert(points[i]) int loop
+            // much faster than do d_.insert(points[i]) in loop
             d_.insert(points.begin(), points.end());
         }
 
@@ -209,9 +210,9 @@ namespace ni::_2d {
     private:
         auto calc(const delaunay_t::Face_handle &nearest_tr, value_type xi, value_type yi) const -> value_type {
             // get vertices coords of found triangle
-            auto [x1, y1, z1] = get_coords(nearest_tr, 0);
-            auto [x2, y2, z2] = get_coords(nearest_tr, 1);
-            auto [x3, y3, z3] = get_coords(nearest_tr, 2);
+            const auto [x1, y1, z1] = get_coords(nearest_tr, 0);
+            const auto [x2, y2, z2] = get_coords(nearest_tr, 1);
+            const auto [x3, y3, z3] = get_coords(nearest_tr, 2);
 
             const value_type denominator = (y2 - y3) * (x1 - x3) + (x3 - x2) * (y1 - y3);
             const value_type dx = xi - x3, dy = yi - y3;
@@ -224,7 +225,7 @@ namespace ni::_2d {
 
         auto get_coords(const delaunay_t::Face_handle &nearest, int n_vert) const ->
         std::tuple<value_type, value_type, value_type> {
-            auto point = nearest->vertex(n_vert)->point();
+            const auto point = nearest->vertex(n_vert)->point();
             return {point.x(), point.y(), z_vals_.find(point)->second};
         }
 
@@ -243,29 +244,29 @@ namespace ni::_2d {
     };
 
     namespace detail {
-        template<Type2DScatter type, class Container>
+        template<Type2DScat type, class Container>
         struct interp;
 
         template<class Container>
-        struct interp<Type2DScatter::IDW, Container> {
+        struct interp<Type2DScat::IDW, Container> {
             using type = i_idw<Container>;
         };
 
         template<class Container>
-        struct interp<Type2DScatter::NearestNeighbour, Container> {
+        struct interp<Type2DScat::NearestNeighbour, Container> {
             using type = i_nearest_neighbour<Container>;
         };
 
         template<class Container>
-        struct interp<Type2DScatter::TIN, Container> {
+        struct interp<Type2DScat::TIN, Container> {
             using type = i_tin<Container>;
         };
 
-        template<Type2DScatter type, class Container>
+        template<Type2DScat type, class Container>
         using interp_t = interp<type, Container>::type;
     }
 
-    template<Type2DScatter type, class Container>
+    template<Type2DScat type, class Container>
     class i_scat : public i_2d_base<Container> {
     public:
         using container_type = typename i_2d_base<Container>::container_type;

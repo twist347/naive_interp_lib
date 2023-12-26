@@ -41,7 +41,7 @@ TEST(Prev, Perf) {
     std::cout << "x: " << x.size() << '\n';
 
     auto start = std::chrono::steady_clock::now();
-    auto interp = ni::_1d::make<ni::_1d::Type1D::Prev>(xp, yp);
+    auto interp = ni::_1d::make_i<ni::_1d::Type1D::Prev>(xp, yp);
     auto y = interp(x);
     auto end = std::chrono::steady_clock::now();
     auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
@@ -57,7 +57,7 @@ TEST(Next, Perf) {
     std::cout << "x: " << x.size() << '\n';
 
     auto start = std::chrono::steady_clock::now();
-    auto interp = ni::_1d::make<ni::_1d::Type1D::Next>(xp, yp);
+    auto interp = ni::_1d::make_i<ni::_1d::Type1D::Next>(xp, yp);
     auto y = interp(x);
     auto end = std::chrono::steady_clock::now();
     auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
@@ -73,7 +73,7 @@ TEST(NearestNeighbour, Perf) {
     std::cout << "x: " << x.size() << '\n';
 
     auto start = std::chrono::steady_clock::now();
-    auto interp = ni::_1d::make<ni::_1d::Type1D::NearestNeighbour>(xp, yp);
+    auto interp = ni::_1d::make_i<ni::_1d::Type1D::NearestNeighbour>(xp, yp);
     auto y = interp(x);
     auto end = std::chrono::steady_clock::now();
     auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
@@ -89,7 +89,7 @@ TEST(Linear, Perf) {
     std::cout << "x: " << x.size() << '\n';
 
     auto start = std::chrono::steady_clock::now();
-    auto interp = ni::_1d::make<ni::_1d::Type1D::Linear>(xp, yp);
+    auto interp = ni::_1d::make_i<ni::_1d::Type1D::Linear>(xp, yp);
     auto y = interp(x);
     auto end = std::chrono::steady_clock::now();
     auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
@@ -105,7 +105,7 @@ TEST(Quadratic, Perf) {
     std::cout << "x: " << x.size() << '\n';
 
     auto start = std::chrono::steady_clock::now();
-    auto interp = ni::_1d::make<ni::_1d::Type1D::Quadratic>(xp, yp);
+    auto interp = ni::_1d::make_i<ni::_1d::Type1D::Quadratic>(xp, yp);
     auto y = interp(x);
     auto end = std::chrono::steady_clock::now();
     auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
@@ -121,7 +121,7 @@ TEST(Cubic, Perf) {
     std::cout << "x: " << x.size() << '\n';
 
     auto start = std::chrono::steady_clock::now();
-    auto interp = ni::_1d::make<ni::_1d::Type1D::Cubic>(xp, yp);
+    auto interp = ni::_1d::make_i<ni::_1d::Type1D::Cubic>(xp, yp);
     auto y = interp(x);
     auto end = std::chrono::steady_clock::now();
     auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();

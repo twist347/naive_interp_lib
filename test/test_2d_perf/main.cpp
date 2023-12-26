@@ -48,7 +48,7 @@ TEST(IDW, Perf) {
     std::cout << "xp: " << xp.size() << ", yp: " << yp.size() << ", zp: " << zp.size() << '\n';
     std::cout << "x: " << x.size() << "y: " << y.size() << '\n';
     auto start = std::chrono::steady_clock::now();
-    auto interp = ni::_2d::make_scat<ni::_2d::Type2DScatter::IDW>(xp, yp, zp);
+    auto interp = ni::_2d::make_scat_i<ni::_2d::Type2DScat::IDW>(xp, yp, zp);
     auto z = interp(x, y);
     auto end = std::chrono::steady_clock::now();
     auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
@@ -63,7 +63,7 @@ TEST(NearestNeighbour, Perf) {
     std::cout << "xp: " << xp.size() << ", yp: " << yp.size() << ", zp: " << zp.size() << '\n';
     std::cout << "x: " << x.size() << "y: " << y.size() << '\n';
     auto start = std::chrono::steady_clock::now();
-    auto interp = ni::_2d::make_scat<ni::_2d::Type2DScatter::NearestNeighbour>(xp, yp, zp);
+    auto interp = ni::_2d::make_scat_i<ni::_2d::Type2DScat::NearestNeighbour>(xp, yp, zp);
     auto z = interp(x, y);
     auto end = std::chrono::steady_clock::now();
     auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
@@ -78,7 +78,7 @@ TEST(TIN, Perf) {
     std::cout << "xp: " << xp.size() << ", yp: " << yp.size() << ", zp: " << zp.size() << '\n';
     std::cout << "x: " << x.size() << "y: " << y.size() << '\n';
     auto start = std::chrono::steady_clock::now();
-    auto interp = ni::_2d::make_scat<ni::_2d::Type2DScatter::TIN>(xp, yp, zp);
+    auto interp = ni::_2d::make_scat_i<ni::_2d::Type2DScat::TIN>(xp, yp, zp);
     auto z = interp(x, y);
     auto end = std::chrono::steady_clock::now();
     auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();

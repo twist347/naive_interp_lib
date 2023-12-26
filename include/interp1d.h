@@ -12,6 +12,7 @@
     constexpr auto operator=(class_name &&) noexcept -> class_name & = default; \
 
 namespace ni::_1d {
+
     template<class Container>
     class i_1d_base {
     public:
@@ -28,7 +29,6 @@ namespace ni::_1d {
         constexpr virtual ~i_1d_base() = default;
     };
 
-
     template<Type1D type, class Container>
     class i_1d : public i_1d_base<Container> {
     public:
@@ -43,20 +43,7 @@ namespace ni::_1d {
         GENERATE_MOVE_AND_DELETE_COPY_SEMANTICS(i_1d)
 
         constexpr auto operator()(const container_type &x) const -> container_type override {
-            switch (type) {
-                case Type1D::Prev:
-                    return prev(x, xp_, yp_);
-                case Type1D::Next:
-                    return next(x, xp_, yp_);
-                case Type1D::NearestNeighbour:
-                    return nearest_neighbour(x, xp_, yp_);
-                case Type1D::Linear:
-                    return linear(x, xp_, yp_);
-                case Type1D::Quadratic:
-                    return quadratic(x, xp_, yp_);
-                case Type1D::Cubic:
-                    return cubic(x, xp_, yp_);
-            }
+            return func_i<type, container_type>(x, xp_, yp_);
         }
 
     private:
