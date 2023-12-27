@@ -20,9 +20,9 @@ namespace ni::_2d {
     template<class Container>
     class i_2d_base {
     public:
-        using container_type = typename std::remove_cvref_t<Container>;
-        using value_type = typename container_type::value_type;
-        using size_type = typename container_type::size_type;
+        using container_type = std::remove_cvref_t<Container>;
+        using value_type = container_type::value_type;
+        using size_type = container_type::size_type;
 
         GENERATE_MOVE_AND_DELETE_COPY_SEMANTICS(i_2d_base)
 
@@ -37,16 +37,16 @@ namespace ni::_2d {
     template<class Container>
     class i_idw : public i_2d_base<Container> {
     public:
-        using container_type = typename i_2d_base<Container>::container_type;
-        using value_type = typename container_type::value_type;
-        using size_type = typename container_type::size_type;
+        using container_type = i_2d_base<Container>::container_type;
+        using value_type = container_type::value_type;
+        using size_type = container_type::size_type;
 
     private:
         using point2_t = boost::geometry::model::point<value_type, 2, boost::geometry::cs::cartesian>;
         using point3_t = std::pair<point2_t, value_type>;
 
     public:
-        i_idw(const container_type &xp,
+        constexpr i_idw(const container_type &xp,
               const container_type &yp,
               const container_type &zp,
               std::size_t count = 5,
@@ -65,11 +65,11 @@ namespace ni::_2d {
 
         constexpr auto operator()(const container_type &x, const container_type &y) const -> container_type override {
             namespace bgi = boost::geometry::index;
-            auto sz = std::min(x.size(), y.size());
+            const auto sz = std::min(x.size(), y.size());
             container_type z(sz);
 #pragma omp parallel for schedule(guided)
             for (size_type i = 0; i < sz; ++i) {
-                point2_t current_p(x[i], y[i]);
+                const point2_t current_p(x[i], y[i]);
                 // small_vector is allocated in stack
                 boost::container::small_vector<point3_t, 0> neighbours;
                 neighbours.reserve(count_);
@@ -81,11 +81,11 @@ namespace ni::_2d {
         }
 
     private:
-        std::size_t count_;
-        std::size_t power_;
+        const std::size_t count_;
+        const std::size_t power_;
         boost::geometry::index::rtree<std::pair<point2_t, value_type>, boost::geometry::index::quadratic<16>> rtree_;
 
-        auto calc_radius(const auto &neighbours, const point2_t &current_p) const -> value_type {
+        constexpr auto calc_radius(const auto &neighbours, const point2_t &current_p) const -> value_type {
             namespace bg = boost::geometry;
             value_type radius = utils::to<value_type>(0.0);
 
@@ -95,7 +95,7 @@ namespace ni::_2d {
             return radius / count_;
         }
 
-        auto idw_impl(const auto &neighbours, const point2_t &current_p) const -> value_type {
+        constexpr auto idw_impl(const auto &neighbours, const point2_t &current_p) const -> value_type {
             namespace bg = boost::geometry;
 
             const value_type radius = calc_radius(neighbours, current_p);
@@ -104,12 +104,12 @@ namespace ni::_2d {
 
             // O(log(n)), in practice: count_ iterations
             for (const auto &neighbor: neighbours) {
-                value_type distance = bg::distance(current_p, neighbor.first);
+                const value_type distance = bg::distance(current_p, neighbor.first);
                 if (utils::eq_flt(distance, utils::to<value_type>(0.0))) {
                     return neighbor.second;
                 }
                 if (utils::less_eq_flt(distance, radius)) {
-                    value_type weight = utils::to<value_type>(1.0) / std::pow(distance, power_);
+                    const value_type weight = utils::to<value_type>(1.0) / std::pow(distance, power_);
                     numerator += weight * neighbor.second;
                     denominator += weight;
                 }
@@ -122,9 +122,9 @@ namespace ni::_2d {
     template<class Container>
     class i_nearest_neighbour : public i_2d_base<Container> {
     public:
-        using container_type = typename i_2d_base<Container>::container_type;
-        using value_type = typename container_type::value_type;
-        using size_type = typename container_type::size_type;
+        using container_type = i_2d_base<Container>::container_type;
+        using value_type = container_type::value_type;
+        using size_type = container_type::size_type;
 
     private:
         using point2_t = boost::geometry::model::point<value_type, 2, boost::geometry::cs::cartesian>;
@@ -144,12 +144,12 @@ namespace ni::_2d {
 
         constexpr auto operator()(const container_type &x, const container_type &y) const -> container_type override {
             namespace bgi = boost::geometry::index;
-            auto sz = std::min(x.size(), y.size());
+            const auto sz = std::min(x.size(), y.size());
             container_type z(sz);
 
 #pragma omp parallel for schedule(guided)
             for (size_type i = 0; i < sz; ++i) {
-                point2_t query_point{x[i], y[i]};
+                const point2_t query_point{x[i], y[i]};
                 rtree_.query(bgi::nearest(query_point, 1), boost::make_function_output_iterator(
                         [&z, i](const auto &p) { z[i] = p.second; }
                 ));
@@ -165,9 +165,9 @@ namespace ni::_2d {
     template<class Container>
     class i_tin : public i_2d_base<Container> {
     public:
-        using container_type = typename i_2d_base<Container>::container_type;
-        using value_type = typename container_type::value_type;
-        using size_type = typename container_type::size_type;
+        using container_type = i_2d_base<Container>::container_type;
+        using value_type = container_type::value_type;
+        using size_type = container_type::size_type;
 
     private:
         using kernel_t = CGAL::Exact_predicates_inexact_constructions_kernel;
@@ -182,7 +182,7 @@ namespace ni::_2d {
             std::vector<point2_t> points(xp.size());
             z_vals_.reserve(xp.size());
             for (size_type i = 0; i < xp.size(); ++i) {
-                point2_t p{xp[i], yp[i]};
+                const point2_t p{xp[i], yp[i]};
                 points[i] = p;
                 z_vals_[p] = zp[i];
             }
@@ -193,7 +193,7 @@ namespace ni::_2d {
         GENERATE_MOVE_AND_DELETE_COPY_SEMANTICS(i_tin)
 
         constexpr auto operator()(const container_type &x, const container_type &y) const -> container_type override {
-            auto sz = std::min(x.size(), y.size());
+            const auto sz = std::min(x.size(), y.size());
             container_type z(sz);
             delaunay_t::Face_handle prev{};
 
@@ -208,7 +208,7 @@ namespace ni::_2d {
         }
 
     private:
-        auto calc(const delaunay_t::Face_handle &nearest_tr, value_type xi, value_type yi) const -> value_type {
+        constexpr auto calc(const delaunay_t::Face_handle &nearest_tr, value_type xi, value_type yi) const -> value_type {
             // get vertices coords of found triangle
             const auto [x1, y1, z1] = get_coords(nearest_tr, 0);
             const auto [x2, y2, z2] = get_coords(nearest_tr, 1);
@@ -223,7 +223,7 @@ namespace ni::_2d {
             return alpha * z1 + beta * z2 + gamma * z3;
         }
 
-        auto get_coords(const delaunay_t::Face_handle &nearest, int n_vert) const ->
+        constexpr auto get_coords(const delaunay_t::Face_handle &nearest, int n_vert) const ->
         std::tuple<value_type, value_type, value_type> {
             const auto point = nearest->vertex(n_vert)->point();
             return {point.x(), point.y(), z_vals_.find(point)->second};
@@ -269,9 +269,9 @@ namespace ni::_2d {
     template<Type2DScat type, class Container>
     class i_scat : public i_2d_base<Container> {
     public:
-        using container_type = typename i_2d_base<Container>::container_type;
-        using value_type = typename container_type::value_type;
-        using size_type = typename container_type::size_type;
+        using container_type = i_2d_base<Container>::container_type;
+        using value_type = container_type::value_type;
+        using size_type = container_type::size_type;
 
         template<class ... Args>
         constexpr i_scat(Args &&... args) : interp_(std::forward<Args>(args)...) {}

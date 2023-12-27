@@ -1,7 +1,6 @@
 #pragma once
 
 #include <limits>
-#include <optional>
 #include <algorithm>
 #include <utils.h>
 #include <interp1d_types.h>
@@ -26,7 +25,7 @@ namespace ni::_1d {
                     y[i] = std::numeric_limits<Value>::quiet_NaN();
                     continue;
                 }
-                if (ni::utils::eq_flt(x[i], xp[xp.size() - 1])) {
+                if (utils::eq_flt(x[i], xp[xp.size() - 1])) {
                     y[i] = yp[yp.size() - 1];
                 }
                 const auto idx = std::distance(xp.begin(), std::upper_bound(xp.begin(), xp.end(), x[i]));
@@ -51,7 +50,7 @@ namespace ni::_1d {
                     y[i] = std::numeric_limits<Value>::quiet_NaN();
                     continue;
                 }
-                if (ni::utils::eq_flt(x[i], xp[xp.size() - 1])) {
+                if (utils::eq_flt(x[i], xp[xp.size() - 1])) {
                     y[i] = yp[yp.size() - 1];
                     continue;
                 }
@@ -77,14 +76,14 @@ namespace ni::_1d {
                     y[i] = std::numeric_limits<Value>::quiet_NaN();
                     continue;
                 }
-                if (ni::utils::eq_flt(x[i], xp[xp.size() - 1])) {
+                if (utils::eq_flt(x[i], xp[xp.size() - 1])) {
                     y[i] = yp[yp.size() - 1];
                     continue;
                 }
                 const auto idx = std::distance(xp.begin(), std::upper_bound(xp.begin(), xp.end(), x[i]));
                 const Value prev_distance = std::abs(x[i] - xp[idx - 1]);
                 const Value next_distance = std::abs(xp[idx] - x[i]);
-                y[i] = ni::utils::less_flt(prev_distance, next_distance) ? yp[idx - 1] : yp[idx];
+                y[i] = utils::less_flt(prev_distance, next_distance) ? yp[idx - 1] : yp[idx];
             }
             return y;
         }
@@ -105,14 +104,14 @@ namespace ni::_1d {
                     y[i] = std::numeric_limits<Value>::quiet_NaN();
                     continue;
                 }
-                if (ni::utils::eq_flt(x[i], xp[xp.size() - 1])) {
+                if (utils::eq_flt(x[i], xp[xp.size() - 1])) {
                     y[i] = yp[yp.size() - 1];
                     continue;
                 }
                 const auto idx = std::distance(xp.begin(), std::upper_bound(xp.begin(), xp.end(), x[i]));
                 const Value x0 = xp[idx - 1], x1 = xp[idx];
                 const Value y0 = yp[idx - 1], y1 = yp[idx];
-                y[i] = y0 + ((y1 - y0) / (x1 - x0)) * (x[i] - x0);
+                y[i] = y0 + (y1 - y0) / (x1 - x0) * (x[i] - x0);
             }
             return y;
         }
@@ -124,9 +123,9 @@ namespace ni::_1d {
             }
 
             auto calc_ = [](Value x0, Value y0, Value x1, Value y1, Value x2, Value y2, Value xi) {
-                const Value a = ((xi - x1) * (xi - x2)) / ((x0 - x1) * (x0 - x2)) * y0;
-                const Value b = ((xi - x0) * (xi - x2)) / ((x1 - x0) * (x1 - x2)) * y1;
-                const Value c = ((xi - x0) * (xi - x1)) / ((x2 - x0) * (x2 - x1)) * y2;
+                const Value a = (xi - x1) * (xi - x2) / ((x0 - x1) * (x0 - x2)) * y0;
+                const Value b = (xi - x0) * (xi - x2) / ((x1 - x0) * (x1 - x2)) * y1;
+                const Value c = (xi - x0) * (xi - x1) / ((x2 - x0) * (x2 - x1)) * y2;
                 return a + b + c;
             };
 
@@ -140,7 +139,7 @@ namespace ni::_1d {
                     y[i] = std::numeric_limits<Value>::quiet_NaN();
                     continue;
                 }
-                if (ni::utils::eq_flt(x[i], xp[xp.size() - 1])) {
+                if (utils::eq_flt(x[i], xp[xp.size() - 1])) {
                     y[i] = yp[yp.size() - 1];
                     continue;
                 }
@@ -160,10 +159,10 @@ namespace ni::_1d {
             }
 
             auto calc_ = [](Value x0, Value y0, Value x1, Value y1, Value x2, Value y2, Value x3, Value y3, Value xi) {
-                const Value a = ((xi - x1) * (xi - x2) * (xi - x3) / ((x0 - x1) * (x0 - x2) * (x0 - x3))) * y0;
-                const Value b = ((xi - x0) * (xi - x2) * (xi - x3) / ((x1 - x0) * (x1 - x2) * (x1 - x3))) * y1;
-                const Value c = ((xi - x0) * (xi - x1) * (xi - x3) / ((x2 - x0) * (x2 - x1) * (x2 - x3))) * y2;
-                const Value d = ((xi - x0) * (xi - x1) * (xi - x2) / ((x3 - x0) * (x3 - x1) * (x3 - x2))) * y3;
+                const Value a = (xi - x1) * (xi - x2) * (xi - x3) / ((x0 - x1) * (x0 - x2) * (x0 - x3)) * y0;
+                const Value b = (xi - x0) * (xi - x2) * (xi - x3) / ((x1 - x0) * (x1 - x2) * (x1 - x3)) * y1;
+                const Value c = (xi - x0) * (xi - x1) * (xi - x3) / ((x2 - x0) * (x2 - x1) * (x2 - x3)) * y2;
+                const Value d = (xi - x0) * (xi - x1) * (xi - x2) / ((x3 - x0) * (x3 - x1) * (x3 - x2)) * y3;
                 return a + b + c + d;
             };
 
@@ -177,7 +176,7 @@ namespace ni::_1d {
                     y[i] = std::numeric_limits<Value>::quiet_NaN();
                     continue;
                 }
-                if (ni::utils::eq_flt(x[i], xp[xp.size() - 1])) {
+                if (utils::eq_flt(x[i], xp[xp.size() - 1])) {
                     y[i] = yp[yp.size() - 1];
                     continue;
                 }
@@ -194,10 +193,7 @@ namespace ni::_1d {
 
     // run time
     template<class Container>
-    constexpr auto func_i(Type1D type,
-                          const Container &x,
-                          const Container &xp,
-                          const Container &yp) {
+    constexpr auto func_i(Type1D type, const Container &x, const Container &xp, const Container &yp) {
         switch (type) {
             case Type1D::Prev:
                 return detail::prev(x, xp, yp);
@@ -218,9 +214,7 @@ namespace ni::_1d {
 
     // compile time
     template<Type1D type, class Container>
-    constexpr auto func_i(const Container &x,
-                          const Container &xp,
-                          const Container &yp) {
+    constexpr auto func_i(const Container &x, const Container &xp, const Container &yp) {
         switch (type) {
             case Type1D::Prev:
                 return detail::prev(x, xp, yp);

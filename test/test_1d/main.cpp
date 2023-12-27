@@ -5,8 +5,6 @@
 #include <interp1d.h>
 #include <interp_make.h>
 
-using container_t = std::vector<double>;
-
 TEST(PrevAlg, Base) {
     std::vector<double> xp{1, 2, 3, 4, 5}, yp{1, 4, 9, 16, 25}, x{2, 2.5, 4.5}, expected{4, 4, 16};
     auto y = ni::_1d::func_i<ni::_1d::Type1D::Prev>(x, xp, yp);

@@ -1,6 +1,5 @@
 #pragma once
 
-#include <exception>
 #include <stdexcept>
 #include <interp1d_algs.h>
 #include <interp1d_types.h>
@@ -16,9 +15,9 @@ namespace ni::_1d {
     template<class Container>
     class i_1d_base {
     public:
-        using container_type = typename std::remove_cvref_t<Container>;
-        using value_type = typename container_type::value_type;
-        using size_type = typename container_type::size_type;
+        using container_type = std::remove_cvref_t<Container>;
+        using value_type = container_type::value_type;
+        using size_type = container_type::size_type;
 
         GENERATE_MOVE_AND_DELETE_COPY_SEMANTICS(i_1d_base)
 
@@ -32,9 +31,9 @@ namespace ni::_1d {
     template<Type1D type, class Container>
     class i_1d : public i_1d_base<Container> {
     public:
-        using container_type = typename i_1d_base<Container>::container_type;
-        using value_type = typename container_type::value_type;
-        using size_type = typename container_type::size_type;
+        using container_type = i_1d_base<Container>::container_type;
+        using value_type = container_type::value_type;
+        using size_type = container_type::size_type;
 
         constexpr i_1d(const container_type &xp, const container_type &yp) {
             init(xp, yp);
