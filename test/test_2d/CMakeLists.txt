@@ -9,4 +9,9 @@ include_directories(${CMAKE_SOURCE_DIR}/include)
 
 add_executable(test_2d ${SOURCES})
 
-target_link_libraries(test_2d gtest CGAL::CGAL)
+if (MSVC)
+    target_compile_options(test_2d gtest /openmp CGAL::CGAL)
+else ()
+    target_link_libraries(test_2d gtest OpenMP::OpenMP_CXX CGAL::CGAL)
+    #    target_compile_options(test_2d PRIVATE ${OpenMP_CXX_FLAGS} )
+endif ()

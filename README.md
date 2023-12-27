@@ -37,13 +37,13 @@ In ```_2d``` namespace there are
 ```Type2DScat { IDW, NearestNeighbour, TIN }```
 
 ```c++
-    auto z = ni::_1d::func_i_scat<ni::_2d::Type2DScat::Type>(x, y, xp, yp, zp); // compile time
-    auto z = ni::_1d::func_i_scat(ni::_2d::Type2DScat::Type, x, y, xp, yp, zp); // runtime time
+    auto z = ni::_2d::func_i_scat<ni::_2d::Type2DScat::Type>(x, y, xp, yp, zp); // compile time
+    auto z = ni::_2d::func_i_scat(ni::_2d::Type2DScat::Type, x, y, xp, yp, zp); // runtime time
 ```
 
 or
 
 ```c++
-    auto interp = ni::_1d::make_i<ni::_2d::Type2DScat::Type>(xp, yp, zp);
+    auto interp = ni::_2d::make_i<ni::_2d::Type2DScat::Type>(xp, yp, zp);
     auto z = interp(x, y);
 ```

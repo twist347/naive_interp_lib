@@ -2,6 +2,7 @@
 
 #include <limits>
 #include <algorithm>
+#include <stdexcept>
 #include <utils.h>
 #include <interp1d_types.h>
 

@@ -13,6 +13,6 @@ if (MSVC)
     target_compile_options(test_1d_perf gtest /openmp)
 else ()
     target_link_libraries(test_1d_perf gtest OpenMP::OpenMP_CXX)
-    #    target_compile_options(omp PRIVATE ${OpenMP_CXX_FLAGS})
+    #    target_compile_options(test_1d_perf PRIVATE ${OpenMP_CXX_FLAGS})
 endif ()
 
