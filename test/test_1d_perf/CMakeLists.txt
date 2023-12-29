@@ -5,14 +5,9 @@ set(CMAKE_CXX_STANDARD 23)
 
 file(GLOB SOURCES ./main.cpp)
 
-include_directories(${CMAKE_SOURCE_DIR}/include)
+include_directories(${CMAKE_SOURCE_DIR}/include/_1d)
 
 add_executable(test_1d_perf ${SOURCES})
 
-if (MSVC)
-    target_compile_options(test_1d_perf gtest /openmp)
-else ()
-    target_link_libraries(test_1d_perf gtest OpenMP::OpenMP_CXX)
-    #    target_compile_options(test_1d_perf PRIVATE ${OpenMP_CXX_FLAGS})
-endif ()
+target_link_libraries(test_1d_perf gtest OpenMP::OpenMP_CXX gsl)
 

@@ -128,6 +128,54 @@ TEST(Cubic, Perf) {
     std::cout << "cubic: " << duration << " ms\n";
 }
 
+TEST(CubicSpline, Perf) {
+#ifndef NDEBUG
+    GTEST_SKIP_("allowed only in release build");
+#endif
+    auto [xp, yp, x] = generate_vals();
+    std::cout << "xp: " << xp.size() << ", yp: " << yp.size() << '\n';
+    std::cout << "x: " << x.size() << '\n';
+
+    auto start = std::chrono::steady_clock::now();
+    auto interp = ni::_1d::make_i<ni::_1d::Type1D::CubicSpline>(xp, yp);
+    auto y = interp(x);
+    auto end = std::chrono::steady_clock::now();
+    auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
+    std::cout << "cubic_spline: " << duration << " ms\n";
+}
+
+TEST(CubicSpline, Akima) {
+#ifndef NDEBUG
+    GTEST_SKIP_("allowed only in release build");
+#endif
+    auto [xp, yp, x] = generate_vals();
+    std::cout << "xp: " << xp.size() << ", yp: " << yp.size() << '\n';
+    std::cout << "x: " << x.size() << '\n';
+
+    auto start = std::chrono::steady_clock::now();
+    auto interp = ni::_1d::make_i<ni::_1d::Type1D::Akima>(xp, yp);
+    auto y = interp(x);
+    auto end = std::chrono::steady_clock::now();
+    auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
+    std::cout << "akima: " << duration << " ms\n";
+}
+
+TEST(CubicSpline, Steffen) {
+#ifndef NDEBUG
+    GTEST_SKIP_("allowed only in release build");
+#endif
+    auto [xp, yp, x] = generate_vals();
+    std::cout << "xp: " << xp.size() << ", yp: " << yp.size() << '\n';
+    std::cout << "x: " << x.size() << '\n';
+
+    auto start = std::chrono::steady_clock::now();
+    auto interp = ni::_1d::make_i<ni::_1d::Type1D::Steffen>(xp, yp);
+    auto y = interp(x);
+    auto end = std::chrono::steady_clock::now();
+    auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
+    std::cout << "steffen: " << duration << " ms\n";
+}
+
 int main(int argc, char **argv) {
     testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();

@@ -3,8 +3,8 @@
 #include <filesystem>
 #include <fstream>
 #include <functional>
-#include <interp1d_algs.h>
 #include <iostream>
+#include <interp_make.h>
 
 // LINUX ONLY PLOTTING VIA GNUPLOT
 
@@ -15,7 +15,7 @@ double custom(double x) {
 }
 
 template<class Container>
-auto plotting_gnuplot(Container xp, Container yp, const std::string &file_name, int step = 1) -> void {
+auto plotting_gnuplot(const Container &xp, const Container &yp, const std::string &file_name, int step = 1) -> void {
     std::filesystem::path plot_path = std::filesystem::canonical(__FILE__).parent_path() / "plot";
     std::ofstream source(plot_path / file_name);
     for (typename Container::size_type i = 0; i < xp.size(); i += step) {
@@ -29,7 +29,7 @@ auto generate_vals(FunctionPtr f) {
     double x_min = -15.0, x_max = 15.0;
     double y_min = -15.0, y_max = 15.0;
     const int N = 10000;
-    std::vector<double> xp(N), yp(N), x(N / 50);
+    std::vector<double> xp(N), yp(N), x(N / 10);
 
     double step = std::abs(x_max - x_min) / N;
     std::random_device rd;
@@ -57,12 +57,15 @@ int main() {
     std::cout << "xp: " << xp.size() << ", yp: " << yp.size() << '\n';
     std::cout << "x: " << x.size() << "y: " << x.size() << '\n';
 
-    auto y_prev = ni::_1d::func_i<ni::_1d::Type1D::Prev>(x, xp, yp);
-    auto y_next = ni::_1d::func_i<ni::_1d::Type1D::Next>(x, xp, yp);
-    auto y_nn = ni::_1d::func_i<ni::_1d::Type1D::NearestNeighbour>(x, xp, yp);
-    auto y_linear = ni::_1d::func_i<ni::_1d::Type1D::Linear>(x, xp, yp);
-    auto y_quadratic = ni::_1d::func_i<ni::_1d::Type1D::Quadratic>(x, xp, yp);
-    auto y_cubic = ni::_1d::func_i<ni::_1d::Type1D::Cubic>(x, xp, yp);
+    auto y_prev = ni::_1d::make_i<ni::_1d::Type1D::Prev>(xp, yp)(x);
+    auto y_next = ni::_1d::make_i<ni::_1d::Type1D::Next>(xp, yp)(x);
+    auto y_nn = ni::_1d::make_i<ni::_1d::Type1D::NearestNeighbour>(xp, yp)(x);
+    auto y_linear = ni::_1d::make_i<ni::_1d::Type1D::Linear>(xp, yp)(x);
+    auto y_quadratic = ni::_1d::make_i<ni::_1d::Type1D::Quadratic>(xp, yp)(x);
+    auto y_cubic = ni::_1d::make_i<ni::_1d::Type1D::Cubic>(xp, yp)(x);
+    auto y_cubic_s = ni::_1d::make_i<ni::_1d::Type1D::CubicSpline>(xp, yp)(x);
+    auto y_akima = ni::_1d::make_i<ni::_1d::Type1D::Akima>(xp, yp)(x);
+    auto y_steffen = ni::_1d::make_i<ni::_1d::Type1D::Steffen>(xp, yp)(x);
 
     plotting_gnuplot(xp, yp, "orig");
     plotting_gnuplot(x, y_prev, "prev");
@@ -71,6 +74,9 @@ int main() {
     plotting_gnuplot(x, y_linear, "linear");
     plotting_gnuplot(x, y_quadratic, "quadratic");
     plotting_gnuplot(x, y_cubic, "cubic");
+    plotting_gnuplot(x, y_cubic_s, "cubic_s");
+    plotting_gnuplot(x, y_akima, "akima");
+    plotting_gnuplot(x, y_steffen, "steffen");
 
     std::filesystem::path parent_path = std::filesystem::canonical(__FILE__).parent_path();
     std::system((std::string("cd ") + parent_path.string() + " && mkdir plot").c_str());
@@ -81,7 +87,7 @@ int main() {
               "set xzeroaxis\n"
               "set yzeroaxis\n"
               "plot 'orig' with points, 'prev' with points, 'next' with points, 'nn' with points, 'linear' with points,"
-              "'quadratic' with points, 'cubic' with points\n"
+              "'quadratic' with points, 'cubic' with points, 'cubic_s' with points, 'akima' with points, 'steffen' with points\n"
               "pause -1";
     script.close();
     std::string cmd = std::string("cd ") + script_path.string() + " && gnuplot ./script";

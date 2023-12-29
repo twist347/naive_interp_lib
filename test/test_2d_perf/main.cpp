@@ -85,6 +85,40 @@ TEST(TIN, Perf) {
     std::cout << "tin: " << duration << " ms\n";
 }
 
+#if 0
+
+TEST(RBFLinear, Perf) {
+#ifndef NDEBUG
+    GTEST_SKIP_("allowed only in release build");
+#endif
+    auto [xp, yp, zp, x, y] = generate_vals();
+    std::cout << "xp: " << xp.size() << ", yp: " << yp.size() << ", zp: " << zp.size() << '\n';
+    std::cout << "x: " << x.size() << "y: " << y.size() << '\n';
+    auto start = std::chrono::steady_clock::now();
+    auto interp = ni::_2d::make_rbf_i<ni::_2d::Type2DRBF::Linear>(xp, yp, zp);
+    auto z = interp(x, y);
+    auto end = std::chrono::steady_clock::now();
+    auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
+    std::cout << "rbf_linear: " << duration << " ms\n";
+}
+
+TEST(RBFGauss, Perf) {
+#ifndef NDEBUG
+    GTEST_SKIP_("allowed only in release build");
+#endif
+    auto [xp, yp, zp, x, y] = generate_vals();
+    std::cout << "xp: " << xp.size() << ", yp: " << yp.size() << ", zp: " << zp.size() << '\n';
+    std::cout << "x: " << x.size() << "y: " << y.size() << '\n';
+    auto start = std::chrono::steady_clock::now();
+    auto interp = ni::_2d::make_rbf_i<ni::_2d::Type2DRBF::Gauss>(xp, yp, zp);
+    auto z = interp(x, y);
+    auto end = std::chrono::steady_clock::now();
+    auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
+    std::cout << "rbf_gauss: " << duration << " ms\n";
+}
+
+#endif
+
 int main(int argc, char **argv) {
     testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();
