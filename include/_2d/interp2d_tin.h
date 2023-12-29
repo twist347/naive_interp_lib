@@ -4,7 +4,6 @@
 #include <CGAL/Delaunay_triangulation_2.h>
 
 #include <interp2d_base.h>
-#include <utils.h>
 
 namespace ni::_2d::detail {
     /// Triangulated Irregular Network

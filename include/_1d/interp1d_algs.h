@@ -4,7 +4,6 @@
 #include <algorithm>
 #include <stdexcept>
 #include <utils.h>
-#include <interp1d_types.h>
 #include <interp1d_gsl.h>
 
 namespace ni::_1d::detail {
@@ -190,17 +189,17 @@ namespace ni::_1d::detail {
         return y;
     }
 
-    template<class Container, class Value = Container::value_type>
+    template<class Container>
     constexpr auto cubic_spline(const Container &x, const Container &xp, const Container &yp) -> Container {
         return ni::_1d::detail::i_gsl<ni::_1d::detail::TypeGSL::CubicSpline, Container>(xp, yp)(x);
     }
 
-    template<class Container, class Value = Container::value_type>
+    template<class Container>
     constexpr auto akima(const Container &x, const Container &xp, const Container &yp) -> Container {
         return ni::_1d::detail::i_gsl<ni::_1d::detail::TypeGSL::Akima, Container>(xp, yp)(x);
     }
 
-    template<class Container, class Value = Container::value_type>
+    template<class Container>
     constexpr auto steffen(const Container &x, const Container &xp, const Container &yp) -> Container {
         return ni::_1d::detail::i_gsl<ni::_1d::detail::TypeGSL::Steffen, Container>(xp, yp)(x);
     }

@@ -9,12 +9,12 @@
 
 template<class Value>
 double elliptical_paraboloid(Value x, Value y, Value a = 1, Value b = 1, Value c = 1) {
-    return ((x * x) / (a * a) + (y * y) / (b * b));
+    return (x * x) / (a * a) + (y * y) / (b * b);
 }
 
 template<class Value>
 double hyperbolic_paraboloid(Value x, Value y, Value a = 1, Value b = 1, Value c = 1) {
-    return ((x * x) / (a * a) - (y * y) / (b * b));
+    return (x * x) / (a * a) - (y * y) / (b * b);
 }
 
 template<class Value>

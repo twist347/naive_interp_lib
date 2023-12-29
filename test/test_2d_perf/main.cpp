@@ -5,7 +5,7 @@
 #include <interp_make.h>
 
 double elliptical_paraboloid(double x, double y, double a = 1, double b = 1, double c = 1) {
-    return ((x * x) / (a * a) + (y * y) / (b * b));
+    return (x * x) / (a * a) + (y * y) / (b * b);
 }
 
 auto generate_vals() {

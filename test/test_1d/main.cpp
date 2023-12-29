@@ -1,6 +1,5 @@
 #include <gtest/gtest.h>
 #include <vector>
-#include <interp1d.h>
 #include <interp_make.h>
 #include <test_utils.h>
 

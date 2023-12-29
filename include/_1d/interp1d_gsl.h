@@ -14,7 +14,7 @@ namespace ni::_1d::detail {
         Steffen
     };
 
-    auto gsl_spline_alloc_type(TypeGSL type) {
+    inline auto gsl_spline_alloc_type(TypeGSL type) {
         switch (type) {
             case TypeGSL::Linear:
                 return gsl_interp_linear;
@@ -44,7 +44,7 @@ namespace ni::_1d::detail {
 
         GENERATE_MOVE_AND_DELETE_COPY_SEMANTICS(i_gsl)
 
-        constexpr virtual auto operator()(const container_type &x) const -> container_type {
+        constexpr auto operator()(const container_type &x) const -> container_type override {
             container_type y(x.size());
             const auto raw_ptr_interp = interp_.get();
 #pragma omp parallel for firstprivate(raw_ptr_interp) schedule(guided)
