@@ -17,6 +17,7 @@ namespace ni::_1d {
         using size_type = base_t::size_type;
 
         constexpr i_1d(const container_type &xp, const container_type &yp) {
+            // due to exception safety
             init(xp, yp);
         }
 
