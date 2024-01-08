@@ -51,7 +51,7 @@ auto plotting_gnuplot(const Container &xp, const Container &yp, const Container 
 auto generate_vals() {
     double x_min = -10.0, x_max = 10.0;
     double y_min = -10.0, y_max = 10.0;
-    int N = 50;
+    int N = 70;
     double step = std::abs(x_max - x_min) / N;
     auto sz = (N + 1) * (N + 1);
 
@@ -64,7 +64,7 @@ auto generate_vals() {
     std::size_t idx = 0;
     for (double dx = x_min; dx < x_max; dx += step) {
         for (double dy = y_min; dy < y_max; dy += step) {
-            double z = elliptical_paraboloid(dx, dy);
+            double z = sin_cos(dx, dy);
             xp[idx] = dx;
             yp[idx] = dy;
             zp[idx] = z;
@@ -90,14 +90,24 @@ int main() {
     auto z_nn = ni::_2d::make_scat_i<ni::_2d::Type2DScat::NearestNeighbour>(xp, yp, zp)(x, y);
     auto z_tin = ni::_2d::make_scat_i<ni::_2d::Type2DScat::TIN>(xp, yp, zp)(x, y);
     auto z_rbf_linear = ni::_2d::make_rbf_i<ni::_2d::Type2DRBF::Linear>(xp, yp, zp)(x, y);
-    auto z_rbf_gauss = ni::_2d::make_rbf_i<ni::_2d::Type2DRBF::Gauss>(xp, yp, zp)(x, y);
+    auto z_rbf_cubic = ni::_2d::make_rbf_i<ni::_2d::Type2DRBF::Cubic>(xp, yp, zp)(x, y);
+    auto z_rbf_quintic = ni::_2d::make_rbf_i<ni::_2d::Type2DRBF::Quintic>(xp, yp, zp)(x, y);
+    auto z_rbf_m = ni::_2d::make_rbf_i<ni::_2d::Type2DRBF::Multiquadric>(xp, yp, zp)(x, y);
+    auto z_rbf_im = ni::_2d::make_rbf_i<ni::_2d::Type2DRBF::InverseMultiquadric>(xp, yp, zp)(x, y);
+    auto z_rbf_gauss = ni::_2d::make_rbf_i<ni::_2d::Type2DRBF::Gaussian>(xp, yp, zp)(x, y);
+    auto z_rbf_tp = ni::_2d::make_rbf_i<ni::_2d::Type2DRBF::ThinPlate>(xp, yp, zp)(x, y);
 
     plotting_gnuplot(xp, yp, zp, "orig");
     plotting_gnuplot(x, y, z_idw, "idw");
     plotting_gnuplot(x, y, z_nn, "nn");
     plotting_gnuplot(x, y, z_tin, "tin");
     plotting_gnuplot(x, y, z_rbf_linear, "rbf_lin");
+    plotting_gnuplot(x, y, z_rbf_cubic, "rbf_cub");
+    plotting_gnuplot(x, y, z_rbf_quintic, "rbf_qui");
+    plotting_gnuplot(x, y, z_rbf_m, "rbf_m");
+    plotting_gnuplot(x, y, z_rbf_im, "rbf_im");
     plotting_gnuplot(x, y, z_rbf_gauss, "rbf_gauss");
+    plotting_gnuplot(x, y, z_rbf_tp, "rbf_tp");
 
     std::filesystem::path parent_path = std::filesystem::canonical(__FILE__).parent_path();
     std::system((std::string("cd ") + parent_path.string() + " && mkdir plot").c_str());
@@ -107,8 +117,17 @@ int main() {
     script << "set size ratio -1\n"
               "set xzeroaxis\n"
               "set yzeroaxis\n"
-              "splot 'orig' with points, 'idw' with points, 'nn' with points, 'tin' with points, 'rbf_lin' with points, "
-              "'rbf_gauss' with points\n"
+              "splot 'orig' with points"
+//              ", 'idw' with points"
+//              ", 'nn' with points"
+//              ", 'tin' with points"
+              ", 'rbf_lin' with points"
+              ", 'rbf_cub' with points"
+              ", 'rbf_qui' with points"
+              ", 'rbf_m' with points"
+              ", 'rbf_im' with points"
+              ", 'rbf_tp' with points"
+              ", 'rbf_gauss' with points\n"
               "pause -1";
     script.close();
     std::string cmd = std::string("cd ") + script_path.string() + " && gnuplot ./script";

@@ -1,6 +1,6 @@
 #pragma once
 
-#include <type_traits>
+#include <container_type_traits.h>
 
 #define GENERATE_MOVE_AND_DELETE_COPY_SEMANTICS(class_name) \
     constexpr class_name(const class_name &) = delete; \
@@ -13,8 +13,8 @@ namespace ni::_1d {
     class i_1d_base {
     public:
         using container_type = std::remove_cvref_t<Container>;
-        using value_type = container_type::value_type;
-        using size_type = container_type::size_type;
+        using value_type = detail::container_value_type_t<container_type>;
+        using size_type = detail::container_size_type_t<container_type>;
 
         GENERATE_MOVE_AND_DELETE_COPY_SEMANTICS(i_1d_base)
 

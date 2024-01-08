@@ -1,6 +1,6 @@
 Some naive header-only interpolation library.
 
-Dependencies: Boost, CGAL, Openmp, GSL(GNU Scientific Library), Eigen(included)
+Dependencies: Boost, CGAL, Openmp, GSL(GNU Scientific Library), Armadillo.
 
 There are following namespaces: ```ni::_1d``` for 1-dimension space and ```ni::_2d``` for 2-dimension space
 interpolators. All ```_1d``` interpolators have base class ```i_1d_base``` and
@@ -46,7 +46,16 @@ where ```IDW``` is Inverse Distance Weighted and ```TIN``` is Triangulated Irreg
 ```
 
 And in ```_2d``` namespace there are
-```Type2DRBF { Linear, Gauss }```
+```Type2DRBF { Linear, Cubic, Quintic, Multiquadric, InverseMultiquadric, Gaussian, ThinPlate }```
+with corresponding kernels:
+    
+    Linear: r
+    Cubic: r ^ 3
+    Quintic: r ^ 5
+    Multiquadric: sqrt(1.0 + epsilon ^ 2 * r ^ 2)
+    InverseMultiquadric: 1.0 / sqrt(1.0 + epsilon ^ 2 * r ^ 2)
+    Gaussian: exp(-epsilon * r ^ 2)
+    ThinPlate: r ^ 2 * log(r)
 
 ```c++
     #include <interp_make.h>
@@ -59,5 +68,5 @@ And in ```_2d``` namespace there are
 
 
 ### Note:
-Interpolator works with any container that supports ```[]``` and ```.size()``` operations.
+Interpolator works with any container that supports ```[]```, ```.size()``` and ```.data()``` operations.
 For example std::vector, std::array, std::deque, Eigen::ArrayXd.

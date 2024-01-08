@@ -9,5 +9,5 @@ include_directories(${CMAKE_SOURCE_DIR}/include/_2d)
 
 add_executable(test_2d_plot ${SOURCES})
 
-target_link_libraries(test_2d_plot OpenMP::OpenMP_CXX CGAL::CGAL gsl)
+target_link_libraries(test_2d_plot OpenMP::OpenMP_CXX CGAL::CGAL gsl ${ARMADILLO_LIBRARIES})
 

@@ -1,6 +1,6 @@
 #pragma once
 
-#include <Eigen/Dense>
+#include <armadillo>
 
 #include <interp2d_base.h>
 #include <interp2d_types.h>
@@ -8,25 +8,9 @@
 
 namespace ni::_2d::detail {
 
-    namespace kernel {
+#if 1
 
-        template<class Value>
-        auto dist2D(Value x1, Value x2, Value y1, Value y2) -> Value {
-            return std::sqrt(std::pow(x1 - x2, 2) + std::pow(y1 - y2, 2));
-        }
-
-        template<class Value>
-        auto linear_k(Value x1, Value x2, Value y1, Value y2) -> Value {
-            return dist2D(x1, x2, y1, y2);
-        }
-
-        template<class Value>
-        auto gauss_k(Value x1, Value x2, Value y1, Value y2) -> Value {
-            const auto r = dist2D(x1, x2, y1, y2);
-            return std::exp(-std::pow(r, 2));
-        }
-    }
-
+    // Pure RBF interpolator
     template<Type2DRBF type, class Container>
     class i_rbf : public i_2d_base<Container> {
     public:
@@ -34,54 +18,246 @@ namespace ni::_2d::detail {
         using value_type = container_type::value_type;
         using size_type = container_type::size_type;
 
-        constexpr i_rbf(const container_type &xp, const container_type &yp, const container_type &zp) : xp_(xp),
-                                                                                                        yp_(yp),
-                                                                                                        zp_(zp) {
-            const auto N = xp_.size();
-            Eigen::MatrixX<value_type> phi_m(N, N);
-#pragma omp parallel for simd collapse(2)
-            for (size_type i = 0; i < N; ++i) {
-                for (size_type j = i; j < N; ++j) {
-                    const auto val = rbf_func_(xp[i], xp[j], yp[i], yp[j]);
-                    phi_m(i, j) = val;
-                    phi_m(j, i) = val;
+        constexpr i_rbf(const container_type &xp,
+                        const container_type &yp,
+                        const container_type &zp) : xp_(xp),
+                                                    yp_(yp),
+                                                    zp_(arma_vec(zp.data(), zp.size()).eval()) {
+
+            const value_type lambda = 0.001;
+
+            const auto n = xp_.size();
+            arma_mat A(n, n);
+
+            for (size_type i = 0; i < n; ++i) {
+                for (size_type j = i; j < n; ++j) {
+                    const value_type dx = xp_[i] - xp_[j];
+                    const value_type dy = yp_[i] - yp_[j];
+                    const value_type val = radial_func(std::sqrt(dx * dx + dy * dy));
+                    // optimization due to matrix symmetry
+                    A(i, j) = val;
+                    A(j, i) = val;
                 }
+                A(i, i) += lambda;
             }
 
-            const Eigen::Map<Eigen::MatrixX<value_type>> zp_m(zp_.data(), zp_.size(), 1);
-            // TODO: HouseholderQR is very slow
-            weights_ = Eigen::HouseholderQR<Eigen::MatrixX<value_type>>(phi_m).solve(zp_m);
+            // Solve A * wights = zp_. Find weights_
+            if (!arma::solve(weights_, A, zp_, arma::solve_opts::no_approx + arma::solve_opts::fast)) {
+                throw std::runtime_error("the SLAE has no solution. Conditions are poor in " + get_type_name());
+            }
         }
 
         constexpr auto operator()(const container_type &x, const container_type &y) const -> container_type override {
-            const auto N = x.size();
-            const auto M = weights_.size();
-            container_type z(N);
-#pragma omp parallel for simd schedule(guided)
-            for (size_type i = 0; i < N; ++i) {
-                value_type val = utils::to<value_type>(0.0);
-                for (size_type j = 0; j < M; ++j) {
-                    val += weights_[j] * rbf_func_(x[i], xp_[j], y[i], yp_[j]);
+            const auto n = x.size();
+            const auto m = xp_.size();
+
+            arma_vec z_arma(n);
+
+            for (size_type i = 0; i < n; ++i) {
+                for (size_type j = 0; j < m; ++j) {
+                    const value_type dx = x[i] - xp_[j];
+                    const value_type dy = y[i] - yp_[j];
+                    z_arma(i) += weights_(j) * radial_func(std::sqrt(dx * dx + dy * dy));
                 }
-                z[i] = val;
             }
-            return z;
+
+            // copy (from arma to container_type)
+            return container_type{z_arma.memptr(), z_arma.memptr() + z_arma.n_elem};
         }
 
     private:
-        constexpr auto rbf_func_(value_type x1, value_type x2, value_type y1, value_type y2) const {
-            if constexpr (type == Type2DRBF::Linear) {
-                return kernel::linear_k(x1, x2, y1, y2);
-            } else if constexpr (type == Type2DRBF::Gauss) {
-                return kernel::gauss_k(x1, x2, y1, y2);
-            } else {
-                throw std::invalid_argument("unknown rbf interpolation type");
+        constexpr value_type radial_func(value_type r, value_type epsilon = 1.0) const {
+            switch (type) {
+                case Type2DRBF::Linear:
+                    return r;
+                case Type2DRBF::Cubic:
+                    return r * r * r;
+                case Type2DRBF::Quintic:
+                    return r * r * r * r * r;
+                case Type2DRBF::Multiquadric:
+                    return std::sqrt(1.0 + epsilon * epsilon * r * r);
+                case Type2DRBF::InverseMultiquadric:
+                    return 1.0 / std::sqrt(1.0 + epsilon * epsilon * r * r);
+                case Type2DRBF::Gaussian:
+                    return std::exp(-epsilon * r * r);
+                case Type2DRBF::ThinPlate:
+                    return r * r * std::log(r);
+                default:
+                    throw std::invalid_argument("Unknown rbf interpolation type");
             }
         }
 
+        constexpr std::string get_type_name() const {
+            switch (type) {
+                case Type2DRBF::Linear:
+                    return "Linear";
+                case Type2DRBF::Cubic:
+                    return "Cubic";
+                case Type2DRBF::Quintic:
+                    return "Quintic";
+                case Type2DRBF::Multiquadric:
+                    return "Multiquadric";
+                case Type2DRBF::InverseMultiquadric:
+                    return "InverseMultiquadric";
+                case Type2DRBF::Gaussian:
+                    return "Gaussian";
+                case Type2DRBF::ThinPlate:
+                    return "ThinPlate";
+                default:
+                    throw std::invalid_argument("Unknown rbf interpolation type");
+            }
+        }
+
+        using arma_vec = arma::Col<value_type>; // arma::vec is arma::Col<double>
+        using arma_mat = arma::Mat<value_type>; // arma::mat is arma::Mat<double>
+
         container_type xp_;
         container_type yp_;
-        container_type zp_;
-        Eigen::VectorX<value_type> weights_;
+        arma_vec zp_;
+        arma_vec weights_;
     };
+
+#endif
+
+#if 0
+
+    // RBF (With Adding Polynomial Term)
+    template<Type2DRBF type, class Container>
+    class i_rbf : public i_2d_base<Container> {
+    public:
+        using container_type = i_2d_base<Container>::container_type;
+        using value_type = container_type::value_type;
+        using size_type = container_type::size_type;
+
+        constexpr i_rbf(const container_type &xp,
+                        const container_type &yp,
+                        const container_type &zp,
+                        int poly_degree = 2) : xp_(xp),
+                                               yp_(yp),
+                                               zp_(arma_vec(zp.data(), zp.size()).eval()),
+                                               poly_degree_(poly_degree) {
+            // TODO: check it
+            // value for matrix regularization
+            const value_type lambda = 0.001;
+
+            const auto n = xp_.size();
+            const size_type poly_terms = (poly_degree_ + 1) * (poly_degree_ + 2) / 2;
+            const size_type augmented_size = n + poly_terms;
+
+            arma_mat A(augmented_size, augmented_size, arma::fill::zeros);
+
+            // RBF part
+            for (size_type i = 0; i < n; ++i) {
+                for (size_type j = i; j < n; ++j) {
+                    const value_type dx = xp_[i] - xp_[j];
+                    const value_type dy = yp_[i] - yp_[j];
+                    const value_type val = radial_func(std::sqrt(dx * dx + dy * dy));
+                    A(i, j) = val;
+                    A(j, i) = val;
+                }
+                A(i, i) += lambda;
+            }
+
+            // polynomial part
+            arma_vec poly_zp = arma::zeros<arma_vec>(augmented_size);
+            poly_zp(arma::span(0, n - 1)) = zp_;
+
+            for (size_type i = 0; i < n; ++i) {
+                size_type idx = n;
+                for (int px = 0; px <= poly_degree_; ++px) {
+                    for (int py = 0; py <= poly_degree_ - px; ++py) {
+                        A(i, idx) = std::pow(xp_[i], px) * std::pow(yp_[i], py);
+                        A(idx, i) = A(i, idx);
+                        ++idx;
+                    }
+                }
+            }
+
+            // solve A * weights_ = poly_zp, find weights_
+            if (!arma::solve(weights_, A, poly_zp, arma::solve_opts::no_approx + arma::solve_opts::fast)) {
+                throw std::runtime_error("the SLAE has no solution. Conditions are poor in " + get_type_name());
+            }
+        }
+
+        constexpr auto operator()(const container_type &x, const container_type &y) const -> container_type override {
+            const auto n = x.size();
+            const size_type m = xp_.size();
+            const size_type poly_terms = (poly_degree_ + 1) * (poly_degree_ + 2) / 2;
+            const size_type augmented_size = m + poly_terms;
+
+            arma_vec z_arma(n);
+
+            for (size_type i = 0; i < n; ++i) {
+                for (size_type j = 0; j < m; ++j) {
+                    const value_type dx = x[i] - xp_[j];
+                    const value_type dy = y[i] - yp_[j];
+                    z_arma(i) += weights_(j) * radial_func(std::sqrt(dx * dx + dy * dy));
+                }
+                size_type idx = m;
+                for (int px = 0; px <= poly_degree_; ++px) {
+                    for (int py = 0; py <= poly_degree_ - px; ++py) {
+                        z_arma(i) += weights_(idx) * std::pow(x[i], px) * std::pow(y[i], py);
+                        ++idx;
+                    }
+                }
+            }
+
+            // copy (from arma to container_type)
+            return container_type{z_arma.memptr(), z_arma.memptr() + z_arma.n_elem};
+        }
+
+    private:
+        constexpr value_type radial_func(value_type r, value_type epsilon = 1.0) const {
+            switch (type) {
+                case Type2DRBF::Linear:
+                    return r;
+                case Type2DRBF::Cubic:
+                    return r * r * r;
+                case Type2DRBF::Quintic:
+                    return r * r * r * r * r;
+                case Type2DRBF::Multiquadric:
+                    return std::sqrt(1.0 + epsilon * epsilon * r * r);
+                case Type2DRBF::InverseMultiquadric:
+                    return 1.0 / std::sqrt(1.0 + epsilon * epsilon * r * r);
+                case Type2DRBF::Gaussian:
+                    return std::exp(-epsilon * r * r);
+                case Type2DRBF::ThinPlate:
+                    return r * r * std::log(r);
+                default:
+                    throw std::invalid_argument("Unknown rbf interpolation type");
+            }
+        }
+
+        constexpr std::string get_type_name() const {
+            switch (type) {
+                case Type2DRBF::Linear:
+                    return "Linear";
+                case Type2DRBF::Cubic:
+                    return "Cubic";
+                case Type2DRBF::Quintic:
+                    return "Quintic";
+                case Type2DRBF::Multiquadric:
+                    return "Multiquadric";
+                case Type2DRBF::InverseMultiquadric:
+                    return "InverseMultiquadric";
+                case Type2DRBF::Gaussian:
+                    return "Gaussian";
+                case Type2DRBF::ThinPlate:
+                    return "ThinPlate";
+                default:
+                    throw std::invalid_argument("Unknown rbf interpolation type");
+            }
+        }
+
+        using arma_vec = arma::Col<value_type>; // arma::vec is arma::Col<double>
+        using arma_mat = arma::Mat<value_type>; // arma::mat is arma::Mat<double>
+
+        container_type xp_;
+        container_type yp_;
+        arma_vec zp_;
+        arma_vec weights_;
+        int poly_degree_;
+    };
+
+#endif
 }

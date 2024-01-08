@@ -9,6 +9,11 @@ namespace ni::_2d {
 
     enum class Type2DRBF {
         Linear,
-        Gauss
+        Cubic,
+        Quintic,
+        Multiquadric,
+        InverseMultiquadric,
+        Gaussian,
+        ThinPlate
     };
 }

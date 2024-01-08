@@ -8,6 +8,7 @@ find_package(OpenMP REQUIRED)
 find_package(CGAL REQUIRED)
 find_package(Boost REQUIRED)
 find_package(GSL REQUIRED)
+find_package(Armadillo REQUIRED)
 
 if (CMAKE_BUILD_TYPE MATCHES "Debug")
     message("Debug build")
@@ -20,11 +21,11 @@ include_directories(include/)
 include_directories(test/)
 
 include_directories(${Boost_INCLUDE_DIRS})
-include_directories(third_party/eigen-3.4.0)
+include_directories(${ARMADILLO_INCLUDE_DIRS})
 
 add_library(ni INTERFACE)
 target_include_directories(ni INTERFACE ${CMAKE_CURRENT_SOURCE_DIR}/include)
-target_link_libraries(ni INTERFACE OpenMP::OpenMP_CXX ${Boost_LIBRARIES} CGAL::CGAL gsl)
+target_link_libraries(ni INTERFACE OpenMP::OpenMP_CXX ${Boost_LIBRARIES} CGAL::CGAL gsl ${ARMADILLO_LIBRARIES})
 
 add_subdirectory(test/test_1d)
 add_subdirectory(test/test_2d)
