@@ -1,6 +1,6 @@
 Some naive header-only interpolation library.
 
-Required C++23 standard.
+C++-23 required.
 
 Dependencies: Boost, CGAL, Openmp, GSL(GNU Scientific Library), Armadillo.
 
