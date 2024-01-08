@@ -31,7 +31,8 @@ namespace ni::_2d::detail {
                         std::size_t power = 2) : count_(count), power_(power) {
 
             if (xp.size() != yp.size() || xp.size() != zp.size()) {
-                throw std::invalid_argument("all xp, yp, zp must be the same size");
+                std::cerr << "all xp, yp, zp must be the same size\n";
+                std::terminate();
             }
 
             for (size_type i = 0; i < xp.size(); ++i) {

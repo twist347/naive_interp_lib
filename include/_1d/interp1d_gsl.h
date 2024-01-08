@@ -14,31 +14,29 @@ namespace ni::_1d::detail {
         Steffen
     };
 
-    inline auto gsl_spline_alloc_type(TypeGSL type) {
-        switch (type) {
-            case TypeGSL::Linear:
-                return gsl_interp_linear;
-            case TypeGSL::CubicSpline:
-                return gsl_interp_cspline;
-            case TypeGSL::Akima:
-                return gsl_interp_akima;
-            case TypeGSL::Steffen:
-                return gsl_interp_steffen;
-            default:
-                throw std::invalid_argument("unknown gsl interp type");
-        }
-    }
-
     template<TypeGSL type, class Container>
-    class i_gsl : public ni::_1d::i_1d_base<Container> {
+    class i_gsl : public i_1d_base<Container> {
+    private:
+        using base_t = i_1d_base<Container>;
     public:
-        using container_type = std::remove_cvref_t<Container>;
-        using value_type = container_type::value_type;
-        using size_type = container_type::size_type;
+        using container_type = base_t::container_type;
+        using value_type = base_t::value_type;
+        using size_type = base_t::size_type;
 
         constexpr i_gsl(const container_type &xp, const container_type &yp) :
-                interp_(gsl_spline_alloc(gsl_spline_alloc_type(type), xp.size()), gsl_spline_free) {
-            init(xp, yp);
+                xp_(xp),
+                yp_(yp),
+                interp_(gsl_spline_alloc(gsl_spline_alloc_type(), xp.size()), gsl_spline_free) {
+            if (xp.size() != yp.size()) {
+                std::cerr << "size of xp must be equal to yp size\n";
+                std::terminate();
+            }
+
+            if (xp.size() < min_points_gsl()) {
+                std::cerr << "the number of points must be at least " + std::to_string(min_points_gsl()) << '\n';
+                std::terminate();
+            }
+
             gsl_spline_init(interp_.get(), xp_.data(), yp_.data(), xp_.size());
         }
 
@@ -55,18 +53,19 @@ namespace ni::_1d::detail {
         }
 
     private:
-        constexpr void init(const container_type &xp, const container_type &yp) {
-            if (xp.size() != yp.size()) {
-                throw std::invalid_argument("size of xp must be equal to yp size");
+        constexpr auto gsl_spline_alloc_type() {
+            switch (type) {
+                case TypeGSL::Linear:
+                    return gsl_interp_linear;
+                case TypeGSL::CubicSpline:
+                    return gsl_interp_cspline;
+                case TypeGSL::Akima:
+                    return gsl_interp_akima;
+                case TypeGSL::Steffen:
+                    return gsl_interp_steffen;
+                default:
+                    throw std::invalid_argument("unknown gsl interpolation type");
             }
-
-            if (xp.size() < min_points_gsl()) {
-                throw std::invalid_argument(
-                        "the number of points must be at least " + std::to_string(min_points_gsl())
-                );
-            }
-            xp_ = xp;
-            yp_ = yp;
         }
 
         constexpr static auto min_points_gsl() -> int {
@@ -83,8 +82,8 @@ namespace ni::_1d::detail {
             }
         }
 
-        container_type xp_;
-        container_type yp_;
-        std::unique_ptr<gsl_spline, decltype(&gsl_spline_free)> interp_;
+        const container_type xp_;
+        const container_type yp_;
+        const std::unique_ptr<gsl_spline, decltype(&gsl_spline_free)> interp_;
     };
 }

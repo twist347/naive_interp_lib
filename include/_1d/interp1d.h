@@ -16,9 +16,16 @@ namespace ni::_1d {
         using value_type = base_t::value_type;
         using size_type = base_t::size_type;
 
-        constexpr i_1d(const container_type &xp, const container_type &yp) {
-            // due to exception safety
-            init(xp, yp);
+        constexpr i_1d(const container_type &xp, const container_type &yp) : xp_(xp), yp_(yp) {
+            if (xp.size() != yp.size()) {
+                std::cerr << "size of xp must be equal to yp size\n";
+                std::terminate();
+            }
+
+            if (xp.size() < min_num_points) {
+                std::cerr << "the number of points must be at least " + std::to_string(min_num_points) << '\n';
+                std::terminate();
+            }
         }
 
         GENERATE_MOVE_AND_DELETE_COPY_SEMANTICS(i_1d)
@@ -49,20 +56,6 @@ namespace ni::_1d {
         }
 
     private:
-        constexpr void init(const container_type &xp, const container_type &yp) {
-            if (xp.size() != yp.size()) {
-                throw std::invalid_argument("size of xp must be equal to yp size");
-            }
-
-            if (xp.size() < min_num_points) {
-                throw std::invalid_argument(
-                        "the number of points must be at least " + std::to_string(min_num_points)
-                );
-            }
-            xp_ = xp;
-            yp_ = yp;
-        }
-
         constexpr static auto min_points_extr() -> int {
             switch (type) {
                 case Type1D::Prev:
@@ -86,7 +79,7 @@ namespace ni::_1d {
 
         constexpr static int min_num_points = min_points_extr();
 
-        container_type xp_;
-        container_type yp_;
+        const container_type xp_;
+        const container_type yp_;
     };
 }

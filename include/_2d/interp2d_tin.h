@@ -24,7 +24,8 @@ namespace ni::_2d::detail {
     public:
         constexpr i_tin(const container_type &xp, const container_type &yp, const container_type &zp) {
             if (xp.size() != yp.size() || xp.size() != zp.size()) {
-                throw std::invalid_argument("all xp, yp, zp must be the same size");
+                std::cerr << "all xp, yp, zp must be the same size\n";
+                std::terminate();
             }
             std::vector<point2_t> points(xp.size());
             z_vals_.reserve(xp.size());

@@ -25,6 +25,10 @@ namespace ni::_2d::detail {
                         const container_type &zp) : xp_(xp),
                                                     yp_(yp),
                                                     zp_(arma_vec(zp.data(), zp.size()).eval()) {
+            if (xp.size() != yp.size() || xp.size() != zp.size()) {
+                std::cerr << "all xp, yp, zp must be the same size\n";
+                std::terminate();
+            }
 
             const value_type lambda = 0.001;
 
@@ -113,9 +117,9 @@ namespace ni::_2d::detail {
         using arma_vec = arma::Col<value_type>; // arma::vec is arma::Col<double>
         using arma_mat = arma::Mat<value_type>; // arma::mat is arma::Mat<double>
 
-        container_type xp_;
-        container_type yp_;
-        arma_vec zp_;
+        const container_type xp_;
+        const container_type yp_;
+        const arma_vec zp_;
         arma_vec weights_;
     };
 

@@ -23,7 +23,8 @@ namespace ni::_2d::detail {
     public:
         constexpr i_nearest_neighbour(const container_type &xp, const container_type &yp, const container_type &zp) {
             if (xp.size() != yp.size() || xp.size() != zp.size()) {
-                throw std::invalid_argument("all xp, yp, zp must be the same size");
+                std::cerr << "all xp, yp, zp must be the same size\n";
+                std::terminate();
             }
 
             for (size_type i = 0; i < xp.size(); ++i) {

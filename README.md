@@ -1,5 +1,7 @@
 Some naive header-only interpolation library.
 
+Required C++23 standard.
+
 Dependencies: Boost, CGAL, Openmp, GSL(GNU Scientific Library), Armadillo.
 
 There are following namespaces: ```ni::_1d``` for 1-dimension space and ```ni::_2d``` for 2-dimension space
@@ -68,6 +70,6 @@ with corresponding kernels:
 
 
 ### Note:
-Interpolator works with any container that supports ```[]```, ```.size()``` and ```.data()``` operations 
-and default constructible.
+Interpolator works with any container that supports ```[]```, ```.size()``` and ```.data()``` operations. 
+
 For example std::vector, std::array, std::deque, Eigen::ArrayXd.

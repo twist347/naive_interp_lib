@@ -1,5 +1,5 @@
 #include <gtest/gtest.h>
-#include <interp2d.h>
+#include <interp2d_scat.h>
 #include <interp_make.h>
 #include <vector>
 #include <test_utils.h>
