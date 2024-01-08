@@ -13,10 +13,12 @@ namespace ni::_2d::detail {
     // Pure RBF interpolator
     template<Type2DRBF type, class Container>
     class i_rbf : public i_2d_base<Container> {
+    private:
+        using base_t = i_2d_base<Container>;
     public:
-        using container_type = i_2d_base<Container>::container_type;
-        using value_type = container_type::value_type;
-        using size_type = container_type::size_type;
+        using container_type = base_t::container_type;
+        using value_type = base_t::value_type;
+        using size_type = base_t::size_type;
 
         constexpr i_rbf(const container_type &xp,
                         const container_type &yp,
@@ -41,7 +43,7 @@ namespace ni::_2d::detail {
                 A(i, i) += lambda;
             }
 
-            // Solve A * wights = zp_. Find weights_
+            // Solve A * weights_ = zp_. Find weights_
             if (!arma::solve(weights_, A, zp_, arma::solve_opts::no_approx + arma::solve_opts::fast)) {
                 throw std::runtime_error("the SLAE has no solution. Conditions are poor in " + get_type_name());
             }

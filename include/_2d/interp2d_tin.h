@@ -9,10 +9,12 @@ namespace ni::_2d::detail {
     /// Triangulated Irregular Network
     template<class Container>
     class i_tin : public i_2d_base<Container> {
+    private:
+        using base_t = i_2d_base<Container>;
     public:
-        using container_type = i_2d_base<Container>::container_type;
-        using value_type = container_type::value_type;
-        using size_type = container_type::size_type;
+        using container_type = base_t::container_type;
+        using value_type = base_t::value_type;
+        using size_type = base_t::size_type;
 
     private:
         using kernel_t = CGAL::Exact_predicates_inexact_constructions_kernel;

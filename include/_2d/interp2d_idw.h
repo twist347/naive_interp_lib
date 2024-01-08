@@ -12,10 +12,12 @@ namespace ni::_2d::detail {
     /// Inverse Distance Weighted
     template<class Container>
     class i_idw : public i_2d_base<Container> {
+    private:
+        using base_t = i_2d_base<Container>;
     public:
-        using container_type = i_2d_base<Container>::container_type;
-        using value_type = container_type::value_type;
-        using size_type = container_type::size_type;
+        using container_type = base_t::container_type;
+        using value_type = base_t::value_type;
+        using size_type = base_t::size_type;
 
     private:
         using point2_t = boost::geometry::model::point<value_type, 2, boost::geometry::cs::cartesian>;

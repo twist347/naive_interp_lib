@@ -5,10 +5,11 @@
 #include <stdexcept>
 #include <utils.h>
 #include <interp1d_gsl.h>
+#include <container_type_traits.h>
 
 namespace ni::_1d::detail {
 
-    template<class Container, class Value = Container::value_type>
+    template<class Container, class Value = ni::detail::container_value_type_t<Container>>
     constexpr auto prev(const Container &x, const Container &xp, const Container &yp) -> Container {
         if (xp.size() < 1 || yp.size() < 1 || xp.size() != yp.size()) {
             throw std::invalid_argument("the input data does not meet the conditions");
@@ -33,7 +34,7 @@ namespace ni::_1d::detail {
         return y;
     }
 
-    template<class Container, class Value = Container::value_type>
+    template<class Container, class Value = ni::detail::container_value_type_t<Container>>
     constexpr auto next(const Container &x, const Container &xp, const Container &yp) -> Container {
         if (xp.size() < 1 || yp.size() < 1 || xp.size() != yp.size()) {
             throw std::invalid_argument("the input data does not meet the conditions");
@@ -59,7 +60,7 @@ namespace ni::_1d::detail {
         return y;
     }
 
-    template<class Container, class Value = Container::value_type>
+    template<class Container, class Value = ni::detail::container_value_type_t<Container>>
     constexpr auto nearest_neighbour(const Container &x, const Container &xp, const Container &yp) -> Container {
         if (xp.size() < 1 || yp.size() < 1 || xp.size() != yp.size()) {
             throw std::invalid_argument("the input data does not meet the conditions");
@@ -87,7 +88,7 @@ namespace ni::_1d::detail {
         return y;
     }
 
-    template<class Container, class Value = Container::value_type>
+    template<class Container, class Value = ni::detail::container_value_type_t<Container>>
     constexpr auto linear(const Container &x, const Container &xp, const Container &yp) -> Container {
         if (xp.size() < 2 || yp.size() < 2 || xp.size() != yp.size()) {
             throw std::invalid_argument("the input data does not meet the conditions");
@@ -115,7 +116,7 @@ namespace ni::_1d::detail {
         return y;
     }
 
-    template<class Container, class Value = Container::value_type>
+    template<class Container, class Value = ni::detail::container_value_type_t<Container>>
     constexpr auto quadratic(const Container &x, const Container &xp, const Container &yp) -> Container {
         if (xp.size() < 3 || yp.size() < 3 || xp.size() != yp.size()) {
             throw std::invalid_argument("the input data does not meet the conditions");
@@ -151,7 +152,7 @@ namespace ni::_1d::detail {
         return y;
     }
 
-    template<class Container, class Value = Container::value_type>
+    template<class Container, class Value = ni::detail::container_value_type_t<Container>>
     constexpr auto cubic(const Container &x, const Container &xp, const Container &yp) -> Container {
         if (xp.size() < 4 || yp.size() < 4 || xp.size() != yp.size()) {
             throw std::invalid_argument("the input data does not meet the conditions");

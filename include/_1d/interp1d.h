@@ -9,10 +9,12 @@ namespace ni::_1d {
 
     template<Type1D type, class Container>
     class i_1d : public i_1d_base<Container> {
+    private:
+        using base_t = i_1d_base<Container>;
     public:
-        using container_type = i_1d_base<Container>::container_type;
-        using value_type = container_type::value_type;
-        using size_type = container_type::size_type;
+        using container_type = base_t::container_type;
+        using value_type = base_t::value_type;
+        using size_type = base_t::size_type;
 
         constexpr i_1d(const container_type &xp, const container_type &yp) {
             init(xp, yp);
