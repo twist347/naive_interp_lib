@@ -5,7 +5,7 @@
 
 #include <interp2d_base.h>
 
-namespace ni::_2d::detail {
+namespace ni::_2d::impl {
     /// Triangulated Irregular Network
     template<class Container>
     class i_tin : public i_2d_base<Container> {

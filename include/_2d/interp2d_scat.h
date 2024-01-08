@@ -5,9 +5,8 @@
 #include <interp2d_idw.h>
 #include <interp2d_nn.h>
 #include <interp2d_tin.h>
-#include <interp2d_rbf.h>
 
-namespace ni::_2d {
+namespace ni::_2d::impl {
 
     namespace detail {
         template<Type2DScat type, class Container>
@@ -15,17 +14,17 @@ namespace ni::_2d {
 
         template<class Container>
         struct interp<Type2DScat::IDW, Container> {
-            using type = _2d::detail::i_idw<Container>;
+            using type = _2d::impl::i_idw<Container>;
         };
 
         template<class Container>
         struct interp<Type2DScat::NearestNeighbour, Container> {
-            using type = _2d::detail::i_nearest_neighbour<Container>;
+            using type = _2d::impl::i_nearest_neighbour<Container>;
         };
 
         template<class Container>
         struct interp<Type2DScat::TIN, Container> {
-            using type = _2d::detail::i_tin<Container>;
+            using type = _2d::impl::i_tin<Container>;
         };
 
         template<Type2DScat type, class Container>
@@ -54,6 +53,4 @@ namespace ni::_2d {
         using interp_t = detail::interp_t<type, container_type>;
         interp_t interp_;
     };
-
-    using detail::i_rbf;
 }

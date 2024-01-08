@@ -7,7 +7,7 @@
 #include <interp1d_gsl.h>
 #include <container_type_traits.h>
 
-namespace ni::_1d::detail {
+namespace ni::_1d::impl {
 
     template<class Container>
     constexpr auto prev(const Container &x, const Container &xp, const Container &yp) -> Container {
@@ -199,16 +199,16 @@ namespace ni::_1d::detail {
 
     template<class Container>
     constexpr auto cubic_spline(const Container &x, const Container &xp, const Container &yp) -> Container {
-        return ni::_1d::detail::i_gsl<ni::_1d::detail::TypeGSL::CubicSpline, Container>(xp, yp)(x);
+        return ni::_1d::impl::i_gsl<ni::_1d::impl::TypeGSL::CubicSpline, Container>(xp, yp)(x);
     }
 
     template<class Container>
     constexpr auto akima(const Container &x, const Container &xp, const Container &yp) -> Container {
-        return ni::_1d::detail::i_gsl<ni::_1d::detail::TypeGSL::Akima, Container>(xp, yp)(x);
+        return ni::_1d::impl::i_gsl<ni::_1d::impl::TypeGSL::Akima, Container>(xp, yp)(x);
     }
 
     template<class Container>
     constexpr auto steffen(const Container &x, const Container &xp, const Container &yp) -> Container {
-        return ni::_1d::detail::i_gsl<ni::_1d::detail::TypeGSL::Steffen, Container>(xp, yp)(x);
+        return ni::_1d::impl::i_gsl<ni::_1d::impl::TypeGSL::Steffen, Container>(xp, yp)(x);
     }
 }

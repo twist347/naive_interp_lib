@@ -6,7 +6,7 @@
 #include <interp2d_types.h>
 #include <utils.h>
 
-namespace ni::_2d::detail {
+namespace ni::_2d::impl {
 
 #if 1
 

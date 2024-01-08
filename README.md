@@ -8,6 +8,8 @@ There are following namespaces: ```ni::_1d``` for 1-dimension space and ```ni::_
 interpolators. All ```_1d``` interpolators have base class ```i_1d_base``` and
 all ```_2d``` interpolators - ```i_2d_base```.
 
+The ```impl``` and ```detail``` namespaces store implementation details.
+
 All interpolators are not copied, only moved.
 
 All interpolators have the following traits: ```container_type```, ```value_type```, ```size_type```.

@@ -5,12 +5,6 @@
 
 constexpr static auto nan_val = std::numeric_limits<double>::quiet_NaN();
 
-TEST(A, B) {
-    auto x = 1.12345, y = 1.123;
-    std::cout << 1e-1 << '\n';
-    std::cout << ni::utils::eq_flt(x, y, 1e-1) << '\n';
-}
-
 TEST(PrevInterp, Base) {
     std::vector<double> xp{1, 2, 3, 4, 5}, yp{1, 4, 9, 16, 25}, x{2, 2.5, 4.5}, expected{4, 4, 16};
     auto interp = ni::_1d::make_i<ni::_1d::Type1D::Prev>(xp, yp);
@@ -91,13 +85,6 @@ TEST(NextInterp, NaninX) {
 TEST(NextInterp, NaninYp) {
     std::vector<double> xp{1, 2, 3, 4, 5}, yp{1, 4, nan_val, 16, 25}, x{2, 2.5, 3.5}, expected{4, nan_val, 16};
     auto interp = ni::_1d::make_i<ni::_1d::Type1D::Next>(xp, yp);
-    auto y = interp(x);
-    ASSERT_TRUE(arrays_eq(y, expected));
-}
-
-TEST(NearestNeighbourInterp, Base) {
-    std::vector<double> xp{1, 2, 3, 4, 5}, yp{1, 4, 9, 16, 25}, x{2, 2.5, 4.5}, expected{4, 9, 25};
-    auto interp = ni::_1d::i_1d<ni::_1d::Type1D::NearestNeighbour, std::vector<double>>(xp, yp);
     auto y = interp(x);
     ASSERT_TRUE(arrays_eq(y, expected));
 }

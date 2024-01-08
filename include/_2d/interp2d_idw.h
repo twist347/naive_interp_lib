@@ -8,7 +8,7 @@
 #include <interp2d_base.h>
 #include <utils.h>
 
-namespace ni::_2d::detail {
+namespace ni::_2d::impl {
     /// Inverse Distance Weighted
     template<class Container>
     class i_idw : public i_2d_base<Container> {

@@ -5,7 +5,7 @@
 #include <interp1d_types.h>
 #include <interp1d_algs.h>
 
-namespace ni::_1d {
+namespace ni::_1d::impl {
 
     template<Type1D type, class Container>
     class i_1d : public i_1d_base<Container> {
@@ -33,23 +33,23 @@ namespace ni::_1d {
         constexpr auto operator()(const container_type &x) const -> container_type override {
             switch (type) {
                 case Type1D::Prev:
-                    return detail::prev(x, xp_, yp_);
+                    return impl::prev(x, xp_, yp_);
                 case Type1D::Next:
-                    return detail::next(x, xp_, yp_);
+                    return impl::next(x, xp_, yp_);
                 case Type1D::NearestNeighbour:
-                    return detail::nearest_neighbour(x, xp_, yp_);
+                    return impl::nearest_neighbour(x, xp_, yp_);
                 case Type1D::Linear:
-                    return detail::linear(x, xp_, yp_);
+                    return impl::linear(x, xp_, yp_);
                 case Type1D::Quadratic:
-                    return detail::quadratic(x, xp_, yp_);
+                    return impl::quadratic(x, xp_, yp_);
                 case Type1D::Cubic:
-                    return detail::cubic(x, xp_, yp_);
+                    return impl::cubic(x, xp_, yp_);
                 case Type1D::CubicSpline:
-                    return detail::cubic_spline(x, xp_, yp_);
+                    return impl::cubic_spline(x, xp_, yp_);
                 case Type1D::Akima:
-                    return detail::akima(x, xp_, yp_);
+                    return impl::akima(x, xp_, yp_);
                 case Type1D::Steffen:
-                    return detail::steffen(x, xp_, yp_);
+                    return impl::steffen(x, xp_, yp_);
                 default:
                     throw std::invalid_argument("unknown 1d interpolation type");
             }

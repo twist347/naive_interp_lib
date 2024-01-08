@@ -86,8 +86,16 @@ int main() {
     script << "set size ratio -1\n"
               "set xzeroaxis\n"
               "set yzeroaxis\n"
-              "plot 'orig' with points, 'prev' with points, 'next' with points, 'nn' with points, 'linear' with points,"
-              "'quadratic' with points, 'cubic' with points, 'cubic_s' with points, 'akima' with points, 'steffen' with points\n"
+              "plot 'orig' with points"
+              ", 'prev' with points"
+              ", 'next' with points"
+              ", 'nn' with points"
+              ", 'linear' with points"
+              ", 'quadratic' with points"
+              ", 'cubic' with points"
+              ", 'cubic_s' with points"
+              ", 'akima' with points"
+              ", 'steffen' with points\n"
               "pause -1";
     script.close();
     std::string cmd = std::string("cd ") + script_path.string() + " && gnuplot ./script";
