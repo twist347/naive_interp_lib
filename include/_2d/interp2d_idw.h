@@ -31,12 +31,13 @@ namespace ni::_2d::impl {
                         std::size_t power = 2) : count_(count), power_(power) {
 
             if (xp.size() != yp.size() || xp.size() != zp.size()) {
-                std::cerr << "all xp, yp, zp must be the same size\n";
-                std::terminate();
+                throw std::invalid_argument("all xp, yp, zp must be the same size");
             }
 
-            for (size_type i = 0; i < xp.size(); ++i) {
-                rtree_.insert({{xp[i], yp[i]}, zp[i]});
+            for (size_type i = 0; i < zp.size(); ++i) {
+                if (!std::isnan(zp[i])) {
+                    rtree_.insert({{xp[i], yp[i]}, zp[i]});
+                }
             }
         }
 
@@ -62,7 +63,7 @@ namespace ni::_2d::impl {
     private:
         const std::size_t count_;
         const std::size_t power_;
-        boost::geometry::index::rtree<std::pair<point2_t, value_type>, boost::geometry::index::quadratic<16>> rtree_;
+        boost::geometry::index::rtree <std::pair<point2_t, value_type>, boost::geometry::index::quadratic<16>> rtree_;
 
         constexpr auto calc_radius(const auto &neighbours, const point2_t &current_p) const -> value_type {
             namespace bg = boost::geometry;

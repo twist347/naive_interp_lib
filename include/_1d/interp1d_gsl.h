@@ -28,13 +28,11 @@ namespace ni::_1d::impl {
                 yp_(yp),
                 interp_(gsl_spline_alloc(gsl_spline_alloc_type(), xp.size()), gsl_spline_free) {
             if (xp.size() != yp.size()) {
-                std::cerr << "size of xp must be equal to yp size\n";
-                std::terminate();
+                throw std::invalid_argument("size of xp must be equal to yp size");
             }
 
             if (xp.size() < min_points_gsl()) {
-                std::cerr << "the number of points must be at least " + std::to_string(min_points_gsl()) << '\n';
-                std::terminate();
+                throw std::invalid_argument("the number of points must be at least " + std::to_string(min_points_gsl()));
             }
 
             gsl_spline_init(interp_.get(), xp_.data(), yp_.data(), xp_.size());

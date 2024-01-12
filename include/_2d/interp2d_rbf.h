@@ -22,14 +22,60 @@ namespace ni::_2d::impl {
 
         constexpr i_rbf(const container_type &xp,
                         const container_type &yp,
-                        const container_type &zp) : xp_(xp),
-                                                    yp_(yp),
-                                                    zp_(arma_vec(zp.data(), zp.size()).eval()) {
+                        const container_type &zp) {
             if (xp.size() != yp.size() || xp.size() != zp.size()) {
-                std::cerr << "all xp, yp, zp must be the same size\n";
-                std::terminate();
+                throw std::invalid_argument("all xp, yp, zp must be the same size");
             }
 
+            filter_nans(xp, yp, zp);
+
+            const auto A = make_mat_for_SLAE();
+
+            // Solve SLAE: A * weights_ = zp_. Find weights_
+            if (!arma::solve(weights_, A, zp_, arma::solve_opts::no_approx + arma::solve_opts::fast)) {
+                throw std::runtime_error("the SLAE has no solution. Conditions are poor in " + get_type_name());
+            }
+        }
+
+        constexpr auto operator()(const container_type &x, const container_type &y) const -> container_type override {
+            const auto n = x.size();
+            const auto m = xp_.size();
+
+            container_type z(n);
+
+            for (size_type i = 0; i < n; ++i) {
+                for (size_type j = 0; j < m; ++j) {
+                    const value_type dx = x[i] - xp_[j];
+                    const value_type dy = y[i] - yp_[j];
+                    z[i] += weights_(j) * radial_func(std::sqrt(dx * dx + dy * dy));
+                }
+            }
+            return z;
+        }
+
+    private:
+        constexpr void filter_nans(const container_type &xp, const container_type &yp, const container_type &zp) {
+            const auto nans_count = std::count_if(zp_.begin(), zp_.end(),
+                                                  [](value_type val) { return std::isnan(val); });
+            const auto sz = zp.size() - nans_count;
+
+            xp_ = container_type(sz);
+            yp_ = container_type(sz);
+            zp_ = arma_vec(sz);
+
+            for (size_type i = 0, j = 0; i < zp.size(); ++i) {
+                if (!std::isnan(zp[i])) {
+                    xp_[j] = xp[i];
+                    yp_[j] = yp[i];
+                    zp_(j) = zp[i];
+                    ++j;
+                }
+            }
+        }
+
+        constexpr auto make_mat_for_SLAE() {
+            // TODO: check it
+            // value for matrix regularization
             const value_type lambda = 0.001;
 
             const auto n = xp_.size();
@@ -46,32 +92,9 @@ namespace ni::_2d::impl {
                 }
                 A(i, i) += lambda;
             }
-
-            // Solve A * weights_ = zp_. Find weights_
-            if (!arma::solve(weights_, A, zp_, arma::solve_opts::no_approx + arma::solve_opts::fast)) {
-                throw std::runtime_error("the SLAE has no solution. Conditions are poor in " + get_type_name());
-            }
+            return A;
         }
 
-        constexpr auto operator()(const container_type &x, const container_type &y) const -> container_type override {
-            const auto n = x.size();
-            const auto m = xp_.size();
-
-            arma_vec z_arma(n);
-
-            for (size_type i = 0; i < n; ++i) {
-                for (size_type j = 0; j < m; ++j) {
-                    const value_type dx = x[i] - xp_[j];
-                    const value_type dy = y[i] - yp_[j];
-                    z_arma(i) += weights_(j) * radial_func(std::sqrt(dx * dx + dy * dy));
-                }
-            }
-
-            // copy (from arma to container_type)
-            return container_type{z_arma.memptr(), z_arma.memptr() + z_arma.n_elem};
-        }
-
-    private:
         constexpr value_type radial_func(value_type r, value_type epsilon = 1.0) const {
             switch (type) {
                 case Type2DRBF::Linear:
@@ -117,9 +140,9 @@ namespace ni::_2d::impl {
         using arma_vec = arma::Col<value_type>; // arma::vec is arma::Col<double>
         using arma_mat = arma::Mat<value_type>; // arma::mat is arma::Mat<double>
 
-        const container_type xp_;
-        const container_type yp_;
-        const arma_vec zp_;
+        container_type xp_;
+        container_type yp_;
+        arma_vec zp_;
         arma_vec weights_;
     };
 

@@ -72,6 +72,7 @@ with corresponding kernels:
 
 
 ### Note:
-Interpolator works with any container that supports ```[]```, ```.size()``` and ```.data()``` operations. 
+Interpolator works with any container that supports ```[]```, ```.size()``` and ```.data()``` operations 
+and has a constructor from integer value (container size). 
 
 For example std::vector, std::array, std::deque, Eigen::ArrayXd.

@@ -23,12 +23,13 @@ namespace ni::_2d::impl {
     public:
         constexpr i_nearest_neighbour(const container_type &xp, const container_type &yp, const container_type &zp) {
             if (xp.size() != yp.size() || xp.size() != zp.size()) {
-                std::cerr << "all xp, yp, zp must be the same size\n";
-                std::terminate();
+                throw std::invalid_argument("all xp, yp, zp must be the same size");
             }
 
-            for (size_type i = 0; i < xp.size(); ++i) {
-                rtree_.insert({{xp[i], yp[i]}, zp[i]});
+            for (size_type i = 0; i < zp.size(); ++i) {
+                if (!std::isnan(zp[i])) {
+                    rtree_.insert({{xp[i], yp[i]}, zp[i]});
+                }
             }
         }
 

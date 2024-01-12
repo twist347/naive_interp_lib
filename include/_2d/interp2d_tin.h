@@ -24,15 +24,19 @@ namespace ni::_2d::impl {
     public:
         constexpr i_tin(const container_type &xp, const container_type &yp, const container_type &zp) {
             if (xp.size() != yp.size() || xp.size() != zp.size()) {
-                std::cerr << "all xp, yp, zp must be the same size\n";
-                std::terminate();
+                throw std::invalid_argument("all xp, yp, zp must be the same size");
             }
-            std::vector<point2_t> points(xp.size());
-            z_vals_.reserve(xp.size());
-            for (size_type i = 0; i < xp.size(); ++i) {
-                const point2_t p{xp[i], yp[i]};
-                points[i] = p;
-                z_vals_[p] = zp[i];
+            const auto nan_count = std::count_if(zp.begin(), zp.end(), [](value_type val) { return std::isnan(val); });
+            const auto sz = zp.size() - nan_count;
+            std::vector<point2_t> points(sz);
+            z_vals_.reserve(sz);
+            for (size_type i = 0, j = 0; i < zp.size(); ++i) {
+                if (!std::isnan(zp[i])) {
+                    const point2_t p{xp[i], yp[i]};
+                    points[j] = p;
+                    z_vals_[p] = zp[i];
+                    ++j;
+                }
             }
             // much faster than do d_.insert(points[i]) in loop
             d_.insert(points.begin(), points.end());
@@ -47,8 +51,13 @@ namespace ni::_2d::impl {
 
 #pragma omp parallel for firstprivate(prev) schedule(guided)
             for (size_type i = 0; i < sz; ++i) {
-                // nearest triangle to current point {x[i],y[i]}. prev is a start hint
+                // nearest triangle to current point {x[i],y[i]}. prev is a hint
                 const auto nearest_tr = d_.locate({x[i], y[i]}, prev);
+                if (d_.is_infinite(nearest_tr)) {
+                    // TODO: what to do if tr is infinite?
+                    z[i] = std::numeric_limits<value_type>::quiet_NaN();
+                    continue;
+                }
                 prev = nearest_tr;
                 z[i] = calc(nearest_tr, x[i], y[i]);
             }

@@ -18,13 +18,11 @@ namespace ni::_1d::impl {
 
         constexpr i_1d(const container_type &xp, const container_type &yp) : xp_(xp), yp_(yp) {
             if (xp.size() != yp.size()) {
-                std::cerr << "size of xp must be equal to yp size\n";
-                std::terminate();
+                throw std::invalid_argument("size of xp must be equal to yp size");
             }
 
             if (xp.size() < min_num_points) {
-                std::cerr << "the number of points must be at least " + std::to_string(min_num_points) << '\n';
-                std::terminate();
+                throw std::invalid_argument("the number of points must be at least " + std::to_string(min_num_points));
             }
         }
 
