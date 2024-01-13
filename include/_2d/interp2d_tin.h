@@ -54,8 +54,12 @@ namespace ni::_2d::impl {
                 // nearest triangle to current point {x[i],y[i]}. prev is a hint
                 const auto nearest_tr = d_.locate({x[i], y[i]}, prev);
                 if (d_.is_infinite(nearest_tr)) {
-                    // TODO: what to do if tr is infinite?
-                    z[i] = std::numeric_limits<value_type>::quiet_NaN();
+                    // TODO: check it
+                    const auto nearest_v = d_.nearest_vertex({x[i], y[i]});
+                    const auto point = nearest_v->point();
+                    const value_type x_coord = point.x(), y_coord = point.y();
+                    const auto it = z_vals_.find(point);
+                    z[i] = it == z_vals_.end() ? 0 : it->second;
                     continue;
                 }
                 prev = nearest_tr;

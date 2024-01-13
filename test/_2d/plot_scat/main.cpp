@@ -11,7 +11,7 @@ int main() {
     const auto path = std::filesystem::canonical(__FILE__).parent_path();
     std::system((std::string("cd ") + path.string() + " && mkdir " + folder_name).c_str());
 
-    double (*func)(double, double) = plotting::surfaces::elliptical_paraboloid;
+    double (*func)(double, double) = plotting::surfaces::hyperbolic_paraboloid;
     constexpr int N = 70; // N * N
     const auto [xp, yp, zp, x, y] = generate_vals(func, N);
 
