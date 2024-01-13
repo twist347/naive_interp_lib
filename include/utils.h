@@ -7,6 +7,9 @@ namespace ni::utils {
     template<class T>
     concept is_flt = std::is_floating_point_v<T>;
 
+    template<is_flt T>
+    constexpr T nan = std::numeric_limits<T>::quiet_NaN();
+
     template<is_flt T, is_flt U>
     constexpr auto to(U u) -> T {
         return static_cast<T>(u);

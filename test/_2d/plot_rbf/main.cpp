@@ -38,7 +38,7 @@ int main() {
     // nans test
     std::vector<double> zp_nans(zp.begin(), zp.end());
     for (std::size_t i = 0; i < zp.size(); i += 2) {
-        zp_nans[i] = std::numeric_limits<double>::quiet_NaN();
+        zp_nans[i] = ni::utils::nan<double>;
     }
 
     const auto z_rbf_lin_n = ni::_2d::make_rbf_i<ni::_2d::Type2DRBF::Linear>(xp, yp, zp_nans)(x, y);

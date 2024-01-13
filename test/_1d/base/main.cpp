@@ -2,7 +2,7 @@
 #include <interp_make.h>
 #include <test_utils.h>
 
-constexpr auto nan_val = std::numeric_limits<double>::quiet_NaN();
+constexpr auto nan_val = ni::utils::nan<double>;
 
 TEST(PrevInterp, Base) {
     const std::vector<double> xp{1, 2, 3, 4, 5}, yp{1, 4, 9, 16, 25}, x{2, 2.5, 4.5}, expected{4, 4, 16};

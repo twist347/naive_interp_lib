@@ -23,7 +23,7 @@ namespace ni::_1d::impl {
 #pragma omp parallel for schedule(guided)
         for (idx_t i = 0; i < x.size(); ++i) {
             if (std::isnan(x[i])) {
-                y[i] = std::numeric_limits<value_t>::quiet_NaN();
+                y[i] = utils::nan<value_t>;
                 continue;
             }
             if (utils::eq_flt(x[i], xp[xp.size() - 1])) {
@@ -49,7 +49,7 @@ namespace ni::_1d::impl {
 #pragma omp parallel for schedule(guided)
         for (idx_t i = 0; i < x.size(); ++i) {
             if (std::isnan(x[i])) {
-                y[i] = std::numeric_limits<value_t>::quiet_NaN();
+                y[i] = utils::nan<value_t>;
                 continue;
             }
             if (utils::eq_flt(x[i], xp[xp.size() - 1])) {
@@ -76,7 +76,7 @@ namespace ni::_1d::impl {
 #pragma omp parallel for schedule(guided)
         for (idx_t i = 0; i < x.size(); ++i) {
             if (std::isnan(x[i])) {
-                y[i] = std::numeric_limits<value_t>::quiet_NaN();
+                y[i] = utils::nan<value_t>;
                 continue;
             }
             if (utils::eq_flt(x[i], xp[xp.size() - 1])) {
@@ -105,7 +105,7 @@ namespace ni::_1d::impl {
 #pragma omp parallel for schedule(guided)
         for (idx_t i = 0; i < x.size(); ++i) {
             if (std::isnan(x[i])) {
-                y[i] = std::numeric_limits<value_t>::quiet_NaN();
+                y[i] = utils::nan<double>;
                 continue;
             }
             if (utils::eq_flt(x[i], xp[xp.size() - 1])) {
@@ -141,7 +141,7 @@ namespace ni::_1d::impl {
 #pragma omp parallel for schedule(guided)
         for (idx_t i = 0; i < x.size(); ++i) {
             if (std::isnan(x[i])) {
-                y[i] = std::numeric_limits<value_t>::quiet_NaN();
+                y[i] = utils::nan<double>;
                 continue;
             }
             if (utils::eq_flt(x[i], xp[xp.size() - 1])) {
@@ -180,7 +180,7 @@ namespace ni::_1d::impl {
 #pragma omp parallel for schedule(guided)
         for (idx_t i = 0; i < x.size(); ++i) {
             if (std::isnan(x[i])) {
-                y[i] = std::numeric_limits<value_t>::quiet_NaN();
+                y[i] = utils::nan<double>;
                 continue;
             }
             if (utils::eq_flt(x[i], xp[xp.size() - 1])) {

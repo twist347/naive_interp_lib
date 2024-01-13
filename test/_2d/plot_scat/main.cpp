@@ -30,7 +30,7 @@ int main() {
     // nans test
     std::vector<double> zp_nans(zp.begin(), zp.end());
     for (std::size_t i = 0; i < zp.size(); i += 2) {
-        zp_nans[i] = std::numeric_limits<double>::quiet_NaN();
+        zp_nans[i] = ni::utils::nan<double>;
     }
     const auto z_idw_n = ni::_2d::make_scat_i<ni::_2d::Type2DScat::IDW>(xp, yp, zp_nans)(x, y);
     const auto z_nn_n = ni::_2d::make_scat_i<ni::_2d::Type2DScat::NearestNeighbour>(xp, yp, zp_nans)(x, y);

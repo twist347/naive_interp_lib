@@ -59,7 +59,7 @@ namespace ni::_2d::impl {
                     const auto point = nearest_v->point();
                     const value_type x_coord = point.x(), y_coord = point.y();
                     const auto it = z_vals_.find(point);
-                    z[i] = it == z_vals_.end() ? 0 : it->second;
+                    z[i] = it == z_vals_.end() ? utils::nan<value_type> : it->second;
                     continue;
                 }
                 prev = nearest_tr;
@@ -89,7 +89,7 @@ namespace ni::_2d::impl {
         std::tuple<value_type, value_type, value_type> {
             const auto point = nearest->vertex(n_vert)->point();
             const auto it = z_vals_.find(point);
-            return {point.x(), point.y(), it == z_vals_.end() ? 0 : it->second};
+            return {point.x(), point.y(), it == z_vals_.end() ? utils::nan<value_type> : it->second};
         }
 
         struct point2_t_hash {
