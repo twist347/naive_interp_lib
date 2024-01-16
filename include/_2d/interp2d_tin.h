@@ -55,10 +55,8 @@ namespace ni::_2d::impl {
                 const auto nearest_tr = d_.locate({x[i], y[i]}, prev);
                 if (d_.is_infinite(nearest_tr)) {
                     // TODO: check it
-                    const auto nearest_v = d_.nearest_vertex({x[i], y[i]});
-                    const auto point = nearest_v->point();
-                    const value_type x_coord = point.x(), y_coord = point.y();
-                    const auto it = z_vals_.find(point);
+                    // find nearest point
+                    const auto it = z_vals_.find(d_.nearest_vertex({x[i], y[i]})->point());
                     z[i] = it == z_vals_.end() ? utils::nan<value_type> : it->second;
                     continue;
                 }

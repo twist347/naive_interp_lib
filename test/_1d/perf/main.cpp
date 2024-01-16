@@ -3,7 +3,7 @@
 #include <test_utils.h>
 
 double (*func)(double) = plotting::curves::custom;
-constexpr int N = 1000000;
+constexpr int N = 2000000;
 const auto [xp, yp, x] = plotting::_1d::generate_vals(func, N);
 
 TEST(Prev, Perf) {
