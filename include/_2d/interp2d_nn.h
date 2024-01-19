@@ -8,6 +8,7 @@
 #include <utils.h>
 
 namespace ni::_2d::impl {
+
     template<class Container>
     class i_nearest_neighbour : public i_2d_base<Container> {
     private:

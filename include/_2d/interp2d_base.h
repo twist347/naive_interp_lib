@@ -9,6 +9,7 @@
     constexpr auto operator=(class_name &&) noexcept -> class_name & = default; \
 
 namespace ni::_2d {
+    
     template<class Container>
     class i_2d_base {
     public:

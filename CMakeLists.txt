@@ -10,6 +10,8 @@ find_package(Boost REQUIRED)
 find_package(GSL REQUIRED)
 find_package(Armadillo REQUIRED)
 
+set(CGAL_DO_NOT_WARN_ABOUT_CMAKE_BUILD_TYPE TRUE)
+
 if (CMAKE_BUILD_TYPE MATCHES "Debug")
     message("Debug build")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fsanitize=address,undefined,leak -fno-sanitize-recover=all")

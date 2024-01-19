@@ -7,6 +7,7 @@
 #include <interp1d_base.h>
 
 namespace ni::_1d::impl {
+    
     enum class TypeGSL {
         Linear,
         CubicSpline,

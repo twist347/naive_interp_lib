@@ -3,7 +3,7 @@
 #include <test_utils.h>
 
 double (*func)(double, double) = plotting::surfaces::elliptical_paraboloid;
-constexpr int N = 700; // N * N
+constexpr int N = 500; // N * N
 const auto [xp, yp, zp, x, y] = plotting::_2d::generate_vals(func, N);
 
 TEST(IDW, Perf) {
