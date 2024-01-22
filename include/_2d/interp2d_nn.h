@@ -38,6 +38,7 @@ namespace ni::_2d::impl {
 
         constexpr auto operator()(const container_type &x, const container_type &y) const -> container_type override {
             namespace bgi = boost::geometry::index;
+
             const auto sz = std::min(x.size(), y.size());
             container_type z(sz);
 

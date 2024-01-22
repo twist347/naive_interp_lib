@@ -10,11 +10,7 @@ TEST(IDW, Perf) {
 #ifndef NDEBUG
     GTEST_SKIP_("allowed only in release build");
 #endif
-    const auto start = std::chrono::steady_clock::now();
-    auto interp = ni::_2d::make_scat_i<ni::_2d::Type2DScat::IDW>(xp, yp, zp);
-    const auto z = interp(x, y);
-    const auto end = std::chrono::steady_clock::now();
-    const auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
+    const auto [res, duration] = interp_measure_time<ni::_2d::Type2DScat::IDW>(xp, yp, zp, x, y);
     std::cout << "idw: " << duration << " ms\n";
 }
 
@@ -22,11 +18,7 @@ TEST(NearestNeighbour, Perf) {
 #ifndef NDEBUG
     GTEST_SKIP_("allowed only in release build");
 #endif
-    const auto start = std::chrono::steady_clock::now();
-    auto interp = ni::_2d::make_scat_i<ni::_2d::Type2DScat::NearestNeighbour>(xp, yp, zp);
-    const auto z = interp(x, y);
-    const auto end = std::chrono::steady_clock::now();
-    const auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
+    const auto [res, duration] = interp_measure_time<ni::_2d::Type2DScat::NearestNeighbour>(xp, yp, zp, x, y);
     std::cout << "nearest_neighbour: " << duration << " ms\n";
 }
 
@@ -34,11 +26,7 @@ TEST(TIN, Perf) {
 #ifndef NDEBUG
     GTEST_SKIP_("allowed only in release build");
 #endif
-    const auto start = std::chrono::steady_clock::now();
-    auto interp = ni::_2d::make_scat_i<ni::_2d::Type2DScat::TIN>(xp, yp, zp);
-    const auto z = interp(x, y);
-    const auto end = std::chrono::steady_clock::now();
-    const auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
+    const auto [res, duration] = interp_measure_time<ni::_2d::Type2DScat::TIN>(xp, yp, zp, x, y);
     std::cout << "tin: " << duration << " ms\n";
 }
 

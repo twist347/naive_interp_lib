@@ -73,7 +73,7 @@ namespace ni::_2d::impl {
             }
         }
 
-        constexpr auto make_mat_for_SLAE() {
+        constexpr auto make_mat_for_SLAE() const {
             // TODO: check it
             // value for matrix regularization
             const value_type lambda = 0.001;
