@@ -34,7 +34,7 @@ constexpr auto arrays_eq(const T &real, const T &expected,
     return true;
 }
 
-template<ni::_1d::Type1D type, class Container>
+template<auto type, class Container>
 constexpr auto interp_measure_time(const Container &xp, const Container &yp, const Container &x) {
     const auto start = std::chrono::steady_clock::now();
 
@@ -47,21 +47,7 @@ constexpr auto interp_measure_time(const Container &xp, const Container &yp, con
     return std::make_pair(res, duration);
 }
 
-template<ni::_2d::Type2DScat type, class Container>
-constexpr auto interp_measure_time(const Container &xp, const Container &yp, const Container &zp, const Container &x,
-                                   const Container &y) {
-    const auto start = std::chrono::steady_clock::now();
-
-    auto interp = ni::make_i<type>(xp, yp, zp);
-    auto res = interp(x, y);
-
-    const auto end = std::chrono::steady_clock::now();
-    const auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
-
-    return std::make_pair(res, duration);
-}
-
-template<ni::_2d::Type2DRBF type, class Container>
+template<auto type, class Container>
 constexpr auto interp_measure_time(const Container &xp, const Container &yp, const Container &zp, const Container &x,
                                    const Container &y) {
     const auto start = std::chrono::steady_clock::now();
