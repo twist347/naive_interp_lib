@@ -1,6 +1,6 @@
 #pragma once
 
-namespace ni::_1d {
+namespace ni {
 
     enum class Type1D {
         Prev,
@@ -13,4 +13,14 @@ namespace ni::_1d {
         Akima,
         Steffen
     };
+
+    namespace _1d::impl {
+
+        enum class TypeGSL {
+            Linear,
+            CubicSpline,
+            Akima,
+            Steffen
+        };
+    }
 }

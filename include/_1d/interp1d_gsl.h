@@ -4,16 +4,11 @@
 #include <memory>
 #include <gsl/gsl_spline.h>
 #include <gsl/gsl_interp.h>
-#include <interp1d_base.h>
+
+#include "interp1d_base.h"
+#include "interp1d_types.h"
 
 namespace ni::_1d::impl {
-    
-    enum class TypeGSL {
-        Linear,
-        CubicSpline,
-        Akima,
-        Steffen
-    };
 
     template<TypeGSL type, class Container>
     class i_gsl : public i_1d_base<Container> {

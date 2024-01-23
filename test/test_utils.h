@@ -5,7 +5,8 @@
 #include <random>
 #include <chrono>
 #include <vector>
-#include <utils.h>
+
+#include "utility/utils.h"
 #include <interp_make.h>
 
 template<class Container>
@@ -21,6 +22,7 @@ constexpr auto arrays_eq(const T &real, const T &expected,
                          ni::utils::eps<typename std::remove_cvref_t<T>::value_type>) -> bool {
     using idx_t = std::remove_cvref_t<T>::size_type;
     if (real.size() != expected.size()) {
+        std::cerr << "real.size() != expected.size()\n";
         return false;
     }
     for (idx_t i = 0; i < real.size(); ++i) {
@@ -116,11 +118,10 @@ namespace plotting::_1d {
     }
 
     template<class Value = double>
-    constexpr auto generate_vals(Value (*func)(Value), int N) {
-        const Value x_min = -15.0, x_max = 15.0;
-        std::vector<Value> xp(N), yp(N), x(N / 10);
+    constexpr auto generate_vals(Value (*func)(Value), int count, Value x_min, Value x_max) {
+        std::vector<Value> xp(count), yp(count), x(count / 10);
 
-        const Value step = std::abs(x_max - x_min) / N;
+        const Value step = std::abs(x_max - x_min) / count;
         std::random_device rd;
         std::mt19937 gen(rd());
         std::uniform_real_distribution<Value> dis(x_min + step, x_max - step);
@@ -155,11 +156,9 @@ namespace plotting::_2d {
     }
 
     template<class Value = double>
-    constexpr auto generate_vals(Value (*func)(Value, Value), int N) {
-        const Value x_min = -10.0, x_max = 10.0;
-        const Value y_min = -10.0, y_max = 10.0;
-        const Value step = std::abs(x_max - x_min) / N;
-        const auto sz = (N + 1) * (N + 1);
+    constexpr auto generate_vals(Value (*func)(Value, Value), int count, Value x_min, Value x_max, Value y_min, Value y_max) {
+        const Value step = std::abs(x_max - x_min) / count;
+        const auto sz = (count + 1) * (count + 1);
 
         std::vector<Value> xp(sz), yp(sz), zp(sz), x(sz), y(sz);
         std::random_device rd;

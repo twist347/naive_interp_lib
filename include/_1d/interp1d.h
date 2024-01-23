@@ -1,9 +1,10 @@
 #pragma once
 
 #include <stdexcept>
-#include <interp1d_base.h>
-#include <interp1d_types.h>
-#include <interp1d_algs.h>
+
+#include "interp1d_base.h"
+#include "interp1d_types.h"
+#include "interp1d_algs.h"
 
 namespace ni::_1d::impl {
 

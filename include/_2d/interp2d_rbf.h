@@ -2,9 +2,9 @@
 
 #include <armadillo>
 
-#include <interp2d_base.h>
-#include <interp2d_types.h>
-#include <utils.h>
+#include "interp2d_base.h"
+#include "interp2d_types.h"
+#include "utility/utils.h"
 
 namespace ni::_2d::impl {
 

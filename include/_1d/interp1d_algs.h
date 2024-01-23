@@ -3,9 +3,10 @@
 #include <limits>
 #include <algorithm>
 #include <stdexcept>
-#include <utils.h>
-#include <interp1d_gsl.h>
-#include <container_type_traits.h>
+
+#include "interp1d_gsl.h"
+#include "utility/container_type_traits.h"
+#include "utility/utils.h"
 
 namespace ni::_1d::impl {
 

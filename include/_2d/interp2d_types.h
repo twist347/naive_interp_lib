@@ -1,6 +1,6 @@
 #pragma once
 
-namespace ni::_2d {
+namespace ni {
 
     enum class Type2DScat {
         IDW, // Inverse Distance Weighted

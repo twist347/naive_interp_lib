@@ -1,5 +1,5 @@
 #include <interp_make.h>
-#include <test_utils.h>
+#include "../../test_utils.h"
 
 // LINUX ONLY PLOTTING VIA GNUPLOT
 
@@ -18,15 +18,16 @@ int main() {
     }
 
     double (*func)(double, double) = plotting::surfaces::sin_cos;
-    constexpr int N = 70; // N * N
-    const auto [xp, yp, zp, x, y] = generate_vals(func, N);
+    constexpr int count = 70; // count * count
+    constexpr double x_min = -10.0, x_max = 10.0, y_min = -10.0, y_max = 10.0;
+    const auto [xp, yp, zp, x, y] = generate_vals(func, count, x_min, x_max, y_min, y_max);
 
     std::cout << "xp: " << xp.size() << ", yp: " << yp.size() << ", zp: " << zp.size() << '\n';
     std::cout << "x: " << x.size() << ", y: " << x.size() << ", z: " << y.size() << '\n';
 
-    const auto z_idw = ni::make_i<ni::_2d::Type2DScat::IDW>(xp, yp, zp)(x, y);
-    const auto z_nn = ni::make_i<ni::_2d::Type2DScat::NearestNeighbour>(xp, yp, zp)(x, y);
-    const auto z_tin = ni::make_i<ni::_2d::Type2DScat::TIN>(xp, yp, zp)(x, y);
+    const auto z_idw = ni::make_i<ni::Type2DScat::IDW>(xp, yp, zp)(x, y);
+    const auto z_nn = ni::make_i<ni::Type2DScat::NearestNeighbour>(xp, yp, zp)(x, y);
+    const auto z_tin = ni::make_i<ni::Type2DScat::TIN>(xp, yp, zp)(x, y);
 
     plotting_gnuplot(xp, yp, zp, data_path, "orig");
     plotting_gnuplot(x, y, z_idw, data_path, "idw");
@@ -38,9 +39,9 @@ int main() {
     for (std::size_t i = 0; i < zp.size(); i += 2) {
         zp_nans[i] = ni::utils::nan<double>;
     }
-    const auto z_idw_n = ni::make_i<ni::_2d::Type2DScat::IDW>(xp, yp, zp_nans)(x, y);
-    const auto z_nn_n = ni::make_i<ni::_2d::Type2DScat::NearestNeighbour>(xp, yp, zp_nans)(x, y);
-    const auto z_tin_n = ni::make_i<ni::_2d::Type2DScat::TIN>(xp, yp, zp_nans)(x, y);
+    const auto z_idw_n = ni::make_i<ni::Type2DScat::IDW>(xp, yp, zp_nans)(x, y);
+    const auto z_nn_n = ni::make_i<ni::Type2DScat::NearestNeighbour>(xp, yp, zp_nans)(x, y);
+    const auto z_tin_n = ni::make_i<ni::Type2DScat::TIN>(xp, yp, zp_nans)(x, y);
 
     plotting_gnuplot(x, y, z_idw_n, data_path, "idw_n");
     plotting_gnuplot(x, y, z_nn_n, data_path, "nn_n");

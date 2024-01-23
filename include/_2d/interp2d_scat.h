@@ -1,10 +1,9 @@
 #pragma once
 
-#include <interp2d_base.h>
-#include <interp2d_types.h>
-#include <interp2d_idw.h>
-#include <interp2d_nn.h>
-#include <interp2d_tin.h>
+#include "interp2d_types.h"
+#include "interp2d_idw.h"
+#include "interp2d_nn.h"
+#include "interp2d_tin.h"
 
 namespace ni::_2d::impl {
 

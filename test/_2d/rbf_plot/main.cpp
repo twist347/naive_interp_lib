@@ -1,5 +1,5 @@
 #include <interp_make.h>
-#include <test_utils.h>
+#include "../../test_utils.h"
 
 // LINUX ONLY PLOTTING VIA GNUPLOT
 
@@ -18,19 +18,20 @@ int main() {
     }
 
     double (*func)(double, double) = plotting::surfaces::sin_cos;
-    constexpr int N = 70; // N * N
-    const auto [xp, yp, zp, x, y] = generate_vals(func, N);
+    constexpr int count = 70; // count * count
+    constexpr double x_min = -10.0, x_max = 10.0, y_min = -10.0, y_max = 10.0;
+    const auto [xp, yp, zp, x, y] = generate_vals(func, count, x_min, x_max, y_min, y_max);
 
     std::cout << "xp: " << xp.size() << ", yp: " << yp.size() << ", zp: " << zp.size() << '\n';
     std::cout << "x: " << x.size() << ", y: " << x.size() << ", z: " << y.size() << '\n';
 
-    const auto z_rbf_linear = ni::make_i<ni::_2d::Type2DRBF::Linear>(xp, yp, zp)(x, y);
-    const auto z_rbf_cubic = ni::make_i<ni::_2d::Type2DRBF::Cubic>(xp, yp, zp)(x, y);
-    const auto z_rbf_quintic = ni::make_i<ni::_2d::Type2DRBF::Quintic>(xp, yp, zp)(x, y);
-    const auto z_rbf_m = ni::make_i<ni::_2d::Type2DRBF::Multiquadric>(xp, yp, zp)(x, y);
-    const auto z_rbf_im = ni::make_i<ni::_2d::Type2DRBF::InverseMultiquadric>(xp, yp, zp)(x, y);
-    const auto z_rbf_gauss = ni::make_i<ni::_2d::Type2DRBF::Gaussian>(xp, yp, zp)(x, y);
-    const auto z_rbf_tp = ni::make_i<ni::_2d::Type2DRBF::ThinPlate>(xp, yp, zp)(x, y);
+    const auto z_rbf_linear = ni::make_i<ni::Type2DRBF::Linear>(xp, yp, zp)(x, y);
+    const auto z_rbf_cubic = ni::make_i<ni::Type2DRBF::Cubic>(xp, yp, zp)(x, y);
+    const auto z_rbf_quintic = ni::make_i<ni::Type2DRBF::Quintic>(xp, yp, zp)(x, y);
+    const auto z_rbf_m = ni::make_i<ni::Type2DRBF::Multiquadric>(xp, yp, zp)(x, y);
+    const auto z_rbf_im = ni::make_i<ni::Type2DRBF::InverseMultiquadric>(xp, yp, zp)(x, y);
+    const auto z_rbf_gauss = ni::make_i<ni::Type2DRBF::Gaussian>(xp, yp, zp)(x, y);
+    const auto z_rbf_tp = ni::make_i<ni::Type2DRBF::ThinPlate>(xp, yp, zp)(x, y);
 
     plotting_gnuplot(xp, yp, zp, data_path, "orig");
     plotting_gnuplot(x, y, z_rbf_linear, data_path, "rbf_lin");
@@ -47,7 +48,7 @@ int main() {
         zp_nans[i] = ni::utils::nan<double>;
     }
 
-    const auto z_rbf_lin_n = ni::make_i<ni::_2d::Type2DRBF::Linear>(xp, yp, zp_nans)(x, y);
+    const auto z_rbf_lin_n = ni::make_i<ni::Type2DRBF::Linear>(xp, yp, zp_nans)(x, y);
     plotting_gnuplot(x, y, z_rbf_lin_n, data_path, "rbf_lin_n");
     // nans test end
 

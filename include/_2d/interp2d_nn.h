@@ -4,8 +4,8 @@
 #include <boost/geometry/index/rtree.hpp>
 #include <boost/function_output_iterator.hpp>
 
-#include <interp2d_base.h>
-#include <utils.h>
+#include "interp2d_base.h"
+#include "utility/utils.h"
 
 namespace ni::_2d::impl {
 

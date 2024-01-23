@@ -1,5 +1,5 @@
 #include <interp_make.h>
-#include <test_utils.h>
+#include "../../test_utils.h"
 
 // LINUX ONLY PLOTTING VIA GNUPLOT
 
@@ -18,21 +18,22 @@ int main() {
     }
 
     double (*func)(double) = plotting::curves::custom;
-    constexpr int N = 10000;
-    const auto [xp, yp, x] = generate_vals(func, N);
+    constexpr int count = 10'000;
+    constexpr double x_min = -15.0, x_max = 15.0;
+    const auto [xp, yp, x] = generate_vals(func, count, x_min, x_max);
 
     std::cout << "xp: " << xp.size() << ", yp: " << yp.size() << '\n';
     std::cout << "x: " << x.size() << "y: " << x.size() << '\n';
 
-    const auto y_prev = ni::make_i<ni::_1d::Type1D::Prev>(xp, yp)(x);
-    const auto y_next = ni::make_i<ni::_1d::Type1D::Next>(xp, yp)(x);
-    const auto y_nn = ni::make_i<ni::_1d::Type1D::NearestNeighbour>(xp, yp)(x);
-    const auto y_linear = ni::make_i<ni::_1d::Type1D::Linear>(xp, yp)(x);
-    const auto y_quadratic = ni::make_i<ni::_1d::Type1D::Quadratic>(xp, yp)(x);
-    const auto y_cubic = ni::make_i<ni::_1d::Type1D::Cubic>(xp, yp)(x);
-    const auto y_cubic_s = ni::make_i<ni::_1d::Type1D::CubicSpline>(xp, yp)(x);
-    const auto y_akima = ni::make_i<ni::_1d::Type1D::Akima>(xp, yp)(x);
-    const auto y_steffen = ni::make_i<ni::_1d::Type1D::Steffen>(xp, yp)(x);
+    const auto y_prev = ni::make_i<ni::Type1D::Prev>(xp, yp)(x);
+    const auto y_next = ni::make_i<ni::Type1D::Next>(xp, yp)(x);
+    const auto y_nn = ni::make_i<ni::Type1D::NearestNeighbour>(xp, yp)(x);
+    const auto y_linear = ni::make_i<ni::Type1D::Linear>(xp, yp)(x);
+    const auto y_quadratic = ni::make_i<ni::Type1D::Quadratic>(xp, yp)(x);
+    const auto y_cubic = ni::make_i<ni::Type1D::Cubic>(xp, yp)(x);
+    const auto y_cubic_s = ni::make_i<ni::Type1D::CubicSpline>(xp, yp)(x);
+    const auto y_akima = ni::make_i<ni::Type1D::Akima>(xp, yp)(x);
+    const auto y_steffen = ni::make_i<ni::Type1D::Steffen>(xp, yp)(x);
 
     plotting_gnuplot(xp, yp, data_path, "orig");
     plotting_gnuplot(x, y_prev, data_path, "prev");
