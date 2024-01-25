@@ -94,23 +94,22 @@ namespace ni::_2d::impl {
         }
 
         constexpr value_type radial_func(value_type r, value_type epsilon = 1.0) const {
-            switch (type) {
-                case Type2DRBF::Linear:
-                    return r;
-                case Type2DRBF::Cubic:
-                    return r * r * r;
-                case Type2DRBF::Quintic:
-                    return r * r * r * r * r;
-                case Type2DRBF::Multiquadric:
-                    return std::sqrt(1.0 + epsilon * epsilon * r * r);
-                case Type2DRBF::InverseMultiquadric:
-                    return 1.0 / std::sqrt(1.0 + epsilon * epsilon * r * r);
-                case Type2DRBF::Gaussian:
-                    return std::exp(-epsilon * r * r);
-                case Type2DRBF::ThinPlate:
-                    return utils::eq_flt(r, static_cast<value_type>(0.0)) ? r : r * r * std::log(r);
-                default:
-                    throw std::invalid_argument("Unknown rbf interpolation type");
+            if constexpr (type == Type2DRBF::Linear) {
+                return r;
+            } else if constexpr (type == Type2DRBF::Cubic) {
+                return r * r * r;
+            } else if constexpr (type == Type2DRBF::Quintic) {
+                return r * r * r * r * r;
+            } else if constexpr (type == Type2DRBF::Multiquadric) {
+                return std::sqrt(1.0 + epsilon * epsilon * r * r);
+            } else if constexpr (type == Type2DRBF::InverseMultiquadric) {
+                return 1.0 / std::sqrt(1.0 + epsilon * epsilon * r * r);
+            } else if constexpr (type == Type2DRBF::Gaussian) {
+                return std::exp(-epsilon * r * r);
+            } else if constexpr (type == Type2DRBF::ThinPlate) {
+                return utils::eq_flt(r, static_cast<value_type>(0.0)) ? r : r * r * std::log(r);
+            } else {
+                throw std::invalid_argument("Unknown rbf interpolation type");
             }
         }
 
