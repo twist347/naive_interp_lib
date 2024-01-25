@@ -45,9 +45,8 @@ namespace ni::_2d::impl {
 
             for (size_type i = 0; i < n; ++i) {
                 for (size_type j = 0; j < m; ++j) {
-                    const value_type dx = x[i] - xp_[j];
-                    const value_type dy = y[i] - yp_[j];
-                    z[i] += weights_(j) * radial_func(std::sqrt(dx * dx + dy * dy));
+                    const value_type dx = x[i] - xp_[j], dy = y[i] - yp_[j];
+                    z[i] += weights_[j] * radial_func(std::hypot(dx, dy));
                 }
             }
             return z;
@@ -83,9 +82,8 @@ namespace ni::_2d::impl {
 
             for (size_type i = 0; i < n; ++i) {
                 for (size_type j = i; j < n; ++j) {
-                    const value_type dx = xp_[i] - xp_[j];
-                    const value_type dy = yp_[i] - yp_[j];
-                    const value_type val = radial_func(std::sqrt(dx * dx + dy * dy));
+                    const value_type dx = xp_[i] - xp_[j], dy = yp_[i] - yp_[j];
+                    const value_type val = radial_func(std::hypot(dx, dy));
                     // optimization due to matrix symmetry
                     A(i, j) = val;
                     A(j, i) = val;
@@ -110,7 +108,7 @@ namespace ni::_2d::impl {
                 case Type2DRBF::Gaussian:
                     return std::exp(-epsilon * r * r);
                 case Type2DRBF::ThinPlate:
-                    return r * r * std::log(r);
+                    return utils::eq_flt(r, static_cast<value_type>(0.0)) ? r : r * r * std::log(r);
                 default:
                     throw std::invalid_argument("Unknown rbf interpolation type");
             }
