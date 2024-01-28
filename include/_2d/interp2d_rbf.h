@@ -19,7 +19,10 @@ namespace ni::_2d::impl {
         using container_type = base_t::container_type;
         using value_type = base_t::value_type;
         using size_type = base_t::size_type;
-
+    private:
+        using arma_vec = arma::Col<value_type>; // arma::vec is arma::Col<double>
+        using arma_mat = arma::Mat<value_type>; // arma::mat is arma::Mat<double>
+    public:
         constexpr i_rbf(const container_type &xp,
                         const container_type &yp,
                         const container_type &zp) {
@@ -29,7 +32,8 @@ namespace ni::_2d::impl {
 
             filter_nans(xp, yp, zp);
 
-            const auto A = make_mat_for_SLAE();
+            arma_mat A(xp_.size(), xp_.size());
+            make_mat_for_SLAE(A);
 
             // Solve SLAE: A * weights_ = zp_. Find weights_
             if (!arma::solve(weights_, A, zp_, arma::solve_opts::no_approx + arma::solve_opts::fast)) {
@@ -44,10 +48,13 @@ namespace ni::_2d::impl {
             container_type z(n);
 
             for (size_type i = 0; i < n; ++i) {
+                value_type sum = utils::to<value_type>(0.0);
+#pragma omp parallel for reduction(+:sum) schedule(guided)
                 for (size_type j = 0; j < m; ++j) {
                     const value_type dx = x[i] - xp_[j], dy = y[i] - yp_[j];
-                    z[i] += weights_[j] * radial_func(std::hypot(dx, dy));
+                    sum += weights_[j] * radial_func(std::hypot(dx, dy));
                 }
+                z[i] = sum;
             }
             return z;
         }
@@ -72,25 +79,23 @@ namespace ni::_2d::impl {
             }
         }
 
-        constexpr auto make_mat_for_SLAE() const {
+        constexpr void make_mat_for_SLAE(arma_mat &mat) const {
             // TODO: check it
             // value for matrix regularization
             const value_type lambda = 0.001;
 
-            const auto n = xp_.size();
-            arma_mat A(n, n);
+            const auto n = mat.n_cols;
 
             for (size_type i = 0; i < n; ++i) {
                 for (size_type j = i; j < n; ++j) {
                     const value_type dx = xp_[i] - xp_[j], dy = yp_[i] - yp_[j];
                     const value_type val = radial_func(std::hypot(dx, dy));
                     // optimization due to matrix symmetry
-                    A(i, j) = val;
-                    A(j, i) = val;
+                    mat(i, j) = val;
+                    mat(j, i) = val;
                 }
-                A(i, i) += lambda;
+                mat(i, i) += lambda;
             }
-            return A;
         }
 
         constexpr value_type radial_func(value_type r, value_type epsilon = 1.0) const {
@@ -133,9 +138,6 @@ namespace ni::_2d::impl {
                     throw std::invalid_argument("Unknown rbf interpolation type");
             }
         }
-
-        using arma_vec = arma::Col<value_type>; // arma::vec is arma::Col<double>
-        using arma_mat = arma::Mat<value_type>; // arma::mat is arma::Mat<double>
 
         container_type xp_;
         container_type yp_;
