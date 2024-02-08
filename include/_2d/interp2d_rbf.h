@@ -23,9 +23,7 @@ namespace ni::_2d::impl {
         using arma_vec = arma::Col<value_type>; // arma::vec is arma::Col<double>
         using arma_mat = arma::Mat<value_type>; // arma::mat is arma::Mat<double>
     public:
-        constexpr i_rbf(const container_type &xp,
-                        const container_type &yp,
-                        const container_type &zp) {
+        constexpr i_rbf(const container_type &xp, const container_type &yp, const container_type &zp) {
             if (xp.size() != yp.size() || xp.size() != zp.size()) {
                 throw std::invalid_argument("all xp, yp, zp must be the same size");
             }
@@ -33,7 +31,7 @@ namespace ni::_2d::impl {
             filter_nans(xp, yp, zp);
 
             arma_mat A(xp_.size(), xp_.size());
-            make_mat_for_SLAE(A);
+            fill_mat_for_SLAE(A);
 
             // Solve SLAE: A * weights_ = zp_. Find weights_
             if (!arma::solve(weights_, A, zp_, arma::solve_opts::no_approx + arma::solve_opts::fast)) {
@@ -47,14 +45,12 @@ namespace ni::_2d::impl {
 
             container_type z(n);
 
+#pragma omp parallel for schedule(guided)
             for (size_type i = 0; i < n; ++i) {
-                value_type sum = utils::to<value_type>(0.0);
-#pragma omp parallel for reduction(+:sum) schedule(guided)
                 for (size_type j = 0; j < m; ++j) {
                     const value_type dx = x[i] - xp_[j], dy = y[i] - yp_[j];
-                    sum += weights_[j] * radial_func(std::hypot(dx, dy));
+                    z[i] += weights_[j] * radial_func(std::hypot(dx, dy));
                 }
-                z[i] = sum;
             }
             return z;
         }
@@ -79,13 +75,14 @@ namespace ni::_2d::impl {
             }
         }
 
-        constexpr void make_mat_for_SLAE(arma_mat &mat) const {
+        constexpr void fill_mat_for_SLAE(arma_mat &mat) const {
             // TODO: check it
             // value for matrix regularization
             const value_type lambda = 0.001;
 
             const auto n = mat.n_cols;
 
+#pragma omp parallel for schedule(guided)
             for (size_type i = 0; i < n; ++i) {
                 for (size_type j = i; j < n; ++j) {
                     const value_type dx = xp_[i] - xp_[j], dy = yp_[i] - yp_[j];
@@ -94,8 +91,8 @@ namespace ni::_2d::impl {
                     mat(i, j) = val;
                     mat(j, i) = val;
                 }
-                mat(i, i) += lambda;
             }
+            mat.diag() += lambda;
         }
 
         constexpr value_type radial_func(value_type r, value_type epsilon = 1.0) const {
