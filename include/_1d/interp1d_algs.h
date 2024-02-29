@@ -212,4 +212,5 @@ namespace ni::_1d::impl {
     constexpr auto steffen(const Container &x, const Container &xp, const Container &yp) -> Container {
         return ni::_1d::impl::i_gsl<ni::_1d::impl::TypeGSL::Steffen, Container>(xp, yp)(x);
     }
+
 }

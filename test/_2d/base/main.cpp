@@ -1,5 +1,5 @@
 #include <gtest/gtest.h>
-#include <interp_make.h>
+#include <interp.h>
 #include "../../test_utils.h"
 
 TEST(IDWInterp, Base) {

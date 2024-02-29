@@ -10,8 +10,10 @@ namespace ni::_2d::impl {
     /// Triangulated Irregular Network
     template<class Container>
     class i_tin : public i_2d_base<Container> {
+
     private:
         using base_t = i_2d_base<Container>;
+
     public:
         using container_type = base_t::container_type;
         using value_type = base_t::value_type;
@@ -104,4 +106,5 @@ namespace ni::_2d::impl {
         std::unordered_map<point2_t, value_type, point2_t_hash> z_vals_;
         delaunay_t d_;
     };
+
 }

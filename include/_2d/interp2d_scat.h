@@ -32,8 +32,10 @@ namespace ni::_2d::impl {
 
     template<Type2DScat type, class Container>
     class i_scat : public i_2d_base<Container> {
+
     private:
         using base_t = i_2d_base<Container>;
+
     public:
         using container_type = base_t::container_type;
         using value_type = base_t::value_type;
@@ -52,4 +54,5 @@ namespace ni::_2d::impl {
         using interp_t = detail::interp_t<type, container_type>;
         interp_t interp_;
     };
+
 }

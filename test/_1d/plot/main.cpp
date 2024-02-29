@@ -1,4 +1,4 @@
-#include <interp_make.h>
+#include <interp.h>
 #include "../../test_utils.h"
 
 // LINUX ONLY PLOTTING VIA GNUPLOT

@@ -31,4 +31,5 @@ namespace ni::detail {
 
     template<class Container>
     using container_value_type_t = container_value_type<Container>::type;
+
 }

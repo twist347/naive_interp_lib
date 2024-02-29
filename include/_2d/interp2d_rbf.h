@@ -13,15 +13,19 @@ namespace ni::_2d::impl {
     // Pure RBF interpolator
     template<Type2DRBF type, class Container>
     class i_rbf : public i_2d_base<Container> {
+
     private:
         using base_t = i_2d_base<Container>;
+
     public:
         using container_type = base_t::container_type;
         using value_type = base_t::value_type;
         using size_type = base_t::size_type;
+
     private:
         using arma_vec = arma::Col<value_type>; // arma::vec is arma::Col<double>
         using arma_mat = arma::Mat<value_type>; // arma::mat is arma::Mat<double>
+
     public:
         constexpr i_rbf(const container_type &xp, const container_type &yp, const container_type &zp) {
             if (xp.size() != yp.size() || xp.size() != zp.size()) {
@@ -285,4 +289,5 @@ namespace ni::_2d::impl {
     };
 
 #endif
+
 }

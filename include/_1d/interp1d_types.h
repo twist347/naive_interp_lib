@@ -22,5 +22,7 @@ namespace ni {
             Akima,
             Steffen
         };
+
     }
+
 }

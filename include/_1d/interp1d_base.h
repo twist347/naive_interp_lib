@@ -12,6 +12,7 @@ namespace ni::_1d {
 
     template<class Container>
     class i_1d_base {
+
     public:
         using container_type = std::remove_cvref_t<Container>;
         using value_type = detail::container_value_type_t<container_type>;
@@ -25,4 +26,5 @@ namespace ni::_1d {
 
         constexpr virtual ~i_1d_base() = default;
     };
+
 }

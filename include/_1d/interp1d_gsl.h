@@ -12,8 +12,10 @@ namespace ni::_1d::impl {
 
     template<TypeGSL type, class Container>
     class i_gsl : public i_1d_base<Container> {
+
     private:
         using base_t = i_1d_base<Container>;
+
     public:
         using container_type = base_t::container_type;
         using value_type = base_t::value_type;
@@ -79,5 +81,6 @@ namespace ni::_1d::impl {
         const container_type xp_;
         const container_type yp_;
         const std::unique_ptr<gsl_spline, decltype(&gsl_spline_free)> interp_;
+
     };
 }

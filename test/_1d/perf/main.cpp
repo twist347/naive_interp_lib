@@ -1,5 +1,5 @@
 #include <gtest/gtest.h>
-#include <interp_make.h>
+#include <interp.h>
 #include "../../test_utils.h"
 
 double (*func)(double) = plotting::curves::custom;
@@ -11,7 +11,7 @@ TEST(Prev, Perf) {
 #ifndef NDEBUG
     GTEST_SKIP_("allowed only in release build");
 #endif
-    const auto [res, duration] = interp_measure_time<ni::Type1D::Prev>(xp, yp, x);
+    const auto [_, duration] = interp_measure_time<ni::Type1D::Prev>(xp, yp, x);
     std::cout << "prev: " << duration << " ms\n";
 }
 
@@ -19,7 +19,7 @@ TEST(Next, Perf) {
 #ifndef NDEBUG
     GTEST_SKIP_("allowed only in release build");
 #endif
-    const auto [res, duration] = interp_measure_time<ni::Type1D::Next>(xp, yp, x);
+    const auto [_, duration] = interp_measure_time<ni::Type1D::Next>(xp, yp, x);
     std::cout << "next: " << duration << " ms\n";
 }
 
@@ -27,7 +27,7 @@ TEST(NearestNeighbour, Perf) {
 #ifndef NDEBUG
     GTEST_SKIP_("allowed only in release build");
 #endif
-    const auto [res, duration] = interp_measure_time<ni::Type1D::NearestNeighbour>(xp, yp, x);
+    const auto [_, duration] = interp_measure_time<ni::Type1D::NearestNeighbour>(xp, yp, x);
     std::cout << "nearest_neighbour: " << duration << " ms\n";
 }
 
@@ -35,7 +35,7 @@ TEST(Linear, Perf) {
 #ifndef NDEBUG
     GTEST_SKIP_("allowed only in release build");
 #endif
-    const auto [res, duration] = interp_measure_time<ni::Type1D::Linear>(xp, yp, x);
+    const auto [_, duration] = interp_measure_time<ni::Type1D::Linear>(xp, yp, x);
     std::cout << "linear: " << duration << " ms\n";
 }
 
@@ -43,7 +43,7 @@ TEST(Quadratic, Perf) {
 #ifndef NDEBUG
     GTEST_SKIP_("allowed only in release build");
 #endif
-    const auto [res, duration] = interp_measure_time<ni::Type1D::Quadratic>(xp, yp, x);
+    const auto [_, duration] = interp_measure_time<ni::Type1D::Quadratic>(xp, yp, x);
     std::cout << "quadratic: " << duration << " ms\n";
 }
 
@@ -51,7 +51,7 @@ TEST(Cubic, Perf) {
 #ifndef NDEBUG
     GTEST_SKIP_("allowed only in release build");
 #endif
-    const auto [res, duration] = interp_measure_time<ni::Type1D::Cubic>(xp, yp, x);
+    const auto [_, duration] = interp_measure_time<ni::Type1D::Cubic>(xp, yp, x);
     std::cout << "cubic: " << duration << " ms\n";
 }
 
@@ -59,7 +59,7 @@ TEST(CubicSpline, Perf) {
 #ifndef NDEBUG
     GTEST_SKIP_("allowed only in release build");
 #endif
-    const auto [res, duration] = interp_measure_time<ni::Type1D::CubicSpline>(xp, yp, x);
+    const auto [_, duration] = interp_measure_time<ni::Type1D::CubicSpline>(xp, yp, x);
     std::cout << "cubic_spline: " << duration << " ms\n";
 }
 
@@ -67,7 +67,7 @@ TEST(Akima, Perf) {
 #ifndef NDEBUG
     GTEST_SKIP_("allowed only in release build");
 #endif
-    const auto [res, duration] = interp_measure_time<ni::Type1D::Akima>(xp, yp, x);
+    const auto [_, duration] = interp_measure_time<ni::Type1D::Akima>(xp, yp, x);
     std::cout << "akima: " << duration << " ms\n";
 }
 
@@ -75,7 +75,7 @@ TEST(Steffen, Perf) {
 #ifndef NDEBUG
     GTEST_SKIP_("allowed only in release build");
 #endif
-    const auto [res, duration] = interp_measure_time<ni::Type1D::Steffen>(xp, yp, x);
+    const auto [_, duration] = interp_measure_time<ni::Type1D::Steffen>(xp, yp, x);
     std::cout << "steffen: " << duration << " ms\n";
 }
 

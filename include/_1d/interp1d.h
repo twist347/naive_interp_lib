@@ -10,8 +10,10 @@ namespace ni::_1d::impl {
 
     template<Type1D type, class Container>
     class i_1d : public i_1d_base<Container> {
+
     private:
         using base_t = i_1d_base<Container>;
+
     public:
         using container_type = base_t::container_type;
         using value_type = base_t::value_type;
@@ -81,4 +83,5 @@ namespace ni::_1d::impl {
         const container_type xp_;
         const container_type yp_;
     };
+
 }
