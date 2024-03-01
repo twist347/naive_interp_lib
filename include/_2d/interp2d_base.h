@@ -1,19 +1,19 @@
 #pragma once
 
 #include "utility/container_type_traits.h"
-
-#define GENERATE_MOVE_AND_DELETE_COPY_SEMANTICS(class_name) \
-    constexpr class_name(const class_name &) = delete; \
-    constexpr class_name(class_name &&) noexcept = default; \
-    constexpr auto operator=(const class_name &) -> class_name & = delete; \
-    constexpr auto operator=(class_name &&) noexcept -> class_name & = default; \
+#include "utility/macros.h"
 
 namespace ni::_2d {
     
-    template<class Container>
+    template<class Container, bool IsCached = true>
     class i_2d_base {
+    private:
+        using pure_container = std::remove_cvref_t<Container>;
+
     public:
-        using container_type = std::remove_cvref_t<Container>;
+        using container_type = pure_container;
+        using cref_type = const container_type &;
+        using cref_or_val_c_t = std::conditional_t<IsCached, container_type, cref_type>;
         using value_type = detail::container_value_type_t<container_type>;
         using size_type = detail::container_size_type_t<container_type>;
 
@@ -21,7 +21,7 @@ namespace ni::_2d {
 
         constexpr i_2d_base() = default;
 
-        constexpr virtual auto operator()(const container_type &, const container_type &) const -> container_type = 0;
+        constexpr virtual auto operator()(cref_type , cref_type) const -> container_type = 0;
 
         constexpr virtual ~i_2d_base() = default;
     };

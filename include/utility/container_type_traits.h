@@ -21,7 +21,7 @@ namespace ni::detail {
     // type trait for value_type
     template<class Container, class = void>
     struct container_value_type {
-        using type = std::remove_cvref_t<decltype(std::declval<Container>()[])>;
+        using type = std::remove_cvref_t<decltype(std::declval<Container>().operator[])>;
     };
 
     template<class Container>

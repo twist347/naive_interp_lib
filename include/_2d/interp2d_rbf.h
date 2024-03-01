@@ -11,11 +11,13 @@ namespace ni::_2d::impl {
 #if 1
 
     // Pure RBF interpolator
-    template<Type2DRBF type, class Container>
-    class i_rbf : public i_2d_base<Container> {
+    template<Type2DRBF type, class Container, bool IsCached = true>
+    class i_rbf : public i_2d_base<Container, IsCached> {
 
     private:
-        using base_t = i_2d_base<Container>;
+        using base_t = i_2d_base<Container, IsCached>;
+        using cref_or_value_c_t = base_t::cref_or_val_c_t;
+        using cref_type = base_t::cref_type;
 
     public:
         using container_type = base_t::container_type;
@@ -27,7 +29,7 @@ namespace ni::_2d::impl {
         using arma_mat = arma::Mat<value_type>; // arma::mat is arma::Mat<double>
 
     public:
-        constexpr i_rbf(const container_type &xp, const container_type &yp, const container_type &zp) {
+        constexpr i_rbf(cref_type xp, cref_type yp, cref_type zp) {
             if (xp.size() != yp.size() || xp.size() != zp.size()) {
                 throw std::invalid_argument("all xp, yp, zp must be the same size");
             }
@@ -43,7 +45,7 @@ namespace ni::_2d::impl {
             }
         }
 
-        constexpr auto operator()(const container_type &x, const container_type &y) const -> container_type override {
+        constexpr auto operator()(cref_type x, cref_type y) const -> container_type override {
             const auto n = x.size();
             const auto m = xp_.size();
 
@@ -60,7 +62,7 @@ namespace ni::_2d::impl {
         }
 
     private:
-        constexpr void filter_nans(const container_type &xp, const container_type &yp, const container_type &zp) {
+        constexpr void filter_nans(cref_type xp, cref_type yp, cref_type zp) {
             const auto nans_count = std::count_if(zp_.begin(), zp_.end(),
                                                   [](value_type val) { return std::isnan(val); });
             const auto sz = zp.size() - nans_count;

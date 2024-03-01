@@ -25,9 +25,9 @@ int main() {
     std::cout << "xp: " << xp.size() << ", yp: " << yp.size() << ", zp: " << zp.size() << '\n';
     std::cout << "x: " << x.size() << ", y: " << x.size() << ", z: " << y.size() << '\n';
 
-    const auto z_idw = ni::make_i<ni::Type2DScat::IDW>(xp, yp, zp)(x, y);
-    const auto z_nn = ni::make_i<ni::Type2DScat::NearestNeighbour>(xp, yp, zp)(x, y);
-    const auto z_tin = ni::make_i<ni::Type2DScat::TIN>(xp, yp, zp)(x, y);
+    const auto z_idw = ni::do_i<ni::Type2DScat::IDW>(x, y, xp, yp, zp);
+    const auto z_nn = ni::do_i<ni::Type2DScat::NearestNeighbour>(x, y, xp, yp, zp);
+    const auto z_tin = ni::do_i<ni::Type2DScat::TIN>(x, y, xp, yp, zp);
 
     plotting_gnuplot(xp, yp, zp, data_path, "orig");
     plotting_gnuplot(x, y, z_idw, data_path, "idw");
@@ -39,9 +39,9 @@ int main() {
     for (std::size_t i = 0; i < zp.size(); i += 2) {
         zp_nans[i] = ni::utils::nan<double>;
     }
-    const auto z_idw_n = ni::make_i<ni::Type2DScat::IDW>(xp, yp, zp_nans)(x, y);
-    const auto z_nn_n = ni::make_i<ni::Type2DScat::NearestNeighbour>(xp, yp, zp_nans)(x, y);
-    const auto z_tin_n = ni::make_i<ni::Type2DScat::TIN>(xp, yp, zp_nans)(x, y);
+    const auto z_idw_n = ni::do_i<ni::Type2DScat::IDW>(x, y, xp, yp,zp_nans);
+    const auto z_nn_n = ni::do_i<ni::Type2DScat::NearestNeighbour>(x, y, xp, yp,zp_nans);
+    const auto z_tin_n = ni::do_i<ni::Type2DScat::TIN>(x, y, xp, yp,zp_nans);
 
     plotting_gnuplot(x, y, z_idw_n, data_path, "idw_n");
     plotting_gnuplot(x, y, z_nn_n, data_path, "nn_n");

@@ -9,11 +9,13 @@
 
 namespace ni::_2d::impl {
 
-    template<class Container>
-    class i_nearest_neighbour : public i_2d_base<Container> {
+    template<class Container, bool IsCached = true>
+    class i_nearest_neighbour : public i_2d_base<Container, IsCached> {
 
     private:
-        using base_t = i_2d_base<Container>;
+        using base_t = i_2d_base<Container, IsCached>;
+        using cref_or_value_c_t = base_t::cref_or_val_c_t;
+        using cref_type = base_t::cref_type;
 
     public:
         using container_type = base_t::container_type;
@@ -24,7 +26,7 @@ namespace ni::_2d::impl {
         using point2_t = boost::geometry::model::point<value_type, 2, boost::geometry::cs::cartesian>;
 
     public:
-        constexpr i_nearest_neighbour(const container_type &xp, const container_type &yp, const container_type &zp) {
+        constexpr i_nearest_neighbour(cref_type xp, cref_type yp, cref_type zp) {
             if (xp.size() != yp.size() || xp.size() != zp.size()) {
                 throw std::invalid_argument("all xp, yp, zp must be the same size");
             }

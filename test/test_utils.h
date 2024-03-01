@@ -20,12 +20,12 @@ template<class T>
 constexpr auto arrays_eq(const T &real, const T &expected,
                          typename std::remove_cvref_t<T>::value_type eps =
                          ni::utils::eps<typename std::remove_cvref_t<T>::value_type>) -> bool {
-    using idx_t = std::remove_cvref_t<T>::size_type;
+    using size_type = std::remove_cvref_t<T>::size_type;
     if (real.size() != expected.size()) {
         std::cerr << "real.size() != expected.size()\n";
         return false;
     }
-    for (idx_t i = 0; i < real.size(); ++i) {
+    for (size_type i = 0; i < real.size(); ++i) {
         const auto r = real[i], e = expected[i];
         if ((!std::isnan(r) || !std::isnan(e)) && !ni::utils::eq_flt(r, e, eps)) {
             std::cerr << std::fixed << std::setprecision(-std::log10(eps)) << "real: " << r << ", expected: " << e
@@ -40,8 +40,7 @@ template<auto type, class Container>
 constexpr auto interp_measure_time(const Container &xp, const Container &yp, const Container &x) {
     const auto start = std::chrono::steady_clock::now();
 
-    auto interp = ni::make_i<type>(xp, yp);
-    auto res = interp(x);
+    const auto res = ni::do_i<type>(x, xp, yp);
 
     const auto end = std::chrono::steady_clock::now();
     const auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
@@ -54,8 +53,7 @@ constexpr auto interp_measure_time(const Container &xp, const Container &yp, con
                                    const Container &y) {
     const auto start = std::chrono::steady_clock::now();
 
-    auto interp = ni::make_i<type>(xp, yp, zp);
-    auto res = interp(x, y);
+    const auto res = ni::do_i<type>(x, y, xp, yp, zp);
 
     const auto end = std::chrono::steady_clock::now();
     const auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();

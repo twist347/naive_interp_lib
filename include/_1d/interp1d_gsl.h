@@ -10,18 +10,20 @@
 
 namespace ni::_1d::impl {
 
-    template<TypeGSL type, class Container>
-    class i_gsl : public i_1d_base<Container> {
+    template<TypeGSL type, class Container, bool IsCached = true>
+    class i_gsl : public i_1d_base<Container, IsCached> {
 
     private:
-        using base_t = i_1d_base<Container>;
+        using base_t = i_1d_base<Container, IsCached>;
+        using cref_or_value_c_t = base_t::cref_or_val_c_t;
+        using cref_type = base_t::cref_type;
 
     public:
         using container_type = base_t::container_type;
         using value_type = base_t::value_type;
         using size_type = base_t::size_type;
 
-        constexpr i_gsl(const container_type &xp, const container_type &yp) :
+        constexpr i_gsl(cref_type xp, cref_type yp) :
                 xp_(xp),
                 yp_(yp),
                 interp_(gsl_spline_alloc(gsl_spline_alloc_type(), xp.size()), gsl_spline_free) {
@@ -38,7 +40,7 @@ namespace ni::_1d::impl {
 
         GENERATE_MOVE_AND_DELETE_COPY_SEMANTICS(i_gsl)
 
-        constexpr auto operator()(const container_type &x) const -> container_type override {
+        constexpr auto operator()(cref_type x) const -> container_type override {
             container_type y(x.size());
             const auto raw_ptr_interp = interp_.get();
 #pragma omp parallel for firstprivate(raw_ptr_interp) schedule(guided)
@@ -78,9 +80,10 @@ namespace ni::_1d::impl {
             }
         }
 
-        const container_type xp_;
-        const container_type yp_;
+        cref_or_value_c_t xp_;
+        cref_or_value_c_t yp_;
         const std::unique_ptr<gsl_spline, decltype(&gsl_spline_free)> interp_;
 
     };
+
 }

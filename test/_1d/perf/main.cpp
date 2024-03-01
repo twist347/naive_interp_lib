@@ -79,6 +79,15 @@ TEST(Steffen, Perf) {
     std::cout << "steffen: " << duration << " ms\n";
 }
 
+TEST(Linear, Avg) {
+    long long avg_dur = 0L;
+    for (std::size_t i = 0; i < 300; ++i) {
+        const auto [_, duration] = interp_measure_time<ni::Type1D::Linear>(xp, yp, x);
+        avg_dur += duration;
+    }
+    std::cout << avg_dur / 300 << '\n';
+}
+
 int main(int argc, char **argv) {
     std::cout << "xp: " << xp.size() << ", yp: " << yp.size() << '\n';
     std::cout << "x: " << x.size() << '\n';

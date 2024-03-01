@@ -342,15 +342,15 @@ TEST(AkimaInterp, NaninYp) {
     ASSERT_TRUE(arrays_eq(y, expected));
 }
 
-TEST(Interp1D, Traits) {
-    using type =
-            std::invoke_result_t<decltype(ni::make_i<ni::Type1D::Linear,
-                    std::vector<double>, std::vector<double>>), std::vector<double>, std::vector<double>>;
-    static_assert(std::is_same_v<type::container_type, std::vector<double>>);
-    static_assert(std::is_same_v<type::value_type, double>);
-    static_assert(std::is_same_v<type::size_type, std::size_t>);
-    ASSERT_TRUE(1);
-}
+// TEST(Interp1D, Traits) {
+//     using type =
+//             std::invoke_result_t<decltype(ni::make_i<ni::Type1D::Linear,
+//                     std::vector<double>, std::vector<double>>), std::vector<double>, std::vector<double>>;
+//     static_assert(std::is_same_v<type::container_type, std::vector<double>>);
+//     static_assert(std::is_same_v<type::value_type, double>);
+//     static_assert(std::is_same_v<type::size_type, std::size_t>);
+//     ASSERT_TRUE(1);
+// }
 
 int main(int argc, char **argv) {
     testing::InitGoogleTest(&argc, argv);

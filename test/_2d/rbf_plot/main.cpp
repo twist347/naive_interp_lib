@@ -25,13 +25,13 @@ int main() {
     std::cout << "xp: " << xp.size() << ", yp: " << yp.size() << ", zp: " << zp.size() << '\n';
     std::cout << "x: " << x.size() << ", y: " << x.size() << ", z: " << y.size() << '\n';
 
-    const auto z_rbf_linear = ni::make_i<ni::Type2DRBF::Linear>(xp, yp, zp)(x, y);
-    const auto z_rbf_cubic = ni::make_i<ni::Type2DRBF::Cubic>(xp, yp, zp)(x, y);
-    const auto z_rbf_quintic = ni::make_i<ni::Type2DRBF::Quintic>(xp, yp, zp)(x, y);
-    const auto z_rbf_m = ni::make_i<ni::Type2DRBF::Multiquadric>(xp, yp, zp)(x, y);
-    const auto z_rbf_im = ni::make_i<ni::Type2DRBF::InverseMultiquadric>(xp, yp, zp)(x, y);
-    const auto z_rbf_gauss = ni::make_i<ni::Type2DRBF::Gaussian>(xp, yp, zp)(x, y);
-    const auto z_rbf_tp = ni::make_i<ni::Type2DRBF::ThinPlate>(xp, yp, zp)(x, y);
+    const auto z_rbf_linear = ni::do_i<ni::Type2DRBF::Linear>(x, y, xp, yp, zp);
+    const auto z_rbf_cubic = ni::do_i<ni::Type2DRBF::Cubic>(x, y, xp, yp, zp);
+    const auto z_rbf_quintic = ni::do_i<ni::Type2DRBF::Quintic>(x, y, xp, yp, zp);
+    const auto z_rbf_m = ni::do_i<ni::Type2DRBF::Multiquadric>(x, y, xp, yp, zp);
+    const auto z_rbf_im = ni::do_i<ni::Type2DRBF::InverseMultiquadric>(x, y, xp, yp, zp);
+    const auto z_rbf_gauss = ni::do_i<ni::Type2DRBF::Gaussian>(x, y, xp, yp, zp);
+    const auto z_rbf_tp = ni::do_i<ni::Type2DRBF::ThinPlate>(x, y, xp, yp, zp);
 
     plotting_gnuplot(xp, yp, zp, data_path, "orig");
     plotting_gnuplot(x, y, z_rbf_linear, data_path, "rbf_lin");
@@ -48,7 +48,7 @@ int main() {
         zp_nans[i] = ni::utils::nan<double>;
     }
 
-    const auto z_rbf_lin_n = ni::make_i<ni::Type2DRBF::Linear>(xp, yp, zp_nans)(x, y);
+    const auto z_rbf_lin_n = ni::do_i<ni::Type2DRBF::Linear>(x, y, xp, yp, zp_nans);
     plotting_gnuplot(x, y, z_rbf_lin_n, data_path, "rbf_lin_n");
     // nans test end
 

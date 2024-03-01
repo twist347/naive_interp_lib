@@ -11,11 +11,13 @@
 namespace ni::_2d::impl {
 
     /// Inverse Distance Weighted
-    template<class Container>
-    class i_idw : public i_2d_base<Container> {
+    template<class Container, bool IsCached = true>
+    class i_idw : public i_2d_base<Container, IsCached> {
 
     private:
-        using base_t = i_2d_base<Container>;
+        using base_t = i_2d_base<Container, IsCached>;
+        using cref_or_value_c_t = base_t::cref_or_val_c_t;
+        using cref_type = base_t::cref_type;
 
     public:
         using container_type = base_t::container_type;
@@ -27,9 +29,9 @@ namespace ni::_2d::impl {
         using point3_t = std::pair<point2_t, value_type>;
 
     public:
-        constexpr i_idw(const container_type &xp,
-                        const container_type &yp,
-                        const container_type &zp,
+        constexpr i_idw(cref_type xp,
+                        cref_type yp,
+                        cref_type zp,
                         std::size_t count = 5,
                         std::size_t power = 2) : count_(count), power_(power) {
 
@@ -46,7 +48,7 @@ namespace ni::_2d::impl {
 
         GENERATE_MOVE_AND_DELETE_COPY_SEMANTICS(i_idw)
 
-        constexpr auto operator()(const container_type &x, const container_type &y) const -> container_type override {
+        constexpr auto operator()(cref_type x, cref_type y) const -> container_type override {
             namespace bgi = boost::geometry::index;
             const auto sz = std::min(x.size(), y.size());
             container_type z(sz);

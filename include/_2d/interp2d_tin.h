@@ -8,11 +8,13 @@
 namespace ni::_2d::impl {
 
     /// Triangulated Irregular Network
-    template<class Container>
-    class i_tin : public i_2d_base<Container> {
+    template<class Container, bool IsCached = true>
+    class i_tin : public i_2d_base<Container, IsCached> {
 
     private:
-        using base_t = i_2d_base<Container>;
+        using base_t = i_2d_base<Container, IsCached>;
+        using cref_or_value_c_t = base_t::cref_or_val_c_t;
+        using cref_type = base_t::cref_type;
 
     public:
         using container_type = base_t::container_type;
@@ -25,11 +27,12 @@ namespace ni::_2d::impl {
         using delaunay_t = CGAL::Delaunay_triangulation_2<kernel_t>;
 
     public:
-        constexpr i_tin(const container_type &xp, const container_type &yp, const container_type &zp) {
+        constexpr i_tin(cref_type xp, cref_type yp, cref_type zp) {
             if (xp.size() != yp.size() || xp.size() != zp.size()) {
                 throw std::invalid_argument("all xp, yp, zp must be the same size");
             }
-            const auto nan_count = std::count_if(zp.begin(), zp.end(), [](value_type val) { return std::isnan(val); });
+            const auto nan_count =
+                std::count_if(zp.begin(), zp.end(), [](value_type val) { return std::isnan(val); });
             const auto sz = zp.size() - nan_count;
             std::vector<point2_t> points(sz);
             z_vals_.reserve(sz);
@@ -47,7 +50,7 @@ namespace ni::_2d::impl {
 
         GENERATE_MOVE_AND_DELETE_COPY_SEMANTICS(i_tin)
 
-        constexpr auto operator()(const container_type &x, const container_type &y) const -> container_type override {
+        constexpr auto operator()(cref_type x, cref_type y) const -> container_type override {
             const auto sz = std::min(x.size(), y.size());
             container_type z(sz);
             delaunay_t::Face_handle prev{};
