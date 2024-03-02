@@ -85,7 +85,7 @@ TEST(Linear, Avg) {
         const auto [_, duration] = interp_measure_time<ni::Type1D::Linear>(xp, yp, x);
         avg_dur += duration;
     }
-    std::cout << avg_dur / 300 << '\n';
+    std::cout << "avg linear: " << avg_dur / 300 << '\n';
 }
 
 int main(int argc, char **argv) {

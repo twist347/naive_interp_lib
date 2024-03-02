@@ -4,6 +4,8 @@ project(naive_interp_lib)
 
 set(CMAKE_CXX_STANDARD 23)
 
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+
 find_package(OpenMP REQUIRED)
 find_package(CGAL REQUIRED)
 find_package(Boost REQUIRED)
