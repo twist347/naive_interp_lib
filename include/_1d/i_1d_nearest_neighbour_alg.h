@@ -5,7 +5,10 @@ namespace interp {
     namespace detail {
 
         template<typename XpIter, typename YpIter, typename Value>
-        constexpr auto direct_nn_calc_(XpIter xp_first, XpIter xp_last, YpIter yp_first, Value xi) -> Value {
+        constexpr auto direct_nn_calc_(
+            XpIter xp_first, XpIter xp_last,
+            YpIter yp_first, Value xi
+        ) -> Value {
             const auto idx = std::distance(xp_first, std::lower_bound(xp_first, xp_last, xi));
             if (utils::eq(xi, *(xp_first + idx))) {
                 return *(yp_first + idx);
@@ -34,8 +37,7 @@ namespace interp {
                 }
             };
 
-            const auto x_sz = std::distance(x_first, x_last);
-            utils::custom_transform(x_sz, THRESHOLD_VALUE, x_first, x_last, dest_first, calc);
+            detail::apply_transform(x_first, x_last, dest_first, calc);
         }
 
         template<typename XIter, typename XpIter, typename YpIter, typename DestIter, typename Param>
@@ -64,8 +66,7 @@ namespace interp {
                 }
             };
 
-            const auto x_sz = std::distance(x_first, x_last);
-            utils::custom_transform(x_sz, THRESHOLD_VALUE, x_first, x_last, dest_first, calc);
+            detail::apply_transform(x_first, x_last, dest_first, calc);
         }
 
         template<typename XIter, typename XpIter, typename YpIter, typename DestIter>
@@ -93,8 +94,7 @@ namespace interp {
                 }
             };
 
-            const auto x_sz = std::distance(x_first, x_last);
-            utils::custom_transform(x_sz, THRESHOLD_VALUE, x_first, x_last, dest_first, calc);
+            detail::apply_transform(x_first, x_last, dest_first, calc);
         }
 
     }
