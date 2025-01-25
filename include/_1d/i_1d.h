@@ -1,5 +1,6 @@
 #pragma once
 
+#include <cassert>
 #include <vector>
 
 #include "i_1d_types.h"
@@ -24,11 +25,13 @@ namespace interp {
         auto set_data(
             XpIter xp_first, XpIter xp_last,
             YpIter yp_first, YpIter yp_last,
-            const params_1d<typename utils::common_iter_val_type<XpIter, YpIter>> &p = {}
+            const params_1d<utils::common_iter_val_type<XpIter, YpIter>> &p = {}
         ) -> void {
-            static_assert(std::convertible_to<typename utils::common_iter_val_type<XpIter, YpIter>, value_type>);
+            static_assert(std::convertible_to<utils::common_iter_val_type<XpIter, YpIter>, value_type>);
             detail::check_input_data(
-                xp_first, xp_last, yp_first, yp_last, p.extrapolate, p.bounds_check, detail::min_num_points_<type>()
+                xp_first, xp_last,
+                yp_first, yp_last,
+                p.extrapolate, p.bounds_check, detail::min_num_points_<type>()
             );
             xp_ = { xp_first, xp_last };
             yp_ = { yp_first, yp_last };
@@ -37,11 +40,19 @@ namespace interp {
 
         template<typename XpContainer, typename YpContainer>
         auto set_data(
-            const XpContainer &xp,
-            const YpContainer &yp,
-            const params_1d<typename utils::common_cont_val_type<XpContainer, YpContainer>> &p = {}
+            XpContainer &&xp,
+            YpContainer &&yp,
+            const params_1d<utils::common_cont_val_type<XpContainer, YpContainer>> &p = {}
         ) -> void {
-            set_data(std::cbegin(xp), std::cend(xp), std::cbegin(yp), std::cend(yp), p);
+            if constexpr (std::is_rvalue_reference_v<decltype(xp)> && std::is_rvalue_reference_v<decltype(yp)>) {
+                set_data(
+                    std::make_move_iterator(xp.begin()), std::make_move_iterator(xp.end()),
+                    std::make_move_iterator(yp.begin()), std::make_move_iterator(yp.end()),
+                    p
+                );
+            } else {
+                set_data(std::cbegin(xp), std::cend(xp), std::cbegin(yp), std::cend(yp), p);
+            }
         }
 
         template<typename XIter, typename DestIter>
@@ -55,11 +66,17 @@ namespace interp {
             );
         }
 
-        template<typename XContainer>
-        auto operator()(const XContainer &x) const {
-            using container_type = typename std::remove_cvref_t<XContainer>;
-            container_type dest(std::size(x));
+        template<typename XContainer, typename DestContainer>
+        auto operator()(const XContainer &x, DestContainer &dest) const -> void {
+            assert(std::size(x) == std::size(dest));
             operator()(std::cbegin(x), std::cend(x), std::begin(dest));
+        }
+
+        template<typename XContainer, typename DestContainer = std::remove_cvref_t<XContainer>>
+        auto operator()(const XContainer &x) const -> DestContainer {
+            DestContainer dest(std::size(x));
+            operator()(std::cbegin(x), std::cend(x), std::begin(dest));
+
             return dest;
         }
 

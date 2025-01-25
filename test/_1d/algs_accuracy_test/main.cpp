@@ -9,8 +9,9 @@ using container = std::vector<double>;
 
 TEST(PrevInterp, Regular) {
     const container xp{1, 2, 3, 4, 5}, yp{1, 4, 9, 16, 25}, x{1, 3, 4.5}, exp{1, 9, 16};
+    container y(x.size());
     auto interp = interp::make_i<interp::Type1D::Prev>(xp, yp);
-    const auto y = interp(x);
+    interp(x, y);
     ASSERT_TRUE(arrays_eq(y, exp));
 }
 

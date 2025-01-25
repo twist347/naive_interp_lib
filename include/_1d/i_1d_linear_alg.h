@@ -116,7 +116,7 @@ namespace interp {
         YpIter yp_first,
         DestIter dest_first,
         const Params &p
-    ) {
+    ) -> void {
         if (!p.bounds_check && !p.extrapolate) {
             detail::linear_pure_impl(x_first, x_last, xp_first, xp_last, yp_first, dest_first);
         } else if (p.bounds_check && !p.extrapolate) {

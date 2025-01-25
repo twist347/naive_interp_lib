@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.26)
+cmake_minimum_required(VERSION 3.15)
 
 project(naive_interp_lib)
 
@@ -16,17 +16,10 @@ endif ()
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
 
-#include_directories(${Boost_INCLUDE_DIRS})
-#include_directories(${ARMADILLO_INCLUDE_DIRS})
-
-add_library(ni INTERFACE
-        include/_1d/i_1d_linear_alg.h)
+add_library(ni INTERFACE)
 target_include_directories(ni INTERFACE ${CMAKE_CURRENT_SOURCE_DIR}/include)
-target_link_libraries(ni INTERFACE ${Boost_LIBRARIES} CGAL::CGAL ${ARMADILLO_LIBRARIES})
+target_link_libraries(ni INTERFACE TBB::tbb)
 
 add_subdirectory(test/_1d/algs_accuracy_test)
-#add_subdirectory(test/_1d/perf_test)
 add_subdirectory(test/_1d/gperf_test)
 add_subdirectory(test/_1d/plot)
-
-#add_subdirectory(test/_2d/scat_plot)
