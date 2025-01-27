@@ -1,5 +1,11 @@
 #pragma once
 
+#include <algorithm>
+#include <cmath>
+
+#include "utils.h"
+#include "i_1d_alg.h"
+
 namespace interp {
 
     namespace detail {
@@ -7,8 +13,9 @@ namespace interp {
         template<typename XpIter, typename YpIter, typename Value>
         constexpr auto direct_nn_calc_(
             XpIter xp_first, XpIter xp_last,
-            YpIter yp_first, Value xi
-        ) -> Value {
+            YpIter yp_first,
+            Value xi
+        ) noexcept -> Value {
             const auto idx = std::distance(xp_first, std::lower_bound(xp_first, xp_last, xi));
             if (utils::eq(xi, *(xp_first + idx))) {
                 return *(yp_first + idx);

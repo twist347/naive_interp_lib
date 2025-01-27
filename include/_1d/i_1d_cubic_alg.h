@@ -2,8 +2,8 @@
 
 #include <algorithm>
 #include <cmath>
+
 #include "utils.h"
-#include "exec.h"
 #include "i_1d_alg.h"
 
 namespace interp {
@@ -28,7 +28,7 @@ namespace interp {
         constexpr auto direct_cubic_calc_(
             XpIter xp_first, XpIter xp_last,
             YpIter yp_first, Value xi
-        ) -> Value {
+        ) noexcept -> Value {
             auto idx = std::distance(xp_first, std::upper_bound(xp_first, xp_last, xi)) - 1;
             if (utils::eq(xi, *(xp_first + idx))) {
                 return *(yp_first + idx);

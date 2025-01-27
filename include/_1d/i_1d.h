@@ -10,7 +10,6 @@
 #include "i_1d_quadratic_alg.h"
 #include "i_1d_cubic_alg.h"
 #include "i_1d_utils.h"
-#include "../utility/params.h"
 
 namespace interp {
 
@@ -31,7 +30,8 @@ namespace interp {
             detail::check_input_data(
                 xp_first, xp_last,
                 yp_first, yp_last,
-                p.extrapolate, p.bounds_check, detail::min_num_points_<type>()
+                detail::min_num_points_<type>(),
+                p
             );
             xp_ = { xp_first, xp_last };
             yp_ = { yp_first, yp_last };

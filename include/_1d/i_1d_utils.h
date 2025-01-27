@@ -3,6 +3,7 @@
 #include <iterator>
 
 #include "i_1d_types.h"
+#include "../utility/params.h"
 
 namespace interp::detail {
 
@@ -29,14 +30,14 @@ namespace interp::detail {
     auto check_input_data(
         XpIter xp_first, XpIter xp_last,
         YpIter yp_first, YpIter yp_last,
-        bool extrapolate, bool bounds_check,
-        std::size_t min_num
+        std::size_t min_num,
+        const params_1d<utils::common_iter_val_type<XpIter, YpIter>> &p = {}
     ) -> void {
         if (std::distance(xp_first, xp_last) != std::distance(yp_first, yp_last)) {
             throw std::invalid_argument("size of xp must be equal to yp size");
         }
 
-        if (bounds_check && extrapolate) {
+        if (p.bounds_check && p.extrapolate) {
             throw std::invalid_argument("incompatible arguments: bounds_check == true && extrapolate == true");
         }
 

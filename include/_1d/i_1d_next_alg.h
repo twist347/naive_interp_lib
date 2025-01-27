@@ -2,8 +2,8 @@
 
 #include <algorithm>
 #include <cmath>
+
 #include "utils.h"
-#include "exec.h"
 #include "i_1d_alg.h"
 
 namespace interp {
@@ -13,8 +13,9 @@ namespace interp {
         template<typename XpIter, typename YpIter, typename Value>
         constexpr auto direct_next_calc_(
             XpIter xp_first, XpIter xp_last,
-            YpIter yp_first, Value xi
-        ) -> Value {
+            YpIter yp_first,
+            Value xi
+        ) noexcept -> Value {
             const auto idx = std::distance(xp_first, std::lower_bound(xp_first, xp_last, xi));
             return *(yp_first + idx);
         }

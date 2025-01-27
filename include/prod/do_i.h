@@ -27,7 +27,8 @@ namespace interp {
         detail::check_input_data(
             xp_first, xp_last,
             yp_first, yp_last,
-            p.extrapolate, p.bounds_check, detail::min_num_points_<type>()
+            detail::min_num_points_<type>(),
+            p
         );
         if constexpr (type == Type1D::Prev) {
             prev(x_first, x_last, xp_first, xp_last, yp_first, dest_first, p);
