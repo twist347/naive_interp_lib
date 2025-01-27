@@ -23,18 +23,23 @@ namespace interp {
         template<typename XpIter, typename YpIter>
         auto set_data(
             XpIter xp_first, XpIter xp_last,
-            YpIter yp_first, YpIter yp_last,
+            YpIter yp_first,
             const params_1d<utils::common_iter_val_type<XpIter, YpIter>> &p = {}
         ) -> void {
             static_assert(std::convertible_to<utils::common_iter_val_type<XpIter, YpIter>, value_type>);
+
+#ifndef NDEBUG
+
             detail::check_input_data(
                 xp_first, xp_last,
-                yp_first, yp_last,
                 detail::min_num_points_<type>(),
                 p
             );
+
+#endif
+
             xp_ = { xp_first, xp_last };
-            yp_ = { yp_first, yp_last };
+            yp_ = { yp_first, yp_first + std::distance(xp_first, xp_last) };
             p_ = p;
         }
 
@@ -47,11 +52,11 @@ namespace interp {
             if constexpr (std::is_rvalue_reference_v<decltype(xp)> && std::is_rvalue_reference_v<decltype(yp)>) {
                 set_data(
                     std::make_move_iterator(xp.begin()), std::make_move_iterator(xp.end()),
-                    std::make_move_iterator(yp.begin()), std::make_move_iterator(yp.end()),
+                    std::make_move_iterator(yp.begin()),
                     p
                 );
             } else {
-                set_data(std::cbegin(xp), std::cend(xp), std::cbegin(yp), std::cend(yp), p);
+                set_data(std::cbegin(xp), std::cend(xp), std::cbegin(yp), p);
             }
         }
 

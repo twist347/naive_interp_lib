@@ -11,25 +11,32 @@
 
 namespace interp {
 
+    // iterator interface
+
     template<
         Type1D type,
-        typename XIter, typename XpIter,
-        typename YpIter,
+        typename XIter,
+        typename XpIter, typename YpIter,
         typename DestIter
     >
     auto do_i(
         XIter x_first, XIter x_last,
         XpIter xp_first, XpIter xp_last,
-        YpIter yp_first, YpIter yp_last,
+        YpIter yp_first,
         DestIter dest_first,
-        params_1d<typename std::iterator_traits<DestIter>::value_type> p = {}
+        const params_1d<typename std::iterator_traits<DestIter>::value_type> &p = {}
     ) -> void {
+
+#ifndef NDEBUG
+
         detail::check_input_data(
             xp_first, xp_last,
-            yp_first, yp_last,
             detail::min_num_points_<type>(),
             p
         );
+
+#endif
+
         if constexpr (type == Type1D::Prev) {
             prev(x_first, x_last, xp_first, xp_last, yp_first, dest_first, p);
         } else if constexpr (type == Type1D::Next) {
@@ -47,6 +54,8 @@ namespace interp {
         }
     }
 
+    // container interface
+
     template<
         Type1D type,
         typename XContainer,
@@ -57,13 +66,13 @@ namespace interp {
         const XContainer &x,
         const XpContainer &xp,
         const YpContainer &yp,
-        params_1d<typename std::remove_cvref_t<XContainer>::value_type> p = {}
+        const params_1d<typename std::remove_cvref_t<XContainer>::value_type> &p = {}
     ) -> DestContainer {
         DestContainer dest(std::size(x));
         do_i<type>(
             std::cbegin(x), std::cend(x),
             std::cbegin(xp), std::cend(xp),
-            std::cbegin(yp), std::cend(yp),
+            std::cbegin(yp),
             std::begin(dest),
             p
         );
@@ -82,12 +91,12 @@ namespace interp {
         const XpContainer &xp,
         const YpContainer &yp,
         DestContainer &dest,
-        params_1d<typename std::remove_cvref_t<XContainer>::value_type> p = {}
+        const params_1d<typename std::remove_cvref_t<XContainer>::value_type> &p = {}
     ) -> void {
         do_i<type>(
             std::cbegin(x), std::cend(x),
             std::cbegin(xp), std::cend(xp),
-            std::cbegin(yp), std::cend(yp),
+            std::cbegin(yp),
             std::begin(dest),
             p
         );

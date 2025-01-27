@@ -3,12 +3,13 @@
 #include <iterator>
 
 #include "i_1d_types.h"
-#include "../utility/params.h"
 
 namespace interp::detail {
 
+    inline constexpr auto exception_msg = "logically incorrect flags combination: bounds_check && extrapolate";
+
     template<Type1D type>
-    constexpr static auto min_num_points_() -> std::size_t {
+    consteval static auto min_num_points_() -> std::size_t {
         if constexpr (
             type == Type1D::Prev ||
             type == Type1D::Next ||
@@ -26,23 +27,20 @@ namespace interp::detail {
         }
     }
 
-    template<typename XpIter, typename YpIter>
+    template<typename XpIter, typename Param>
     auto check_input_data(
         XpIter xp_first, XpIter xp_last,
-        YpIter yp_first, YpIter yp_last,
         std::size_t min_num,
-        const params_1d<utils::common_iter_val_type<XpIter, YpIter>> &p = {}
+        const Param &p = {}
     ) -> void {
-        if (std::distance(xp_first, xp_last) != std::distance(yp_first, yp_last)) {
-            throw std::invalid_argument("size of xp must be equal to yp size");
-        }
-
         if (p.bounds_check && p.extrapolate) {
             throw std::invalid_argument("incompatible arguments: bounds_check == true && extrapolate == true");
         }
 
         if (std::distance(xp_first, xp_last) < min_num) {
-            throw std::invalid_argument("the number of points must be at least " + std::to_string(min_num));
+            throw std::invalid_argument(
+                "incompatible arguments: the number of points must be at least " + std::to_string(min_num)
+            );
         }
     }
 

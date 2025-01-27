@@ -64,17 +64,20 @@ TEST(PrevInterp, Extrapolate) {
     ASSERT_TRUE(arrays_eq(y, exp));
 }
 
-TEST(PrevInterp, XpSizeNotEqYpSize) {
-    const container xp{1, 2, 3, 4, 5}, yp{1, 4, 9, 16};
-    ASSERT_THROW((interp::make_i<interp::Type1D::Prev>(xp, yp)), std::invalid_argument);
-}
-
 TEST(PrevInterp, MinNumPoints) {
+#ifdef NDEBUG
+    GTEST_SKIP_("allowed only in debug build");
+#endif
+
     const container xp, yp;
     ASSERT_THROW((interp::make_i<interp::Type1D::Prev>(xp, yp)), std::invalid_argument);
 }
 
 TEST(PrevInterp, BoundsCheckAndExtrapolate) {
+#ifdef NDEBUG
+    GTEST_SKIP_("allowed only in debug build");
+#endif
+
     const container xp{1, 2, 3, 4, 5}, yp{1, 4, 9, 16, 25};
     ASSERT_THROW(
             (interp::make_i<interp::Type1D::Prev>(xp, yp, { .extrapolate = true, .bounds_check = true })),
@@ -140,17 +143,20 @@ TEST(NextInterp, Extrapolate) {
     ASSERT_TRUE(arrays_eq(y, exp));
 }
 
-TEST(NextInterp, XpSizeNotEqYpSize) {
-    const container xp{1, 2, 3, 4, 5}, yp{1, 4, 9, 16};
-    ASSERT_THROW((interp::make_i<interp::Type1D::Next>(xp, yp)), std::invalid_argument);
-}
-
 TEST(NextInterp, MinNumPoints) {
+#ifdef NDEBUG
+    GTEST_SKIP_("allowed only in debug build");
+#endif
+
     const container xp, yp;
     ASSERT_THROW((interp::make_i<interp::Type1D::Next>(xp, yp)), std::invalid_argument);
 }
 
 TEST(NextInterp, BoundsCheckAndExtrapolate) {
+#ifdef NDEBUG
+    GTEST_SKIP_("allowed only in debug build");
+#endif
+
     const container xp{1, 2, 3, 4, 5}, yp{1, 4, 9, 16, 25};
     ASSERT_THROW(
             (interp::make_i<interp::Type1D::Next>(xp, yp, { .extrapolate = true, .bounds_check = true })),
@@ -218,17 +224,20 @@ TEST(NearestNeighbourInterp, Extrapolate) {
     ASSERT_TRUE(arrays_eq(y, exp));
 }
 
-TEST(NearestNeighbourInterp, XpSizeNotEqYpSize) {
-    const container xp{1, 2, 3, 4, 5}, yp{1, 4, 9, 16};
-    ASSERT_THROW((interp::make_i<interp::Type1D::NearestNeighbour>(xp, yp)), std::invalid_argument);
-}
-
 TEST(NearestNeighbourInterp, MinNumPoints) {
+#ifdef NDEBUG
+    GTEST_SKIP_("allowed only in debug build");
+#endif
+
     const container xp, yp;
     ASSERT_THROW((interp::make_i<interp::Type1D::NearestNeighbour>(xp, yp)), std::invalid_argument);
 }
 
 TEST(NearestNeighbourInterp, BoundsCheckAndExtrapolate) {
+#ifdef NDEBUG
+    GTEST_SKIP_("allowed only in debug build");
+#endif
+
     const container xp{1, 2, 3, 4, 5}, yp{1, 4, 9, 16, 25};
     ASSERT_THROW(
             (interp::make_i<interp::Type1D::NearestNeighbour>(xp, yp, { .extrapolate = true, .bounds_check = true })),
@@ -296,17 +305,20 @@ TEST(LinearInterp, Extrapolate) {
     ASSERT_TRUE(arrays_eq(y, exp));
 }
 
-TEST(LinearInterp, XpSizeNotEqYpSize) {
-    const container xp{1, 2, 3, 4, 5}, yp{1, 4, 9, 16};
-    ASSERT_THROW((interp::make_i<interp::Type1D::Linear>(xp, yp)), std::invalid_argument);
-}
-
 TEST(LinearInterp, MinNumPoints) {
+#ifdef NDEBUG
+    GTEST_SKIP_("allowed only in debug build");
+#endif
+
     const container xp{1}, yp{1};
     ASSERT_THROW((interp::make_i<interp::Type1D::Linear>(xp, yp)), std::invalid_argument);
 }
 
 TEST(LinearInterp, BoundsCheckAndExtrapolate) {
+#ifdef NDEBUG
+    GTEST_SKIP_("allowed only in debug build");
+#endif
+
     const container xp{1, 2, 3, 4, 5}, yp{1, 4, 9, 16, 25};
     ASSERT_THROW(
             (interp::make_i<interp::Type1D::Linear>(xp, yp, { .extrapolate = true, .bounds_check = true })),
@@ -374,17 +386,20 @@ TEST(QuadraticInterp, Extrapolate) {
     ASSERT_TRUE(arrays_eq(y, exp));
 }
 
-TEST(QuadraticInterp, XpSizeNotEqYpSize) {
-    const container xp{1, 2, 3, 4, 5}, yp{1, 4, 9, 16};
-    ASSERT_THROW((interp::make_i<interp::Type1D::Quadratic>(xp, yp)), std::invalid_argument);
-}
-
 TEST(QuadraticInterp, MinNumPoints) {
+#ifdef NDEBUG
+    GTEST_SKIP_("allowed only in debug build");
+#endif
+
     const container xp{1, 2}, yp{1, 4};
     ASSERT_THROW((interp::make_i<interp::Type1D::Quadratic>(xp, yp)), std::invalid_argument);
 }
 
 TEST(QuadraticInterp, BoundsCheckAndExtrapolate) {
+#ifdef NDEBUG
+    GTEST_SKIP_("allowed only in debug build");
+#endif
+
     const container xp{1, 2, 3, 4, 5}, yp{1, 4, 9, 16, 25};
     ASSERT_THROW(
             (interp::make_i<interp::Type1D::Quadratic>(xp, yp, { .extrapolate = true, .bounds_check = true })),
@@ -452,17 +467,20 @@ TEST(CubicInterp, Extrapolate) {
     ASSERT_TRUE(arrays_eq(y, exp));
 }
 
-TEST(CubicInterp, XpSizeNotEqYpSize) {
-    const container xp{1, 2, 3, 4, 5}, yp{1, 4, 9, 16};
-    ASSERT_THROW((interp::make_i<interp::Type1D::Cubic>(xp, yp)), std::invalid_argument);
-}
-
 TEST(CubicInterp, MinNumPoints) {
+#ifdef NDEBUG
+    GTEST_SKIP_("allowed only in debug build");
+#endif
+
     const container xp{1, 2, 3}, yp{1, 4, 9};
     ASSERT_THROW((interp::make_i<interp::Type1D::Cubic>(xp, yp)), std::invalid_argument);
 }
 
 TEST(CubicInterp, BoundsCheckAndExtrapolate) {
+#ifdef NDEBUG
+    GTEST_SKIP_("allowed only in debug build");
+#endif
+
     const container xp{1, 2, 3, 4, 5}, yp{1, 4, 9, 16, 25};
     ASSERT_THROW(
             (interp::make_i<interp::Type1D::Cubic>(xp, yp, { .extrapolate = true, .bounds_check = true })),
@@ -481,7 +499,7 @@ TEST(AnyInterp, SyntaxTest) {
     const auto y_quad = interp(x);
     ASSERT_TRUE(arrays_eq(y_quad, exp_quad));
 
-    interp = interp::make_i<interp::Type1D::Cubic>(xp.cbegin(), xp.cend(), yp.cbegin(), yp.cend());
+    interp = interp::make_i<interp::Type1D::Cubic>(xp.cbegin(), xp.cend(), yp.cbegin());
     container y_cub(exp_cub.size());
     interp(x.cbegin(), x.cend(), y_cub.begin());
     ASSERT_TRUE(arrays_eq(y_cub, exp_cub));

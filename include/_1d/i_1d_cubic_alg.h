@@ -4,7 +4,8 @@
 #include <cmath>
 
 #include "utils.h"
-#include "i_1d_alg.h"
+#include "i_1d_utils.h"
+#include "../utility/exec.h"
 
 namespace interp {
 
@@ -41,13 +42,14 @@ namespace interp {
             return cubic_calc_(x0, y0, x1, y1, x2, y2, x3, y3, xi);
         }
 
-        template<typename XIter, typename XpIter, typename YpIter, typename DestIter>
+        template<typename XIter, typename XpIter, typename YpIter, typename DestIter, typename Param>
         auto cubic_pure_impl(
             XIter x_first, XIter x_last,
             XpIter xp_first, XpIter xp_last,
             YpIter yp_first,
-            DestIter dest_first
-        ) -> void {
+            DestIter dest_first,
+            const Param &p
+        ) noexcept -> void {
             using value_type = typename std::iterator_traits<std::remove_cvref_t<XIter>>::value_type;
 
             const auto calc = [&](value_type xi) -> value_type {
@@ -58,7 +60,7 @@ namespace interp {
                 }
             };
 
-            detail::apply_transform(x_first, x_last, dest_first, calc);
+            utils::custom_transform(p.exec, x_first, x_last, dest_first, calc);
         }
 
         template<typename XIter, typename XpIter, typename YpIter, typename DestIter, typename Param>
@@ -68,7 +70,7 @@ namespace interp {
             YpIter yp_first,
             DestIter dest_first,
             const Param &p
-        ) -> void {
+        ) noexcept -> void {
             using value_type = typename std::iterator_traits<std::remove_cvref_t<XIter>>::value_type;
 
             const value_type left_dflt_val = p.bounds.first;
@@ -88,16 +90,17 @@ namespace interp {
                 }
             };
 
-            detail::apply_transform(x_first, x_last, dest_first, calc);
+            utils::custom_transform(p.exec, x_first, x_last, dest_first, calc);
         }
 
-        template<typename XIter, typename XpIter, typename YpIter, typename DestIter>
+        template<typename XIter, typename XpIter, typename YpIter, typename DestIter, typename Param>
         auto cubic_extr_impl(
             XIter x_first, XIter x_last,
             XpIter xp_first, XpIter xp_last,
             YpIter yp_first,
-            DestIter dest_first
-        ) -> void {
+            DestIter dest_first,
+            const Param &p
+        ) noexcept -> void {
             using value_type = typename std::iterator_traits<std::remove_cvref_t<XIter>>::value_type;
             const auto yp_size = std::distance(xp_first, xp_last);
 
@@ -119,7 +122,7 @@ namespace interp {
                 }
             };
 
-            detail::apply_transform(x_first, x_last, dest_first, calc);
+            utils::custom_transform(p.exec, x_first, x_last, dest_first, calc);
         }
 
     }
@@ -133,11 +136,11 @@ namespace interp {
         const Param &p
     ) -> void {
         if (!p.bounds_check && !p.extrapolate) {
-            detail::cubic_pure_impl(x_first, x_last, xp_first, xp_last, yp_first, dest_first);
+            detail::cubic_pure_impl(x_first, x_last, xp_first, xp_last, yp_first, dest_first, p);
         } else if (p.bounds_check && !p.extrapolate) {
             detail::cubic_bounds_check_impl(x_first, x_last, xp_first, xp_last, yp_first, dest_first, p);
         } else if (!p.bounds_check && p.extrapolate) {
-            detail::cubic_extr_impl(x_first, x_last, xp_first, xp_last, yp_first, dest_first);
+            detail::cubic_extr_impl(x_first, x_last, xp_first, xp_last, yp_first, dest_first, p);
         } else {
             throw std::invalid_argument(detail::exception_msg);
         }

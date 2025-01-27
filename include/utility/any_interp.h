@@ -47,10 +47,10 @@ namespace interp {
         template<typename XpIter, typename YpIter>
         auto set_data(
             XpIter xp_first, XpIter xp_last,
-            YpIter yp_first, YpIter yp_last,
+            YpIter yp_first,
             const params_1d<typename std::iterator_traits<XpIter>::value_type> &p = {}
         ) -> void {
-            std::visit([&](auto &&interp) { interp.set_data(xp_first, xp_last, yp_first, yp_last, p); }, v);
+            std::visit([&](auto &&interp) { interp.set_data(xp_first, xp_last, yp_first, p); }, v);
         }
 
         template<typename XpContainer, typename YpContainer>

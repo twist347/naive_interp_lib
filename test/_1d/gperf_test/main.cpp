@@ -24,7 +24,7 @@ static auto gb_prev_interp_small_data(benchmark::State &state) -> void {
         interp::do_i<interp::Type1D::Prev>(
                 std::cbegin(x), std::cend(x),
                 std::cbegin(xp), std::cend(xp),
-                std::cbegin(yp), std::cend(yp),
+                std::cbegin(yp),
                 std::begin(y)
         );
         benchmark::ClobberMemory();
@@ -43,7 +43,7 @@ static auto gb_next_interp_small_data(benchmark::State &state) -> void {
         interp::do_i<interp::Type1D::Next>(
                 std::cbegin(x), std::cend(x),
                 std::cbegin(xp), std::cend(xp),
-                std::cbegin(yp), std::cend(yp),
+                std::cbegin(yp),
                 std::begin(y)
         );
         benchmark::ClobberMemory();
@@ -62,7 +62,7 @@ static auto gb_nn_interp_small_data(benchmark::State &state) -> void {
         interp::do_i<interp::Type1D::NearestNeighbour>(
                 std::cbegin(x), std::cend(x),
                 std::cbegin(xp), std::cend(xp),
-                std::cbegin(yp), std::cend(yp),
+                std::cbegin(yp),
                 std::begin(y)
         );
         benchmark::ClobberMemory();
@@ -81,7 +81,7 @@ static auto gb_linear_interp_small_data(benchmark::State &state) -> void {
         interp::do_i<interp::Type1D::NearestNeighbour>(
                 std::cbegin(x), std::cend(x),
                 std::cbegin(xp), std::cend(xp),
-                std::cbegin(yp), std::cend(yp),
+                std::cbegin(yp),
                 std::begin(y)
         );
         benchmark::ClobberMemory();
@@ -100,7 +100,7 @@ static auto gb_quadratic_interp_small_data(benchmark::State &state) -> void {
         interp::do_i<interp::Type1D::NearestNeighbour>(
                 std::cbegin(x), std::cend(x),
                 std::cbegin(xp), std::cend(xp),
-                std::cbegin(yp), std::cend(yp),
+                std::cbegin(yp),
                 std::begin(y)
         );
         benchmark::ClobberMemory();
@@ -119,7 +119,7 @@ static auto gb_cubic_interp_small_data(benchmark::State &state) -> void {
         interp::do_i<interp::Type1D::NearestNeighbour>(
                 std::cbegin(x), std::cend(x),
                 std::cbegin(xp), std::cend(xp),
-                std::cbegin(yp), std::cend(yp),
+                std::cbegin(yp),
                 std::begin(y)
         );
         benchmark::ClobberMemory();
@@ -138,8 +138,9 @@ static auto gb_prev_interp(benchmark::State &state) -> void {
         interp::do_i<interp::Type1D::Prev>(
                 std::cbegin(x), std::cend(x),
                 std::cbegin(xp), std::cend(xp),
-                std::cbegin(yp), std::cend(yp),
-                std::begin(y)
+                std::cbegin(yp),
+                std::begin(y),
+                {.exec = interp::Exec::PAR }
         );
         benchmark::ClobberMemory();
     }
@@ -157,7 +158,7 @@ static auto gb_next_interp(benchmark::State &state) -> void {
         interp::do_i<interp::Type1D::Next>(
                 std::cbegin(x), std::cend(x),
                 std::cbegin(xp), std::cend(xp),
-                std::cbegin(yp), std::cend(yp),
+                std::cbegin(yp),
                 std::begin(y)
         );
         benchmark::ClobberMemory();
@@ -176,7 +177,7 @@ static auto gb_nn_interp(benchmark::State &state) -> void {
         interp::do_i<interp::Type1D::NearestNeighbour>(
                 std::cbegin(x), std::cend(x),
                 std::cbegin(xp), std::cend(xp),
-                std::cbegin(yp), std::cend(yp),
+                std::cbegin(yp),
                 std::begin(y)
         );
         benchmark::ClobberMemory();
@@ -195,7 +196,7 @@ static auto gb_linear_interp(benchmark::State &state) -> void {
         interp::do_i<interp::Type1D::NearestNeighbour>(
                 std::cbegin(x), std::cend(x),
                 std::cbegin(xp), std::cend(xp),
-                std::cbegin(yp), std::cend(yp),
+                std::cbegin(yp),
                 std::begin(y)
         );
         benchmark::ClobberMemory();
@@ -214,7 +215,7 @@ static auto gb_quadratic_interp(benchmark::State &state) -> void {
         interp::do_i<interp::Type1D::NearestNeighbour>(
                 std::cbegin(x), std::cend(x),
                 std::cbegin(xp), std::cend(xp),
-                std::cbegin(yp), std::cend(yp),
+                std::cbegin(yp),
                 std::begin(y)
         );
         benchmark::ClobberMemory();
@@ -233,7 +234,7 @@ static auto gb_cubic_interp(benchmark::State &state) -> void {
         interp::do_i<interp::Type1D::NearestNeighbour>(
                 std::cbegin(x), std::cend(x),
                 std::cbegin(xp), std::cend(xp),
-                std::cbegin(yp), std::cend(yp),
+                std::cbegin(yp),
                 std::begin(y)
         );
         benchmark::ClobberMemory();
