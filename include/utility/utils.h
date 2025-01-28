@@ -2,6 +2,12 @@
 
 #include <concepts>
 
+#ifdef NDEBUG
+    #define INTERP_RELEASE_NOEXCEPT noexcept
+#else
+    #define INTERP_RELEASE_NOEXCEPT
+#endif
+
 namespace interp::utils {
 
     namespace detail {

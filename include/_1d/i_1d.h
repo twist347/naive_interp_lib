@@ -1,15 +1,8 @@
 #pragma once
 
-#include <cassert>
 #include <vector>
 
-#include "i_1d_types.h"
-#include "i_1d_prev_alg.h"
-#include "i_1d_next_alg.h"
-#include "i_1d_nearest_neighbour_alg.h"
-#include "i_1d_quadratic_alg.h"
-#include "i_1d_cubic_alg.h"
-#include "i_1d_utils.h"
+#include "do_i_1d.h"
 
 namespace interp {
 
@@ -29,13 +22,11 @@ namespace interp {
             static_assert(std::convertible_to<utils::common_iter_val_type<XpIter, YpIter>, value_type>);
 
 #ifndef NDEBUG
-
             detail::check_input_data(
                 xp_first, xp_last,
                 detail::min_num_points_<type>(),
                 p
             );
-
 #endif
 
             xp_ = { xp_first, xp_last };
@@ -62,13 +53,12 @@ namespace interp {
 
         template<typename XIter, typename DestIter>
         auto operator()(XIter x_first, XIter x_last, DestIter dest_first) const -> void {
-            interp_dispatch(
+            detail::interp_dispatch<type>(
                 x_first, x_last,
                 std::cbegin(xp_), std::cend(xp_),
                 std::cbegin(yp_),
                 dest_first,
-                p_
-            );
+                p_);
         }
 
         template<typename XContainer, typename DestContainer>
@@ -86,25 +76,6 @@ namespace interp {
         }
 
     private:
-        template<typename ... Args>
-        auto interp_dispatch(Args &&... args) const -> void {
-            if constexpr (type == Type1D::Prev) {
-                prev(std::forward<Args>(args)...);
-            } else if constexpr (type == Type1D::Next) {
-                next(std::forward<Args>(args)...);
-            } else if constexpr (type == Type1D::NearestNeighbour) {
-                nearest_neighbour(std::forward<Args>(args)...);
-            } else if constexpr (type == Type1D::Linear) {
-                linear(std::forward<Args>(args)...);
-            } else if constexpr (type == Type1D::Quadratic) {
-                quadratic(std::forward<Args>(args)...);
-            } else if constexpr (type == Type1D::Cubic) {
-                cubic(std::forward<Args>(args)...);
-            } else {
-                throw std::invalid_argument("unsupported interp type");
-            }
-        }
-
         std::vector<Value> xp_;
         std::vector<Value> yp_;
         params_1d<value_type> p_;

@@ -22,12 +22,6 @@
     #define SEQ_EX
 #endif
 
-#ifdef NDEBUG
-    #define RELEASE_NOEXCEPT noexcept
-#else
-    #define RELEASE_NOEXCEPT
-#endif
-
 namespace interp::utils {
 
     // noexcept despite on std::transform is not noexcept

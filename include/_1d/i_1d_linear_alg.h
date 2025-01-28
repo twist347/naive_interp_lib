@@ -4,7 +4,6 @@
 #include <cmath>
 
 #include "utils.h"
-#include "i_1d_utils.h"
 #include "../utility/exec.h"
 
 namespace interp {
@@ -120,16 +119,15 @@ namespace interp {
         YpIter yp_first,
         DestIter dest_first,
         const Params &p
-    ) -> void {
+    ) noexcept -> void {
         if (!p.bounds_check && !p.extrapolate) {
             detail::linear_pure_impl(x_first, x_last, xp_first, xp_last, yp_first, dest_first, p);
         } else if (p.bounds_check && !p.extrapolate) {
             detail::linear_bounds_check_impl(x_first, x_last, xp_first, xp_last, yp_first, dest_first, p);
         } else if (!p.bounds_check && p.extrapolate) {
             detail::linear_extr_impl(x_first, x_last, xp_first, xp_last, yp_first, dest_first, p);
-        } else {
-            throw std::invalid_argument(detail::exception_msg);
         }
+        // else nothing to do
     }
 
 }

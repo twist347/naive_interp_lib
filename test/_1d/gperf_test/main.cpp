@@ -159,7 +159,8 @@ static auto gb_next_interp(benchmark::State &state) -> void {
                 std::cbegin(x), std::cend(x),
                 std::cbegin(xp), std::cend(xp),
                 std::cbegin(yp),
-                std::begin(y)
+                std::begin(y),
+                {.exec = interp::Exec::PAR_UNSEQ}
         );
         benchmark::ClobberMemory();
     }
@@ -178,7 +179,8 @@ static auto gb_nn_interp(benchmark::State &state) -> void {
                 std::cbegin(x), std::cend(x),
                 std::cbegin(xp), std::cend(xp),
                 std::cbegin(yp),
-                std::begin(y)
+                std::begin(y),
+                {.exec = interp::Exec::PAR_UNSEQ}
         );
         benchmark::ClobberMemory();
     }
@@ -197,7 +199,8 @@ static auto gb_linear_interp(benchmark::State &state) -> void {
                 std::cbegin(x), std::cend(x),
                 std::cbegin(xp), std::cend(xp),
                 std::cbegin(yp),
-                std::begin(y)
+                std::begin(y),
+                {.exec = interp::Exec::PAR_UNSEQ}
         );
         benchmark::ClobberMemory();
     }
@@ -216,7 +219,8 @@ static auto gb_quadratic_interp(benchmark::State &state) -> void {
                 std::cbegin(x), std::cend(x),
                 std::cbegin(xp), std::cend(xp),
                 std::cbegin(yp),
-                std::begin(y)
+                std::begin(y),
+                {.exec = interp::Exec::PAR_UNSEQ}
         );
         benchmark::ClobberMemory();
     }
@@ -235,7 +239,8 @@ static auto gb_cubic_interp(benchmark::State &state) -> void {
                 std::cbegin(x), std::cend(x),
                 std::cbegin(xp), std::cend(xp),
                 std::cbegin(yp),
-                std::begin(y)
+                std::begin(y),
+                {.exec = interp::Exec::PAR_UNSEQ}
         );
         benchmark::ClobberMemory();
     }
