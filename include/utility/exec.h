@@ -3,9 +3,10 @@
 #if __has_include(<execution>)
 
 #include <execution>
-#include <algorithm>
 
 #endif
+
+#include <algorithm>
 
 #include "params.h"
 

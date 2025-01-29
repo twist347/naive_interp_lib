@@ -64,7 +64,7 @@ namespace interp {
         auto check_input_data(
             XpIter xp_first, XpIter xp_last,
             std::size_t min_num,
-            const Param &p = {}
+            const Param &p
         ) -> void {
             if (!std::is_sorted(xp_first, xp_last)) {
                 throw std::invalid_argument(msg::must_be_sorted);

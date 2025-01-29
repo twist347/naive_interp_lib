@@ -1,6 +1,8 @@
 #pragma once
 
 #include <concepts>
+#include <limits>
+#include <type_traits>
 
 #ifdef NDEBUG
     #define INTERP_RELEASE_NOEXCEPT noexcept
