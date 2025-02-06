@@ -20,14 +20,7 @@ namespace interp {
             const params_1d<utils::common_iter_val_type<XpIter, YpIter>> &p = {}
         ) -> void {
             static_assert(std::convertible_to<utils::common_iter_val_type<XpIter, YpIter>, value_type>);
-
-#ifndef NDEBUG
-            detail::check_input_data(
-                xp_first, xp_last,
-                detail::min_num_points_<type>(),
-                p
-            );
-#endif
+            VALIDATE_PARAMS(xp_first, xp_last, p);
 
             xp_ = { xp_first, xp_last };
             yp_ = { yp_first, yp_first + std::distance(xp_first, xp_last) };
@@ -52,7 +45,7 @@ namespace interp {
         }
 
         template<typename XIter, typename DestIter>
-        auto operator()(XIter x_first, XIter x_last, DestIter dest_first) const -> void {
+        auto operator()(XIter x_first, XIter x_last, DestIter dest_first) const noexcept -> void {
             detail::interp_dispatch<type>(
                 x_first, x_last,
                 std::cbegin(xp_), std::cend(xp_),
@@ -62,7 +55,7 @@ namespace interp {
         }
 
         template<typename XContainer, typename DestContainer>
-        auto operator()(const XContainer &x, DestContainer &dest) const -> void {
+        auto operator()(const XContainer &x, DestContainer &dest) const noexcept -> void {
             assert(std::size(x) == std::size(dest));
             operator()(std::cbegin(x), std::cend(x), std::begin(dest));
         }

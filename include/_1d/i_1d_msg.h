@@ -1,5 +1,12 @@
 #pragma once
 
+#include <iostream>
+
+#define assert_msg(expr, msg) \
+    ((static_cast<bool>(expr)) ? \
+        static_cast<void>(0) : \
+        (std::cerr << "assertion failed: " << msg << "\n", assert(false)))
+
 namespace interp::detail::msg {
 
     inline constexpr auto incorrect_flags = "logically incorrect flags combination: bounds_check && extrapolate";
