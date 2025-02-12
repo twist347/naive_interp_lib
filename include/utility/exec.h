@@ -49,7 +49,19 @@ namespace interp::utils {
             default:
                 return std::transform(SEQ_EX first1, last1, d_first, unary_op);
         }
+    }
 
+    template<typename ForwardIt, typename Value, typename Compare>
+    auto custom_upper_bound(
+        ForwardIt first, ForwardIt last,
+        const Value& value,
+        Compare cmp = std::less{}
+    ) noexcept -> ForwardIt {
+        if constexpr (std::floating_point<std::remove_cvref_t<Value>>) {
+            return std::upper_bound(first, last, value, cmp);
+        } else {
+            return std::upper_bound(first, last, value);
+        }
     }
 
 }

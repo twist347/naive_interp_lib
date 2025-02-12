@@ -13,13 +13,21 @@ namespace interp {
 
         i_1d() = default;
 
+        i_1d(const i_1d &) = default;
+
+        i_1d(i_1d &&) noexcept = default;
+
+        auto operator=(const i_1d &) -> i_1d & = default;
+
+        auto operator=(i_1d &&) noexcept -> i_1d & = default;
+
         template<typename XpIter, typename YpIter>
         auto set_data(
             XpIter xp_first, XpIter xp_last,
             YpIter yp_first,
-            const params_1d<utils::common_iter_val_type<XpIter, YpIter>> &p = {}
+            const params_1d<Value> &p = {}
         ) -> void {
-            static_assert(std::convertible_to<utils::common_iter_val_type<XpIter, YpIter>, value_type>);
+            static_assert(std::convertible_to<utils::common_iter_val_t<XpIter, YpIter>, value_type>);
             VALIDATE_PARAMS(xp_first, xp_last, p);
 
             xp_ = { xp_first, xp_last };
@@ -31,8 +39,10 @@ namespace interp {
         auto set_data(
             XpContainer &&xp,
             YpContainer &&yp,
-            const params_1d<utils::common_cont_val_type<XpContainer, YpContainer>> &p = {}
+            const params_1d<Value> &p = {}
         ) -> void {
+            static_assert(std::convertible_to<utils::common_cont_val_t<XpContainer, YpContainer>, value_type>);
+
             if constexpr (std::is_rvalue_reference_v<decltype(xp)> && std::is_rvalue_reference_v<decltype(yp)>) {
                 set_data(
                     std::make_move_iterator(xp.begin()), std::make_move_iterator(xp.end()),
@@ -46,22 +56,30 @@ namespace interp {
 
         template<typename XIter, typename DestIter>
         auto operator()(XIter x_first, XIter x_last, DestIter dest_first) const noexcept -> void {
-            detail::interp_dispatch<type>(
+            static_assert(std::convertible_to<utils::common_iter_val_t<XIter, DestIter>, value_type>);
+
+            using value_type = utils::common_iter_val_t<XIter, DestIter>;
+            detail::interp_dispatch<type, value_type>(
                 x_first, x_last,
                 std::cbegin(xp_), std::cend(xp_),
                 std::cbegin(yp_),
                 dest_first,
-                p_);
+                p_
+            );
         }
 
         template<typename XContainer, typename DestContainer>
         auto operator()(const XContainer &x, DestContainer &dest) const noexcept -> void {
+            static_assert(std::convertible_to<utils::common_cont_val_t<XContainer, DestContainer>, value_type>);
             assert(std::size(x) == std::size(dest));
+
             operator()(std::cbegin(x), std::cend(x), std::begin(dest));
         }
 
         template<typename XContainer, typename DestContainer = std::remove_cvref_t<XContainer>>
         auto operator()(const XContainer &x) const -> DestContainer {
+            static_assert(std::convertible_to<utils::common_cont_val_t<XContainer, DestContainer>, value_type>);
+
             DestContainer dest(std::size(x));
             operator()(std::cbegin(x), std::cend(x), std::begin(dest));
 
@@ -69,8 +87,10 @@ namespace interp {
         }
 
     private:
-        std::vector<Value> xp_;
-        std::vector<Value> yp_;
+        using container_type = std::vector<value_type>;
+
+        container_type xp_;
+        container_type yp_;
         params_1d<value_type> p_;
     };
 

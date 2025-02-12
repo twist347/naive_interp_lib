@@ -7,6 +7,14 @@ constexpr auto nan_v = interp::utils::nan<double>;
 
 using container = std::vector<double>;
 
+TEST(IntegerNums, Regular) {
+    const std::vector<int> xp{1, 2, 3, 4, 5}, yp{1, 4, 9, 16, 25}, x{1, 3, 4}, exp{1, 9, 16};
+    std::vector<int> y(x.size());
+    auto interp = interp::make_i<interp::Type1D::Prev>(xp, yp);
+    interp(x, y);
+    ASSERT_TRUE(arrays_eq(y, exp));
+}
+
 TEST(PrevInterp, Regular) {
     const container xp{1, 2, 3, 4, 5}, yp{1, 4, 9, 16, 25}, x{1, 3, 4.5}, exp{1, 9, 16};
     container y(x.size());

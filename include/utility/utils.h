@@ -1,5 +1,7 @@
 #pragma once
 
+#include <cmath>
+#include <iterator>
 #include <concepts>
 #include <limits>
 #include <type_traits>
@@ -45,12 +47,12 @@ namespace interp::utils {
     }
 
     template<typename... Containers>
-    using common_cont_val_type = std::common_type_t<typename Containers::value_type...>;
+    using common_cont_val_t = std::common_type_t<typename std::remove_cvref_t<Containers>::value_type...>;
 
     template<typename... Iters>
-    using common_iter_val_type = std::common_type_t<typename std::iterator_traits<Iters>::value_type...>;
+    using common_iter_val_t = std::common_type_t<typename std::remove_cvref_t<std::iterator_traits<Iters>>::value_type...>;
 
-    template<std::floating_point Value = double>
+    template<detail::Arithmetic Value>
     constexpr auto nan = std::numeric_limits<Value>::quiet_NaN();
 
     /// lhs == rhs
@@ -67,7 +69,7 @@ namespace interp::utils {
 
     /// lhs < rhs
     template<std::floating_point Value>
-    constexpr auto flt_less(Value lhs, Value rhs, Value eps_ = detail::eps < -detail::Precision>) noexcept -> bool {
+    constexpr auto flt_less(Value lhs, Value rhs, Value eps_ = detail::eps<-detail::Precision>) noexcept -> bool {
         return rhs - lhs > eps_;
     }
 

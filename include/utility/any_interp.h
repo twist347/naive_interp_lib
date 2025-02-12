@@ -25,24 +25,16 @@ namespace interp {
 
         template<typename Interp>
         requires (!std::same_as<any_i, std::remove_cvref_t<Interp>>)
-        any_i(Interp &&interp) : v(std::forward<Interp>(interp)) {}
+        any_i(Interp &&interp) : interp_(std::forward<Interp>(interp)) {}
 
         template<typename Interp>
         requires (!std::same_as<any_i, std::remove_cvref_t<Interp>>)
         auto operator=(Interp &&interp) -> any_i & {
-            v = std::forward<Interp>(interp);
+            interp_ = std::forward<Interp>(interp);
             return *this;
         }
 
-        template<typename XIter, typename DestIter>
-        auto operator()(XIter x_first, XIter x_last, DestIter dest_first) const -> void {
-            std::visit([&](auto &&interp) { interp(x_first, x_last, dest_first); }, v);
-        }
-
-        template<typename XContainer>
-        auto operator()(const XContainer &x) const {
-            return std::visit([&](auto &&interp) { return interp(x); }, v);
-        }
+        // set methods
 
         template<typename XpIter, typename YpIter>
         auto set_data(
@@ -50,7 +42,7 @@ namespace interp {
             YpIter yp_first,
             const params_1d<typename std::iterator_traits<XpIter>::value_type> &p = {}
         ) -> void {
-            std::visit([&](auto &&interp) { interp.set_data(xp_first, xp_last, yp_first, p); }, v);
+            std::visit([&](auto &&interp) { interp.set_data(xp_first, xp_last, yp_first, p); }, interp_);
         }
 
         template<typename XpContainer, typename YpContainer>
@@ -59,18 +51,37 @@ namespace interp {
             const YpContainer &yp,
             const params_1d<typename XpContainer::value_type> &p = {}
         ) -> void {
-            std::visit([&](auto &&interp) { interp.set_data(xp, yp, p); }, v);
+            std::visit([&](auto &&interp) { interp.set_data(xp, yp, p); }, interp_);
+        }
+
+        // func operators
+
+        template<typename XIter, typename DestIter>
+        auto operator()(XIter x_first, XIter x_last, DestIter dest_first) const -> void {
+            std::visit([&](auto &&interp) { interp(x_first, x_last, dest_first); }, interp_);
+        }
+
+        template<typename XContainer>
+        auto operator()(const XContainer &x) const {
+            return std::visit([&](auto &&interp) { return interp(x); }, interp_);
+        }
+
+        template<typename XContainer, typename DestContainer>
+        auto operator()(const XContainer &x, DestContainer &dest) const {
+            return std::visit([&](auto &&interp) { return interp(x, dest); }, interp_);
         }
 
     private:
-        std::variant<
+        using variant_type = std::variant<
             i_1d<Type1D::Prev, Value>,
             i_1d<Type1D::Next, Value>,
             i_1d<Type1D::NearestNeighbour, Value>,
             i_1d<Type1D::Linear, Value>,
             i_1d<Type1D::Quadratic, Value>,
             i_1d<Type1D::Cubic, Value>
-        > v;
+        >;
+
+        variant_type interp_;
     };
 
     // deduction guide

@@ -6,13 +6,18 @@ namespace interp {
 
     // iterator interface
 
-    template<Type1D type, typename XpIter, typename YpIter>
+    template<
+        Type1D type,
+        typename XpIter,
+        typename YpIter,
+        typename Value = utils::common_iter_val_t<XpIter, YpIter>
+    >
     auto make_i(
         XpIter xp_first, XpIter xp_last,
         YpIter yp_first,
-        const params_1d<typename std::iterator_traits<XpIter>::value_type> &p = {}
-    ) -> i_1d<type, typename std::iterator_traits<XpIter>::value_type> {
-        auto interp = i_1d<type, typename std::iterator_traits<XpIter>::value_type>();
+        const params_1d<Value> &p = {}
+    ) -> i_1d<type, Value> {
+        auto interp = i_1d<type, Value>();
         interp.set_data(xp_first, xp_last, yp_first, p);
 
         return interp;
@@ -20,12 +25,17 @@ namespace interp {
 
     // container interface
 
-    template<Type1D type, typename XpContainer, typename YpContainer>
+    template<
+        Type1D type,
+        typename XpContainer,
+        typename YpContainer,
+        typename Value = utils::common_cont_val_t<XpContainer, YpContainer>
+    >
     auto make_i(
         XpContainer &&xp,
         YpContainer &&yp,
-        const params_1d<typename std::remove_cvref_t<XpContainer>::value_type> &p = {}
-    ) {
+        const params_1d<Value> &p = {}
+    ) -> i_1d<type, Value> {
         if constexpr (std::is_rvalue_reference_v<decltype(xp)> && std::is_rvalue_reference_v<decltype(yp)>) {
             return make_i(
                 std::make_move_iterator(xp.begin()), std::make_move_iterator(xp.end()),

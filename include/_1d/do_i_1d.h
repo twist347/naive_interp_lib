@@ -25,25 +25,24 @@
 #endif
 
 namespace interp {
-
     // TODO: add epsilon to params
 
     namespace detail {
 
-        template<Type1D type, typename ... Args>
+        template<Type1D type, typename Value, typename... Args>
         auto interp_dispatch(Args &&... args) noexcept -> void {
             if constexpr (type == Type1D::Prev) {
-                detail::prev_impl_(std::forward<Args>(args)...);
+                detail::prev_impl_<Value>(std::forward<Args>(args)...);
             } else if constexpr (type == Type1D::Next) {
-                detail::next_impl_(std::forward<Args>(args)...);
+                detail::next_impl_<Value>(std::forward<Args>(args)...);
             } else if constexpr (type == Type1D::NearestNeighbour) {
-                detail::nearest_neighbour_impl_(std::forward<Args>(args)...);
+                detail::nearest_neighbour_impl_<Value>(std::forward<Args>(args)...);
             } else if constexpr (type == Type1D::Linear) {
-                detail::linear_impl_(std::forward<Args>(args)...);
+                detail::linear_impl_<Value>(std::forward<Args>(args)...);
             } else if constexpr (type == Type1D::Quadratic) {
-                detail::quadratic_impl_(std::forward<Args>(args)...);
+                detail::quadratic_impl_<Value>(std::forward<Args>(args)...);
             } else if constexpr (type == Type1D::Cubic) {
-                detail::cubic_impl_(std::forward<Args>(args)...);
+                detail::cubic_impl_<Value>(std::forward<Args>(args)...);
             } else {
                 // todo: add msg
                 static_assert(false);
@@ -77,35 +76,38 @@ namespace interp {
     template<
         Type1D type,
         typename XIter,
-        typename XpIter, typename YpIter,
-        typename DestIter
+        typename XpIter,
+        typename YpIter,
+        typename DestIter,
+        typename Value = utils::common_iter_val_t<XIter, XpIter, YpIter, DestIter>
     >
     auto do_i(
         XIter x_first, XIter x_last,
         XpIter xp_first, XpIter xp_last,
         YpIter yp_first,
         DestIter dest_first,
-        const params_1d<typename std::iterator_traits<DestIter>::value_type> &p = {}
+        const params_1d<Value> &p = {}
     ) noexcept -> void {
         VALIDATE_PARAMS(xp_first, xp_last, p);
 
-        detail::interp_dispatch<type>(x_first, x_last, xp_first, xp_last, yp_first, dest_first, p);
+        detail::interp_dispatch<type, Value>(x_first, x_last, xp_first, xp_last, yp_first, dest_first, p);
     }
 
     // container interface
 
     template<
         Type1D type,
-        typename XContainer, typename XpContainer,
-        typename YpContainer,
-        typename DestContainer
+        typename XContainer,
+        typename XpContainer, typename YpContainer,
+        typename DestContainer,
+        typename Value = utils::common_cont_val_t<XContainer, XpContainer, YpContainer, DestContainer>
     >
     auto do_i(
         const XContainer &x,
         const XpContainer &xp,
         const YpContainer &yp,
         DestContainer &dest,
-        const params_1d<typename std::remove_cvref_t<XContainer>::value_type> &p = {}
+        const params_1d<Value> &p = {}
     ) noexcept -> void {
         do_i<type>(
             std::cbegin(x), std::cend(x),
@@ -119,14 +121,16 @@ namespace interp {
     template<
         Type1D type,
         typename XContainer,
-        typename XpContainer, typename YpContainer,
-        typename DestContainer = std::remove_cvref_t<XContainer>
+        typename XpContainer,
+        typename YpContainer,
+        typename DestContainer = std::remove_cvref_t<XContainer>,
+        typename Value = utils::common_cont_val_t<XContainer, XpContainer, YpContainer, DestContainer>
     >
     auto do_i(
         const XContainer &x,
         const XpContainer &xp,
         const YpContainer &yp,
-        const params_1d<typename std::remove_cvref_t<XContainer>::value_type> &p = {}
+        const params_1d<Value> &p = {}
     ) -> DestContainer {
         DestContainer dest(std::size(x));
         do_i<type>(x, xp, yp, dest, p);

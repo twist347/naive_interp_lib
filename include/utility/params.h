@@ -16,7 +16,7 @@ namespace interp {
         Exec exec = Exec::SEQ;
         bool extrapolate = false;
         bool bounds_check = false;
-        std::pair<Value, Value> bounds = std::pair{utils::nan<Value>, utils::nan<Value>};
+        std::pair<Value, Value> bounds = std::make_pair(utils::nan<Value>, utils::nan<Value>);
     };
 
 }
