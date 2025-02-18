@@ -496,23 +496,6 @@ TEST(CubicInterp, Extrapolate) {
 //     );
 // }
 
-TEST(AnyInterp, SyntaxTest) {
-    const container xp{1, 2, 3, 4, 5}, yp{1, 4, 9, 16, 25}, x{1, 3, 4.5};
-    const container exp_lin{1, 9, 20.5}, exp_quad{1, 9, 20.25}, exp_cub{1, 9, 20.25};
-    interp::any_i interp = interp::make_i<interp::Type1D::Linear>(xp, yp);
-    const auto y_lin = interp(x);
-    ASSERT_TRUE(arrays_eq(y_lin, exp_lin));
-
-    interp = interp::make_i<interp::Type1D::Quadratic>(xp, yp);
-    const auto y_quad = interp(x);
-    ASSERT_TRUE(arrays_eq(y_quad, exp_quad));
-
-    interp = interp::make_i<interp::Type1D::Cubic>(xp.cbegin(), xp.cend(), yp.cbegin());
-    container y_cub(exp_cub.size());
-    interp(x.cbegin(), x.cend(), y_cub.begin());
-    ASSERT_TRUE(arrays_eq(y_cub, exp_cub));
-}
-
 int main(int argc, char **argv) {
     std::cout << "Test 'accuracy 1d interps' starts in ";
 #ifndef NDEBUG

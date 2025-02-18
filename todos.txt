@@ -1,0 +1,5 @@
+TODO: think about copy and move semantics for containers concepts
+
+TODO: make type and seq flow_struct in template for constrexpr (or use overloading)
+
+TODO: add epsilon for floating point types

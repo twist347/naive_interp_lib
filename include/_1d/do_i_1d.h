@@ -1,6 +1,7 @@
 #pragma once
 
 #include <cassert>
+#include <iterator>
 
 #include "i_1d_prev_alg.h"
 #include "i_1d_next_alg.h"
@@ -10,6 +11,7 @@
 #include "i_1d_cubic_alg.h"
 #include "i_1d_types.h"
 #include "../utility/params.h"
+#include "../utility/utils.h"
 
 #ifndef NDEBUG
     #include "i_1d_msg.h"
@@ -25,7 +27,6 @@
 #endif
 
 namespace interp {
-    // TODO: add epsilon to params
 
     namespace detail {
 
@@ -75,10 +76,10 @@ namespace interp {
 
     template<
         Type1D type,
-        typename XIter,
-        typename XpIter,
-        typename YpIter,
-        typename DestIter,
+        std::random_access_iterator XIter,
+        std::random_access_iterator XpIter,
+        std::random_access_iterator YpIter,
+        std::random_access_iterator DestIter,
         typename Value = utils::common_iter_val_t<XIter, XpIter, YpIter, DestIter>
     >
     auto do_i(
@@ -97,9 +98,10 @@ namespace interp {
 
     template<
         Type1D type,
-        typename XContainer,
-        typename XpContainer, typename YpContainer,
-        typename DestContainer,
+        RandomAccessContainer XContainer,
+        RandomAccessContainer XpContainer,
+        RandomAccessContainer YpContainer,
+        RandomAccessContainer DestContainer,
         typename Value = utils::common_cont_val_t<XContainer, XpContainer, YpContainer, DestContainer>
     >
     auto do_i(
@@ -120,10 +122,10 @@ namespace interp {
 
     template<
         Type1D type,
-        typename XContainer,
-        typename XpContainer,
-        typename YpContainer,
-        typename DestContainer = std::remove_cvref_t<XContainer>,
+        RandomAccessContainer XContainer,
+        RandomAccessContainer XpContainer,
+        RandomAccessContainer YpContainer,
+        RandomAccessContainer DestContainer = std::remove_cvref_t<XContainer>,
         typename Value = utils::common_cont_val_t<XContainer, XpContainer, YpContainer, DestContainer>
     >
     auto do_i(

@@ -76,7 +76,7 @@ static auto gb_linear_interp_small_data(benchmark::State &state) -> void {
     test_utils::fill_rnd_range(yp.begin(), yp.end(), x_min, x_max);
     test_utils::fill_rnd_range(x.begin(), x.end(), x_min, x_max);
     std::sort(xp.begin(), xp.end());
-    std::sort(x.begin(), x.end());
+    // std::sort(x.begin(), x.end());
 
     for ([[maybe_unused]] auto _ : state) {
         interp::do_i<interp::Type1D::NearestNeighbour>(
@@ -96,7 +96,7 @@ static auto gb_quadratic_interp_small_data(benchmark::State &state) -> void {
     test_utils::fill_rnd_range(yp.begin(), yp.end(), x_min, x_max);
     test_utils::fill_rnd_range(x.begin(), x.end(), x_min, x_max);
     std::sort(xp.begin(), xp.end());
-    std::sort(x.begin(), x.end());
+    // std::sort(x.begin(), x.end());
 
     for ([[maybe_unused]] auto _ : state) {
         interp::do_i<interp::Type1D::NearestNeighbour>(
@@ -135,6 +135,7 @@ static auto gb_prev_interp(benchmark::State &state) -> void {
     test_utils::fill_rnd_range(yp.begin(), yp.end(), x_min, x_max);
     test_utils::fill_rnd_range(x.begin(), x.end(), x_min, x_max);
     std::sort(xp.begin(), xp.end());
+    // std::sort(x.begin(), x.end());
 
     for ([[maybe_unused]] auto _ : state) {
         interp::do_i<interp::Type1D::Prev>(

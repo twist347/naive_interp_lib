@@ -12,6 +12,25 @@
     #define INTERP_RELEASE_NOEXCEPT
 #endif
 
+namespace interp {
+
+    template<typename Container>
+    concept RandomAccessContainer = requires(Container& c, const Container& cc, Container &&r) {
+        { c.begin() } -> std::random_access_iterator;
+        { c.end() } -> std::random_access_iterator;
+        { c.size() } -> std::integral;
+
+        { cc.cbegin() } -> std::random_access_iterator;
+        { cc.cend() } -> std::random_access_iterator;
+        { cc.size() } -> std::integral;
+
+        { std::move(r).begin() } -> std::random_access_iterator;
+        { std::move(r).end() } -> std::random_access_iterator;
+        { std::move(r).size() } -> std::integral;
+    };
+
+}
+
 namespace interp::utils {
 
     namespace detail {

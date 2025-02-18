@@ -21,9 +21,13 @@ namespace interp {
 
         auto operator=(i_1d &&) noexcept -> i_1d & = default;
 
-        template<typename XpIter, typename YpIter>
+        template<
+            std::random_access_iterator XpIter,
+            std::random_access_iterator YpIter
+        >
         auto set_data(
-            XpIter xp_first, XpIter xp_last,
+            XpIter xp_first,
+            XpIter xp_last,
             YpIter yp_first,
             const params_1d<Value> &p = {}
         ) -> void {
@@ -35,7 +39,10 @@ namespace interp {
             p_ = p;
         }
 
-        template<typename XpContainer, typename YpContainer>
+        template<
+            RandomAccessContainer XpContainer,
+            RandomAccessContainer YpContainer
+        >
         auto set_data(
             XpContainer &&xp,
             YpContainer &&yp,
@@ -54,8 +61,15 @@ namespace interp {
             }
         }
 
-        template<typename XIter, typename DestIter>
-        auto operator()(XIter x_first, XIter x_last, DestIter dest_first) const noexcept -> void {
+        template<
+            std::random_access_iterator XIter,
+            std::random_access_iterator DestIter
+        >
+        auto operator()(
+            XIter x_first,
+            XIter x_last,
+            DestIter dest_first
+        ) const noexcept -> void {
             static_assert(std::convertible_to<utils::common_iter_val_t<XIter, DestIter>, value_type>);
 
             using value_type = utils::common_iter_val_t<XIter, DestIter>;
@@ -68,15 +82,24 @@ namespace interp {
             );
         }
 
-        template<typename XContainer, typename DestContainer>
-        auto operator()(const XContainer &x, DestContainer &dest) const noexcept -> void {
+        template<
+            RandomAccessContainer XContainer,
+            RandomAccessContainer DestContainer
+        >
+        auto operator()(
+            const XContainer &x,
+            DestContainer &dest
+        ) const noexcept -> void {
             static_assert(std::convertible_to<utils::common_cont_val_t<XContainer, DestContainer>, value_type>);
             assert(std::size(x) == std::size(dest));
 
             operator()(std::cbegin(x), std::cend(x), std::begin(dest));
         }
 
-        template<typename XContainer, typename DestContainer = std::remove_cvref_t<XContainer>>
+        template<
+            RandomAccessContainer XContainer,
+            RandomAccessContainer DestContainer = std::remove_cvref_t<XContainer>
+        >
         auto operator()(const XContainer &x) const -> DestContainer {
             static_assert(std::convertible_to<utils::common_cont_val_t<XContainer, DestContainer>, value_type>);
 

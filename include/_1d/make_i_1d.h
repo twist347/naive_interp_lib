@@ -1,6 +1,9 @@
 #pragma once
 
+#include <iterator>
+
 #include "i_1d.h"
+#include "../utility/utils.h"
 
 namespace interp {
 
@@ -8,8 +11,8 @@ namespace interp {
 
     template<
         Type1D type,
-        typename XpIter,
-        typename YpIter,
+        std::random_access_iterator XpIter,
+        std::random_access_iterator YpIter,
         typename Value = utils::common_iter_val_t<XpIter, YpIter>
     >
     auto make_i(
@@ -27,8 +30,8 @@ namespace interp {
 
     template<
         Type1D type,
-        typename XpContainer,
-        typename YpContainer,
+        RandomAccessContainer XpContainer,
+        RandomAccessContainer YpContainer,
         typename Value = utils::common_cont_val_t<XpContainer, YpContainer>
     >
     auto make_i(

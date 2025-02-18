@@ -1,8 +1,55 @@
 #pragma once
 
 #include <variant>
+#include <stdexcept>
 
 #include "../_1d/i_1d.h"
+
+namespace interp {
+
+    template<typename Value>
+    class any_i;
+
+}
+
+namespace interp::detail {
+
+    struct fake_interp {
+
+        template<
+            std::random_access_iterator XIter,
+            std::random_access_iterator DestIter
+        >
+        auto operator()(XIter, XIter, DestIter) const -> void {
+            throw std::logic_error("operator() called on uninitialized any_i");
+        }
+
+        template<
+            RandomAccessContainer XContainer,
+            RandomAccessContainer DestContainer = std::remove_cvref_t<XContainer>
+        >
+        auto operator()(const XContainer &) const -> DestContainer {
+            throw std::logic_error("operator()(container) called on uninitialized any_i");
+
+            return DestContainer{};
+        }
+
+        template<
+            RandomAccessContainer XContainer,
+            RandomAccessContainer DestContainer
+        >
+        auto operator()(const XContainer &, DestContainer &) const -> DestContainer {
+            throw std::logic_error("operator()(container, dest) called on uninitialized any_i");
+
+            return DestContainer{};
+        }
+
+    };
+
+    template<typename Value, typename Interp>
+    concept NonSelfInterp = !std::same_as<any_i<Value>, std::remove_cvref_t<Interp>>;
+
+}
 
 namespace interp {
 
@@ -24,55 +71,37 @@ namespace interp {
         // ctor and assignment from interps
 
         template<typename Interp>
-        requires (!std::same_as<any_i, std::remove_cvref_t<Interp>>)
+        requires detail::NonSelfInterp<Value, Interp>
         any_i(Interp &&interp) : interp_(std::forward<Interp>(interp)) {}
 
         template<typename Interp>
-        requires (!std::same_as<any_i, std::remove_cvref_t<Interp>>)
+        requires detail::NonSelfInterp<Value, Interp>
         auto operator=(Interp &&interp) -> any_i & {
             interp_ = std::forward<Interp>(interp);
+
             return *this;
-        }
-
-        // set methods
-
-        template<typename XpIter, typename YpIter>
-        auto set_data(
-            XpIter xp_first, XpIter xp_last,
-            YpIter yp_first,
-            const params_1d<typename std::iterator_traits<XpIter>::value_type> &p = {}
-        ) -> void {
-            std::visit([&](auto &&interp) { interp.set_data(xp_first, xp_last, yp_first, p); }, interp_);
-        }
-
-        template<typename XpContainer, typename YpContainer>
-        auto set_data(
-            const XpContainer &xp,
-            const YpContainer &yp,
-            const params_1d<typename XpContainer::value_type> &p = {}
-        ) -> void {
-            std::visit([&](auto &&interp) { interp.set_data(xp, yp, p); }, interp_);
         }
 
         // func operators
 
-        template<typename XIter, typename DestIter>
+        template<std::random_access_iterator XIter, std::random_access_iterator DestIter>
         auto operator()(XIter x_first, XIter x_last, DestIter dest_first) const -> void {
             std::visit([&](auto &&interp) { interp(x_first, x_last, dest_first); }, interp_);
         }
 
-        template<typename XContainer>
+        template<RandomAccessContainer XContainer>
         auto operator()(const XContainer &x) const {
             return std::visit([&](auto &&interp) { return interp(x); }, interp_);
         }
 
-        template<typename XContainer, typename DestContainer>
+        template<RandomAccessContainer XContainer, RandomAccessContainer DestContainer>
         auto operator()(const XContainer &x, DestContainer &dest) const {
-            return std::visit([&](auto &&interp) { return interp(x, dest); }, interp_);
+            std::visit([&](auto &&interp) { interp(x, dest); }, interp_);
         }
 
     private:
         using variant_type = std::variant<
+            detail::fake_interp,
             i_1d<Type1D::Prev, Value>,
             i_1d<Type1D::Next, Value>,
             i_1d<Type1D::NearestNeighbour, Value>,
