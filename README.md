@@ -216,9 +216,9 @@ In progress.
 ```c++
     std::vector<double> y(std::size(x)); // to write data
     
-    interp::do<interp::Type1D::Next>(x, xp, yp, y); // write to y
+    interp::do_i<interp::Type1D::Next>(x, xp, yp, y); // write to y
     // or
-    const auto other_y = interp::do<interp::Type1D::Next>(x, xp, yp); // get a vector
+    const auto other_y = interp::do_i<interp::Type1D::Next>(x, xp, yp); // get a vector
 ```
 
 ### 2D
