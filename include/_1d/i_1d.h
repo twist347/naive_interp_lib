@@ -26,8 +26,7 @@ namespace interp {
             std::random_access_iterator YpIter
         >
         auto set_data(
-            XpIter xp_first,
-            XpIter xp_last,
+            XpIter xp_first, XpIter xp_last,
             YpIter yp_first,
             const params_1d<Value> &p = {}
         ) -> void {
@@ -66,8 +65,7 @@ namespace interp {
             std::random_access_iterator DestIter
         >
         auto operator()(
-            XIter x_first,
-            XIter x_last,
+            XIter x_first, XIter x_last,
             DestIter dest_first
         ) const noexcept -> void {
             static_assert(std::convertible_to<utils::common_iter_val_t<XIter, DestIter>, value_type>);
