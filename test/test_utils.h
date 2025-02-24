@@ -1,11 +1,13 @@
 #pragma once
 
 #include <filesystem>
-#include <chrono>
 #include <fstream>
 #include <random>
 #include <iostream>
-#include <interp.h>
+#include <algorithm>
+#include <limits>
+#include <iterator>
+#include <cmath>
 
 namespace test_utils {
 
@@ -42,14 +44,14 @@ namespace test_utils {
         std::generate(first, last, [min_val, max_val]() { return gen_rnd_num(min_val, max_val); });
     }
 
-}
-
-template<typename Container>
-void print(const Container &c) {
-    for (const auto &val: c) {
-        std::cout << val << ' ';
+    template<typename Container>
+    auto print(const Container &c) -> void {
+        for (const auto &val: c) {
+            std::cout << val << ' ';
+        }
+        std::cout << '\n';
     }
-    std::cout << '\n';
+
 }
 
 template<class T, typename Scalar = typename T::value_type>
@@ -97,6 +99,7 @@ auto read_from_csv(const std::string &filename) -> Container {
     return array;
 }
 
+/*
 template<auto type, bool ReturnData = false>
 auto interp_measure_time(const auto &xp, const auto &yp, const auto &x) {
     const auto start = std::chrono::high_resolution_clock::now();
@@ -131,6 +134,7 @@ auto interp_measure_time(
         return duration;
     }
 }
+*/
 
 namespace plotting::curves {
 
@@ -194,11 +198,11 @@ namespace plotting::_1d {
 
     template<class Container>
     auto plotting_gnuplot(
-            const Container &xp,
-            const Container &yp,
-            const std::string &path,
-            const std::string &file_name,
-            int step = 1
+        const Container &xp,
+        const Container &yp,
+        const std::string &path,
+        const std::string &file_name,
+        int step = 1
     ) -> void {
         using size_type = typename Container::size_type;
         const std::filesystem::path plot_path(path);
@@ -257,12 +261,12 @@ namespace plotting::_2d {
 
     template<class Container>
     auto plotting_gnuplot(
-            const Container &xp,
-            const Container &yp,
-            const Container &zp,
-            const std::string &path,
-            const std::string &file_name,
-            int step = 1
+        const Container &xp,
+        const Container &yp,
+        const Container &zp,
+        const std::string &path,
+        const std::string &file_name,
+        int step = 1
     ) -> void {
         using size_type = typename Container::size_type;
         const std::filesystem::path plot_path(path);
@@ -275,9 +279,10 @@ namespace plotting::_2d {
 
     template<class Container, class Value = typename Container::value_type>
     auto generate_arrays(
-            Value (*func)(Value, Value),
-            int count,
-            Value x_min, Value x_max, Value y_min, Value y_max
+        Value (*func)(Value, Value),
+        int count,
+        Value x_min, Value x_max,
+        Value y_min, Value y_max
     ) {
         using size_type = typename Container::size_type;
         const Value step = std::abs(x_max - x_min) / count;

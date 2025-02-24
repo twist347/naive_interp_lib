@@ -1,6 +1,7 @@
+#include <vector>
 #include <gtest/gtest.h>
 
-#include "../../test_utils.h"
+#include "test_utils.h"
 #include "interp.h"
 
 constexpr auto nan_v = interp::utils::nan<double>;

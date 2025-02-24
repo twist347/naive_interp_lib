@@ -1,26 +1,37 @@
-cmake_minimum_required(VERSION 3.15)
+cmake_minimum_required(VERSION 3.20)
 
-project(naive_interp_lib)
+set(T naive_interp_lib)
+
+project(${T})
 
 set(CMAKE_CXX_STANDARD 20)
 
-find_package(GTest REQUIRED)
-find_package(benchmark REQUIRED)
+# or set -DBUILD_TESTS=ON for build tests
+option(BUILD_TESTS "Build tests" OFF)
 
+# Intel Thread Building Block library for Execution Policies
 find_package(TBB REQUIRED)
 
-if (UNIX AND CMAKE_BUILD_TYPE MATCHES "Debug")
-    message("Debug build")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fsanitize=address,undefined,leak -fno-sanitize-recover=all")
+# header only library
+add_library(${T} INTERFACE)
+target_include_directories(${T} INTERFACE ${CMAKE_CURRENT_SOURCE_DIR}/include)
+target_link_libraries(${T} INTERFACE TBB::tbb)
+
+# build test
+if (BUILD_TESTS)
+    #find Google Test
+    find_package(GTest REQUIRED)
+    #find Google Benchmark
+    find_package(benchmark REQUIRED)
+
+#enable CTest
+#    enable_testing()
+
+    # add sanitizers in Debug build for Clang|GCC
+    if(CMAKE_BUILD_TYPE STREQUAL "Debug" AND CMAKE_CXX_COMPILER_ID MATCHES "Clang|GNU")
+        add_compile_options(-fsanitize=address -fsanitize=undefined -fsanitize=leak)
+        add_link_options(-fsanitize=address -fsanitize=undefined -fsanitize=leak)
+    endif()
+
+    add_subdirectory(test)
 endif ()
-
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
-
-add_library(ni INTERFACE)
-target_include_directories(ni INTERFACE ${CMAKE_CURRENT_SOURCE_DIR}/include)
-target_link_libraries(ni INTERFACE TBB::tbb)
-
-add_subdirectory(test/_1d/algs_accuracy_test)
-add_subdirectory(test/_1d/gperf_test)
-add_subdirectory(test/_1d/plot)
-add_subdirectory(test/_1d/any_interp)

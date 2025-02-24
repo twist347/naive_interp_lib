@@ -2,6 +2,13 @@
 
 Some header-only interpolation library.
 
+
+### Requirements:
+
+C++-20, Intel Thread Building Blocks.
+
+Only for testing - Google Test, Google Benchmark.
+
 In progress.
 
 ### Common notes:

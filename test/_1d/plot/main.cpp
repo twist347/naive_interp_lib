@@ -1,5 +1,8 @@
-#include <interp.h>
-#include "../../test_utils.h"
+#include <iostream>
+#include <vector>
+
+#include "interp.h"
+#include "test_utils.h"
 
 // LINUX ONLY PLOTTING VIA GNUPLOT
 

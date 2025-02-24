@@ -3,7 +3,7 @@
 #include <iterator>
 
 #include "i_1d.h"
-#include "../utility/utils.h"
+#include "utility/utils.h"
 
 namespace interp {
 

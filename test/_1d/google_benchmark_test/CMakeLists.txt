@@ -1,4 +1,4 @@
-set(T test_1d_any_interp)
+set(T test_1d_google_benchmark)
 
 project(${T})
 
@@ -13,7 +13,7 @@ include_directories(
 
 add_executable(${T} ${SOURCES})
 
-target_link_libraries(${T} gtest tbb)
+target_link_libraries(${T} PRIVATE tbb benchmark::benchmark)
 
 #enable CTest
 #add_test(NAME ${T} COMMAND ${T})

@@ -3,7 +3,7 @@
 #include <variant>
 #include <stdexcept>
 
-#include "../_1d/i_1d.h"
+#include "_1d/i_1d.h"
 
 namespace interp {
 

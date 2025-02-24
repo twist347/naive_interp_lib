@@ -1,8 +1,8 @@
-#include <benchmark/benchmark.h>
-#include "interp.h"
-#include "../../test_utils.h"
-
 #include <vector>
+#include <benchmark/benchmark.h>
+
+#include "interp.h"
+#include "test_utils.h"
 
 double (*func)(double) = plotting::curves::custom;
 

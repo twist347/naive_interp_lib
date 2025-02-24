@@ -10,8 +10,8 @@
 #include "i_1d_quadratic_alg.h"
 #include "i_1d_cubic_alg.h"
 #include "i_1d_types.h"
-#include "../utility/params.h"
-#include "../utility/utils.h"
+#include "utility/params.h"
+#include "utility/utils.h"
 
 #ifndef NDEBUG
     #include "i_1d_msg.h"

@@ -51,6 +51,7 @@ namespace interp::utils {
         }
     }
 
+    /* unused
     template<typename ForwardIt, typename Value, typename Compare>
     auto custom_upper_bound(
         ForwardIt first, ForwardIt last,
@@ -63,5 +64,6 @@ namespace interp::utils {
             return std::upper_bound(first, last, value);
         }
     }
+    */
 
 }

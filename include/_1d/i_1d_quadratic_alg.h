@@ -1,9 +1,7 @@
 #pragma once
 
-#include <algorithm>
-
-#include "utils.h"
-#include "../utility/exec.h"
+#include "utility/utils.h"
+#include "utility/exec.h"
 
 namespace interp::detail {
 
