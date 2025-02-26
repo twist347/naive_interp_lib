@@ -13,7 +13,7 @@ namespace interp {
         Type1D type,
         std::random_access_iterator XpIter,
         std::random_access_iterator YpIter,
-        typename Value = utils::common_iter_val_t<XpIter, YpIter>
+        Numeric Value = utils::common_iter_val_t<XpIter, YpIter>
     >
     auto make_i(
         XpIter xp_first, XpIter xp_last,
@@ -32,7 +32,7 @@ namespace interp {
         Type1D type,
         RandomAccessContainer XpContainer,
         RandomAccessContainer YpContainer,
-        typename Value = utils::common_cont_val_t<XpContainer, YpContainer>
+        Numeric Value = utils::common_cont_val_t<XpContainer, YpContainer>
     >
     auto make_i(
         XpContainer &&xp,

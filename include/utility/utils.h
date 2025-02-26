@@ -2,34 +2,18 @@
 
 #include <cmath>
 #include <iterator>
-#include <concepts>
 #include <limits>
 #include <type_traits>
 
+#include "concepts.h"
+
+/* unused
 #ifdef NDEBUG
     #define INTERP_RELEASE_NOEXCEPT noexcept
 #else
     #define INTERP_RELEASE_NOEXCEPT
 #endif
-
-namespace interp {
-
-    template<typename Container>
-    concept RandomAccessContainer = requires(Container& c, const Container& cc, Container &&r) {
-        { c.begin() } -> std::random_access_iterator;
-        { c.end() } -> std::random_access_iterator;
-        { c.size() } -> std::integral;
-
-        { cc.cbegin() } -> std::random_access_iterator;
-        { cc.cend() } -> std::random_access_iterator;
-        { cc.size() } -> std::integral;
-
-        { std::move(r).begin() } -> std::random_access_iterator;
-        { std::move(r).end() } -> std::random_access_iterator;
-        { std::move(r).size() } -> std::integral;
-    };
-
-}
+*/
 
 namespace interp::utils {
 
@@ -58,10 +42,7 @@ namespace interp::utils {
         }
 
         template<int Prec = 0, std::floating_point Value = double>
-        constexpr auto eps = (Prec == 0) ? std::numeric_limits<Value>::epsilon() : fast_pow<Value, int>(10.0, Prec);
-
-        template<typename Value>
-        concept Arithmetic = std::floating_point<Value> || std::integral<Value>;
+        inline constexpr auto eps = (Prec == 0) ? std::numeric_limits<Value>::epsilon() : fast_pow<Value, int>(10.0, Prec);
 
     }
 
@@ -71,8 +52,8 @@ namespace interp::utils {
     template<typename... Iters>
     using common_iter_val_t = std::common_type_t<typename std::remove_cvref_t<std::iterator_traits<Iters>>::value_type...>;
 
-    template<detail::Arithmetic Value>
-    constexpr auto nan = std::numeric_limits<Value>::quiet_NaN();
+    template<Numeric Value>
+    inline constexpr auto nan = std::numeric_limits<Value>::quiet_NaN();
 
     /// lhs == rhs
     template<std::floating_point Value>
@@ -111,7 +92,7 @@ namespace interp::utils {
     }
 
     /// lhs == rhs
-    template<detail::Arithmetic Value>
+    template<Numeric Value>
     constexpr auto eq(Value lhs, Value rhs) noexcept -> bool {
         if constexpr (std::is_floating_point_v<Value>) {
             return flt_eq(lhs, rhs);
@@ -121,7 +102,7 @@ namespace interp::utils {
     }
 
     /// lhs == rhs
-    template<detail::Arithmetic Value>
+    template<Numeric Value>
     constexpr auto eq(Value lhs, Value rhs, Value eps_) noexcept -> bool {
         if constexpr (std::is_floating_point_v<Value>) {
             return flt_eq(lhs, rhs, eps_);
@@ -131,7 +112,7 @@ namespace interp::utils {
     }
 
     /// lhs != rhs
-    template<detail::Arithmetic Value>
+    template<Numeric Value>
     constexpr auto neq(Value lhs, Value rhs) noexcept -> bool {
         if constexpr (std::is_floating_point_v<Value>) {
             return flt_neq(lhs, rhs);
@@ -141,7 +122,7 @@ namespace interp::utils {
     }
 
     /// lhs != rhs
-    template<detail::Arithmetic Value>
+    template<Numeric Value>
     constexpr auto neq(Value lhs, Value rhs, Value eps_) noexcept -> bool {
         if constexpr (std::is_floating_point_v<Value>) {
             return flt_neq(lhs, rhs, eps_);
@@ -151,7 +132,7 @@ namespace interp::utils {
     }
 
     /// lhs < rhs
-    template<detail::Arithmetic Value>
+    template<Numeric Value>
     constexpr auto less(Value lhs, Value rhs) noexcept -> bool {
         if constexpr (std::is_floating_point_v<Value>) {
             return flt_less(lhs, rhs);
@@ -161,7 +142,7 @@ namespace interp::utils {
     }
 
     /// lhs < rhs
-    template<detail::Arithmetic Value>
+    template<Numeric Value>
     constexpr auto less(Value lhs, Value rhs, Value eps_) noexcept -> bool {
         if constexpr (std::is_floating_point_v<Value>) {
             return flt_less(lhs, rhs, eps_);
@@ -171,7 +152,7 @@ namespace interp::utils {
     }
 
     /// lhs > rhs
-    template<detail::Arithmetic Value>
+    template<Numeric Value>
     constexpr auto greater(Value lhs, Value rhs) noexcept -> bool {
         if constexpr (std::is_floating_point_v<Value>) {
             return flt_greater(lhs, rhs);
@@ -181,7 +162,7 @@ namespace interp::utils {
     }
 
     /// lhs > rhs
-    template<detail::Arithmetic Value>
+    template<Numeric Value>
     constexpr auto greater(Value lhs, Value rhs, Value eps_) noexcept -> bool {
         if constexpr (std::is_floating_point_v<Value>) {
             return flt_greater(lhs, rhs, eps_);
@@ -191,7 +172,7 @@ namespace interp::utils {
     }
 
     /// lhs <= rhs
-    template<detail::Arithmetic Value>
+    template<Numeric Value>
     constexpr auto less_eq(Value lhs, Value rhs) noexcept -> bool {
         if constexpr (std::is_floating_point_v<Value>) {
             return flt_less_eq(lhs, rhs);
@@ -201,7 +182,7 @@ namespace interp::utils {
     }
 
     /// lhs <= rhs
-    template<detail::Arithmetic Value>
+    template<Numeric Value>
     constexpr auto less_eq(Value lhs, Value rhs, Value eps_) noexcept -> bool {
         if constexpr (std::is_floating_point_v<Value>) {
             return flt_less_eq(lhs, rhs, eps_);
@@ -211,7 +192,7 @@ namespace interp::utils {
     }
 
     /// lhs >= rhs
-    template<detail::Arithmetic Value>
+    template<Numeric Value>
     constexpr auto greater_eq(Value lhs, Value rhs) noexcept -> bool {
         if constexpr (std::is_floating_point_v<Value>) {
             return flt_greater_eq(lhs, rhs);
@@ -221,7 +202,7 @@ namespace interp::utils {
     }
 
     /// lhs >= rhs
-    template<detail::Arithmetic Value>
+    template<Numeric Value>
     constexpr auto greater_eq(Value lhs, Value rhs, Value eps_) noexcept -> bool {
         if constexpr (std::is_floating_point_v<Value>) {
             return flt_greater_eq(lhs, rhs, eps_);

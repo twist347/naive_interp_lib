@@ -30,7 +30,7 @@ namespace interp {
 
     namespace detail {
 
-        template<Type1D type, typename Value, typename... Args>
+        template<Type1D type, Numeric Value, typename... Args>
         auto interp_dispatch(Args &&... args) noexcept -> void {
             if constexpr (type == Type1D::Prev) {
                 detail::prev_impl_<Value>(std::forward<Args>(args)...);
@@ -80,7 +80,7 @@ namespace interp {
         std::random_access_iterator XpIter,
         std::random_access_iterator YpIter,
         std::random_access_iterator DestIter,
-        typename Value = utils::common_iter_val_t<XIter, XpIter, YpIter, DestIter>
+        Numeric Value = utils::common_iter_val_t<XIter, XpIter, YpIter, DestIter>
     >
     auto do_i(
         XIter x_first, XIter x_last,
@@ -102,7 +102,7 @@ namespace interp {
         RandomAccessContainer XpContainer,
         RandomAccessContainer YpContainer,
         RandomAccessContainer DestContainer,
-        typename Value = utils::common_cont_val_t<XContainer, XpContainer, YpContainer, DestContainer>
+        Numeric Value = utils::common_cont_val_t<XContainer, XpContainer, YpContainer, DestContainer>
     >
     auto do_i(
         const XContainer &x,
@@ -126,7 +126,7 @@ namespace interp {
         RandomAccessContainer XpContainer,
         RandomAccessContainer YpContainer,
         RandomAccessContainer DestContainer = std::remove_cvref_t<XContainer>,
-        typename Value = utils::common_cont_val_t<XContainer, XpContainer, YpContainer, DestContainer>
+        Numeric Value = utils::common_cont_val_t<XContainer, XpContainer, YpContainer, DestContainer>
     >
     auto do_i(
         const XContainer &x,

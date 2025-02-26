@@ -5,17 +5,17 @@
 
 namespace interp::detail {
 
-    template<typename XpIter, typename YpIter, typename Value>
+    template<rai XpIter, rai YpIter, Numeric Value>
     constexpr auto calc_prev_value_(
         XpIter xp_first, XpIter xp_last,
         YpIter yp_first,
         Value xi
     ) noexcept -> Value {
         const auto idx = std::distance(xp_first, std::upper_bound(xp_first, xp_last, xi));
-        return *(yp_first + idx - 1);
+        return yp_first[idx - 1];
     }
 
-    template<typename Value, typename XIter, typename XpIter, typename YpIter, typename DestIter>
+    template<Numeric Value, rai XIter, rai XpIter, rai YpIter, rai DestIter>
     auto prev_pure_impl_(
         XIter x_first, XIter x_last,
         XpIter xp_first, XpIter xp_last,
@@ -35,7 +35,7 @@ namespace interp::detail {
         utils::custom_transform(p.exec, x_first, x_last, dest_first, calc);
     }
 
-    template<typename Value, typename XIter, typename XpIter, typename YpIter, typename DestIter>
+    template<Numeric Value, rai XIter, rai XpIter, rai YpIter, rai DestIter>
     auto prev_bounds_impl_(
         XIter x_first, XIter x_last,
         XpIter xp_first, XpIter xp_last,
@@ -43,9 +43,10 @@ namespace interp::detail {
         DestIter dest_first,
         const params_1d<Value> &p
     ) noexcept -> void {
+        const auto len = std::distance(xp_first, xp_last);
         const Value left_dflt_val = p.bounds.first;
         const Value right_dflt_val = p.bounds.second;
-        const Value lx0 = *xp_first, rx0 = *(xp_last - 1);
+        const Value lx0 = xp_first[0], rx0 = xp_first[len - 1];
 
         const auto calc = [&](Value xi) -> Value {
             if constexpr (std::numeric_limits<Value>::has_quiet_NaN) {
@@ -65,7 +66,7 @@ namespace interp::detail {
         utils::custom_transform(p.exec, x_first, x_last, dest_first, calc);
     }
 
-    template<typename Value, typename XIter, typename XpIter, typename YpIter, typename DestIter>
+    template<Numeric Value, rai XIter, rai XpIter, rai YpIter, rai DestIter>
     auto prev_extr_impl_(
         XIter x_first, XIter x_last,
         XpIter xp_first, XpIter xp_last,
@@ -73,10 +74,9 @@ namespace interp::detail {
         DestIter dest_first,
         const params_1d<Value> &p
     ) noexcept -> void {
-        const auto yp_size = std::distance(xp_first, xp_last);
-
-        const Value lx0 = *xp_first, rx0 = *(xp_last - 1);
-        const Value ly0 = *yp_first, ry0 = *(yp_first + yp_size - 1);
+        const auto len = std::distance(xp_first, xp_last);
+        const Value lx0 = xp_first[0], rx0 = xp_first[len - 1];
+        const Value ly0 = yp_first[0], ry0 = yp_first[len - 1];
 
         const auto calc = [&](Value xi) -> Value {
             if constexpr (std::numeric_limits<Value>::has_quiet_NaN) {
@@ -96,7 +96,7 @@ namespace interp::detail {
         utils::custom_transform(p.exec, x_first, x_last, dest_first, calc);
     }
 
-    template<typename Value, typename XIter, typename XpIter, typename YpIter, typename DestIter>
+    template<Numeric Value, rai XIter, rai XpIter, rai YpIter, rai DestIter>
     auto prev_impl_(
         XIter x_first, XIter x_last,
         XpIter xp_first, XpIter xp_last,

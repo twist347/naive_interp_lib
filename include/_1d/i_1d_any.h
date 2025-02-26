@@ -4,10 +4,11 @@
 #include <stdexcept>
 
 #include "_1d/i_1d.h"
+#include "utility/concepts.h"
 
 namespace interp {
 
-    template<typename Value>
+    template<Numeric Value>
     class any_i;
 
 }
@@ -53,7 +54,7 @@ namespace interp::detail {
 
 namespace interp {
 
-    template<typename Value>
+    template<Numeric Value>
     class any_i final {
     public:
         using value_type = Value;

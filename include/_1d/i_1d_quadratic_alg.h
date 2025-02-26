@@ -5,7 +5,7 @@
 
 namespace interp::detail {
 
-    template<typename Value>
+    template<Numeric Value>
     constexpr auto quadratic_formula_(
         Value x0, Value y0,
         Value x1, Value y1,
@@ -17,25 +17,24 @@ namespace interp::detail {
                y2 * (xi - x0) * (xi - x1) / ((x2 - x0) * (x2 - x1));
     }
 
-    template<typename XpIter, typename YpIter, typename Value>
+    template<rai XpIter, rai YpIter, Numeric Value>
     constexpr auto calc_quad_value_(
         XpIter xp_first, XpIter xp_last,
         YpIter yp_first,
         Value xi
     ) noexcept -> Value {
         auto idx = std::distance(xp_first, std::lower_bound(xp_first, xp_last, xi));
-        if (utils::eq(xi, *(xp_first + idx))) {
-            return *(yp_first + idx);
+        if (utils::eq(xi, xp_first[idx])) {
+            return yp_first[idx];
         }
         idx = std::max<decltype(idx)>(idx, 2); // shift idx for calculations below
-        const auto xp_idx = xp_first + idx;
-        const auto yp_idx = yp_first + idx;
-        const auto x0 = *(xp_idx - 2), x1 = *(xp_idx - 1), x2 = *xp_idx;
-        const auto y0 = *(yp_idx - 2), y1 = *(yp_idx - 1), y2 = *yp_idx;
+        const auto x0 = xp_first[idx - 2], x1 = xp_first[idx - 1], x2 = xp_first[idx];
+        const auto y0 = yp_first[idx - 2], y1 = yp_first[idx - 1], y2 = yp_first[idx];
+
         return quadratic_formula_(x0, y0, x1, y1, x2, y2, xi);
     }
 
-    template<typename Value, typename XIter, typename XpIter, typename YpIter, typename DestIter>
+    template<Numeric Value, rai XIter, rai XpIter, rai YpIter, rai DestIter>
     auto quadratic_pure_impl_(
         XIter x_first, XIter x_last,
         XpIter xp_first, XpIter xp_last,
@@ -55,7 +54,7 @@ namespace interp::detail {
         utils::custom_transform(p.exec, x_first, x_last, dest_first, calc);
     }
 
-    template<typename Value, typename XIter, typename XpIter, typename YpIter, typename DestIter>
+    template<Numeric Value, rai XIter, rai XpIter, rai YpIter, rai DestIter>
     auto quadratic_bounds_impl_(
         XIter x_first, XIter x_last,
         XpIter xp_first, XpIter xp_last,
@@ -63,10 +62,11 @@ namespace interp::detail {
         DestIter dest_first,
         const params_1d<Value> &p
     ) noexcept -> void {
+        const auto len = std::distance(xp_first, xp_last);
         const Value left_dflt_val = p.bounds.first;
         const Value right_dflt_val = p.bounds.second;
-        const Value lx0 = *xp_first;
-        const Value rx2 = *(xp_last - 1);
+        const Value lx0 = xp_first[0];
+        const Value rx2 = xp_first[len - 1];
 
         const auto calc = [&](Value xi) -> Value {
             if constexpr (std::numeric_limits<Value>::has_quiet_NaN) {
@@ -86,7 +86,7 @@ namespace interp::detail {
         utils::custom_transform(p.exec, x_first, x_last, dest_first, calc);
     }
 
-    template<typename Value, typename XIter, typename XpIter, typename YpIter, typename DestIter>
+    template<Numeric Value, rai XIter, rai XpIter, rai YpIter, rai DestIter>
     auto quadratic_extr_impl_(
         XIter x_first, XIter x_last,
         XpIter xp_first, XpIter xp_last,
@@ -94,13 +94,11 @@ namespace interp::detail {
         DestIter dest_first,
         const params_1d<Value> &p
     ) noexcept -> void {
-        const auto yp_size = std::distance(xp_first, xp_last);
-
-        const Value lx0 = *xp_first, lx1 = *(xp_first + 1), lx2 = *(xp_first + 2);
-        const Value ly0 = *yp_first, ly1 = *(yp_first + 1), ly2 = *(yp_first + 2);
-        const Value rx0 = *(xp_last - 3), rx1 = *(xp_last - 2), rx2 = *(xp_last - 1);
-        const Value ry0 = *(yp_first + yp_size - 3),
-                ry1 = *(yp_first + yp_size - 2), ry2 = *(yp_first + yp_size - 1);
+        const auto len = std::distance(xp_first, xp_last);
+        const Value lx0 = xp_first[0], lx1 = xp_first[1], lx2 = xp_first[2];
+        const Value ly0 = yp_first[0], ly1 = yp_first[1], ly2 = yp_first[2];
+        const Value rx0 = xp_first[len - 3], rx1 = xp_first[len - 2], rx2 = xp_first[len - 1];
+        const Value ry0 = yp_first[len - 3], ry1 = yp_first[len - 2], ry2 = yp_first[len - 1];
 
         const auto calc = [&](Value xi) -> Value {
             if constexpr (std::numeric_limits<Value>::has_quiet_NaN) {
@@ -120,7 +118,7 @@ namespace interp::detail {
         utils::custom_transform(p.exec, x_first, x_last, dest_first, calc);
     }
 
-    template<typename Value, typename XIter, typename XpIter, typename YpIter, typename DestIter>
+    template<Numeric Value, rai XIter, rai XpIter, rai YpIter, rai DestIter>
     auto quadratic_impl_(
         XIter x_first, XIter x_last,
         XpIter xp_first, XpIter xp_last,

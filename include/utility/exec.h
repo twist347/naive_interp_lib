@@ -3,6 +3,7 @@
 #if __has_include(<execution>)
 
 #include <execution>
+#include <cstdio> // for warning message
 
 #endif
 
@@ -16,7 +17,6 @@
     #define PAR_EX std::execution::par,
     #define SEQ_EX std::execution::seq,
 #else
-    #include <cstdio> // for warning message
     #define PAR_UNSEQ_EX
     #define UNSEQ_EX
     #define PAR_EX
